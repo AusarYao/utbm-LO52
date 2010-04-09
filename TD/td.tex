@@ -1,0 +1,36 @@
+\documentclass[a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[francais]{babel}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{calc}
+\usepackage{graphicx}
+\usepackage{phdthesis}
+\usepackage{palatino}
+\usepackage{bbm}
+\usepackage{multicol}
+\usepackage[top=2.5cm, bottom=2cm, left=2.5cm, right=2cm]{geometry}
+
+\usepackage{color} % on en a besoin pour utiliser les couleurs
+\definecolor{grey}{rgb}{0.95,0.95,0.95}
+
+\lstset{tabsize=2, frame=single, basicstyle=\footnotesize, xleftmargin=12mm,
+    backgroundcolor=\color{grey}, showtabs=false, showspaces=false,
+    showstringspaces=false, numbers=left, numberstyle=\footnotesize,
+    framexleftmargin=13mm}
+
+\hypersetup{colorlinks=true, urlcolor=black, linkcolor=black}
+
+\title{Travaux dirigés de LO52 : Logiciels embarqués et communications
+  courtes portées}
+\author{Olivier GRUNDER}
+\date{Printemps 2010}
+\begin{document}
+\large
+\maketitle
+\tableofcontents
+
+\input{notes/TD1.tex}
+
+\end{document}
