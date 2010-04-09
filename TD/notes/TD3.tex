@@ -1,0 +1,20 @@
+\chapter{TD3 : Génération de code}
+
+\section{Exercice 1}
+\begin{lstlisting}
+r1 = (b)
+r2 = (c)
+r3 = r1 * r2
+r4 = r1 - r2
+r5 = r1 * r4
+r6 = -r2
+r7 = r5 * r6
+r8 = r3 + r7
+\end{lstlisting}
+
+Nous pouvons diminuer le nombre de registre en utilisant le meme registre pour
+r1, r5, r7, r8 et un autre pour r4 et r6 amenant le total à 4.
+
+Nous pouvons encore améliorer en stockant le registre r3 en mémoire, comme il
+est peu utilisé.
+

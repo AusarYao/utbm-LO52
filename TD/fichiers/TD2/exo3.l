@@ -7,16 +7,21 @@
 
 %}
 
-blancs [ \t]+
-chiffre [0-9]
-entier [+-]?[1-9]{chiffre}*|0
-reel {entier}('.'{entier}+)?
+blancs    [ \t]+
+chiffre   [0-9]
+lettre    [a-zA-Z]
+alphanum  [0-9a-zA-Z]
+var       {lettre}{alphanum}*
 
 %%
 
   {blancs} {}
-  {reel} {yylval = atof(yytext); return NOMBRE;}
-  .      {return yytext[0];}
-  \n     {return FIN;}
+  .        {return yytext[0];}
+  {entier} {yylval.val = atoi(yytext); return NUM;}
+  {var}    {symrec *s = getsymbole(yytext);
+            if(!s) s = putsymbole(yytext);
+            yyval.symptr = s;
+            return VAR;}
+  \n       {return FIN;}
 
 %%
