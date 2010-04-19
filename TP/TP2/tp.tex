@@ -1,0 +1,86 @@
+\documentclass[a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[francais]{babel}
+\usepackage{listings}
+\usepackage{phdthesis}
+\usepackage{palatino}
+\usepackage{bbm}
+\usepackage[top=2.5cm, bottom=2cm, left=2.5cm, right=2cm]{geometry}
+
+\usepackage{color} % on en a besoin pour utiliser les couleurs
+\definecolor{grey}{rgb}{0.95,0.95,0.95}
+
+\lstset{tabsize=2, frame=single, basicstyle=\footnotesize, xleftmargin=12mm,
+    backgroundcolor=\color{grey}, showtabs=false, showspaces=false,
+    showstringspaces=false, numbers=left, numberstyle=\footnotesize,
+    framexleftmargin=13mm, language=C}
+
+\title{TP2 : Robots Mindstorms\\LO52}
+\author{Hyacinthe Cartiaux\\Maxime Ripard}
+\date{Printemps 2010}
+\begin{document}
+\large
+\maketitle
+\tableofcontents
+
+\chapter{Robot Explorateur}
+Nous devions ici réaliser un programme permettant de se déplacer en évitant
+les obstacles. Nous avons pour celà choisi d'utiliser deux moteurs pour le
+déplacement et un capteur de contact sur le \og nez \fg du robot, afin de
+détecter les obstacles.\\
+
+Notre programme est ici très simple, le robot se contentant d'avancer en
+ligne droite jusqu'au premier obstacle, où il effectue une marche arrière
+puis un virage comme seule man\oe{}uvre d'évitement, avant de repartir en
+marche avant.\\
+
+\lstinputlisting{evite_obstacle.nxc}
+
+\chapter{Suivi de ligne}
+
+Il s'agit ici aussi de réaliser un programme assez simple. Le but était de
+suivre une ligne noire tracée au sol. Pour cela, nous avons utilisé là
+encore les deux moteurs, ainsi que deux capteurs de luminosité situés à
+l'avant de robot et positionnés de part et d'autre de la ligne.\\
+
+Nous partons du principe que le robot est positionné sur la ligne. Nos deux
+capteurs sont eux de part et d'autre de la ligne, ils renvoient donc une
+valeur correspondante à du blanc. Si toutefois cette valeur venait à changer
+pour du noir, cela veut donc dire que nous nous écartons de la ligne. Il
+nous faut alors effectuer un léger virage pour nous repositionner sur la
+ligne.\\
+
+\lstinputlisting{suis_ligne.nxc}
+
+\chapter{Capteur de proximité}
+
+L'objectif de cette partie était de remplir les deux objectifs précédents, à
+savoir suivre une ligne, tout en évitant un obstacle sur celle-ci. Pour
+cela, nous avons utilisé un sonar, pour détecter les obstacles, et deux
+capteurs de luminosité pour suivre la ligne.\\
+
+Le sonar nous sert donc à détecter la présence d'un obstacle proche. Lors
+de la détection, une man\oe{}uvre d'évitement est réalisée, consistant en
+un virage, une marche avant puis un second virage. Après ce second virage,
+les moteurs sont remis en marche normale, avec une direction les amenant à
+croiser de nouveau la ligne. Lors de ce croisement, nous repassons en mode
+suivi de ligne, qui nous permet de reprendre notre chemin le long de celle-
+ci.\\
+
+\lstinputlisting{ligne_et_evite.nxc}
+
+\chapter{Conclusion}
+
+Ce TP aura été très intéressant et constitue une bonne prise en main pour
+aborder le projet. En effet, nous avons pu nous familiariser à travers ces
+quelques exercices à la fois au langage \verb?NXC?, utilisé pour la
+programmation de la brique, et à l'utilisation des différents capteurs.\\
+
+Nous avons également pu appréhender quelques difficultés liées à
+l'environnement qu'il nous faudra gérer au mieux pour le projet, telles que
+la motricité et l'adhérence limitées des roues, l'asservissement peu précis
+ou encore la variation de la valeur retournée par les capteurs de luminosité
+en fonction de la lumière.
+
+\end{document}

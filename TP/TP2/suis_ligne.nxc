@@ -1,0 +1,30 @@
+#define THRESHOLD 35
+#define TURN_TIME 80
+#define SPEED 35
+#define LOW_SPEED 15
+
+task main()
+{
+  // Initialisation des capteurs
+  SetSensorLight(IN_1); // Capteur de luminosite droit
+  SetSensorLight(IN_2); // Capteur de luminosite gauche
+  // Mise en marche des moteurs
+  OnFwd(OUT_AB, SPEED);
+
+  while (true) {
+    // Si on detecte la ligne sur le capteur droit,
+    // on effectue un virage a droite pour se recentrer
+    if (Sensor(IN_1) < THRESHOLD) {
+      OnFwd(OUT_A, LOW_SPEED);
+      Wait(TURN_TIME);
+      OnFwd(OUT_AB, SPEED);
+    }
+    // Si on detecte la ligne sur le capteur gauche,
+    // on effectue un virage a gauche pour se recentrer
+    else if (Sensor(IN_2) < THRESHOLD) {
+      OnFwd(OUT_B, LOW_SPEED);
+      Wait(TURN_TIME);
+      OnFwd(OUT_AB, SPEED);
+    }
+  }
+}

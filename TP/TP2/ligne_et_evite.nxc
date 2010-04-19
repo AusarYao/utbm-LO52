@@ -1,0 +1,69 @@
+#define NEAR 30
+#define THRESHOLD 35
+#define TURN_TIME 500
+#define SPEED 35
+#define LOW_SPEED 15
+
+task main() {
+  // variable utilisee pour recuperer la ligne
+  bool is_back = TRUE;
+
+  // initialisation des capteurs
+  SetSensorLight(IN_1); // Capteur de luminosite droit
+  SetSensorLight(IN_2); // Capteur de luminosite gauche
+  SetSensorLowspeed(IN_3); // Sonar
+
+  // Mise en marche des moteurs
+  OnFwd(OUT_AB, SPEED);
+
+  while (true) {
+    // Si on detecte la ligne sur le capteur droit,
+    if (Sensor(IN_1) < THRESHOLD) {
+      if (is_back) {
+        // et si on doit suivre la ligne,
+        // on effectue un virage a droite
+        OnFwd(OUT_A, LOW_SPEED);
+        Wait(TURN_TIME);
+        OnFwd(OUT_AB, SPEED);
+      }
+      else
+        // si nous devons retrouver la ligne, alors on vient de le faire,
+        // on se remet en mode suivi de ligne
+        is_back = TRUE;
+    }
+    // Si on detecte la ligne sur le capteur gauche,
+    else if (Sensor(IN_2) < THRESHOLD) {
+      if (is_back) {
+        // et si on doit suivre la ligne,
+        // on effectue un virage a gauche
+        OnFwd(OUT_B, LOW_SPEED);
+        Wait(TURN_TIME);
+        OnFwd(OUT_AB, SPEED);
+      }
+      else
+        // si nous devons retrouver la ligne, alors on vient de le faire,
+        // on se remet en mode suivi de ligne
+        is_back = TRUE;
+    }
+    // Si nous detectons un objet proche
+    if (SensorUS(IN_3) < NEAR) {
+      // on se met en mode recuperation de la ligne
+      is_back = FALSE;
+
+      // et nous realisons une manoeuvre d'evitement
+      OnRev(OUT_B, LOW_SPEED);
+      Wait(500);
+
+      OnFwd(OUT_AB, SPEED);
+      Wait(1000);
+
+      OnRev(OUT_A, LOW_SPEED);
+      Wait(500);
+
+      // Une fois la manoeuvre d'evitement realisee, on remet en marche les
+      // moteurs a leur vitesse normale
+      OnFwd(OUT_AB, SPEED);
+    }
+  }
+}
+

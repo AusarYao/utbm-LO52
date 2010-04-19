@@ -1,0 +1,22 @@
+#define TURN_TIME 500
+
+task main() {
+  // Initialisation du capteur de contact
+  SetSensor(IN_4, SENSOR_TOUCH);
+  // Mise en marche des moteurs
+  OnFwd(OUT_AB, 50);
+  while (true) {
+    // Si il y a contact,
+    if (SENSOR_4 == 1) {
+      // On fait marche arriere
+      OnRev(OUT_AB, 50);
+      Wait(TURN_TIME);
+      // On effectue un virage autour du moteur B
+      Off(OUT_B, 50);
+      OnRev(OUT_A, 50);
+      Wait(TURN_TIME);
+      // puis on relance les moteurs en marche avant
+      OnFwd(OUT_AB, 50);
+    }
+  }
+}
