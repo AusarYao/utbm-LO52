@@ -1,0 +1,73 @@
+\chapter{TD5 : J2ME}
+
+\lstset{tabsize=2, frame=single, basicstyle=\footnotesize, xleftmargin=12mm,
+    backgroundcolor=\color{grey}, showtabs=false, showspaces=false,
+    showstringspaces=false, numbers=left, numberstyle=\footnotesize,
+    framexleftmargin=13mm, language=java}
+\section{}
+\break
+\section{}
+\break
+\section{}
+\begin{lstlisting}
+public class BTConnectionServer extends BTConnection {
+  StreamConnectionNotifier notifier;
+  StreamConnection[] tabStreamCon;
+  DataOutputStream[] tabOutStream;
+  DataInputStream[] tabInStream;
+
+  public BTConnectionServer() {
+    notifier = NULL;
+    tabStreamCon = new StreamConnectionNotifier[3];
+    tabOutStream = new DataOutputStream[3];
+    tabInStream = new DataInputStream[3];
+    new Thread(this).start();
+  }
+
+  public void run() {
+    try {
+      localDevice = LocalDevice.getLocalDevice();
+      localDevice.setDiscoverable(..
+      String serviceURL = 
+      notifier = (StreamConnectionNotifier) Connection.open(serviceURL,
+        Connection.READ_WRITE.true);
+      int player_num = 0;
+      while(ajoutJoueurPossible()) {
+        tabStreamCon[player_num] = notifier.acceptAndOpen();
+        tabInStream[player_num] = tabStreamCon[player_num].openInputStream();
+        tabOutStream[player_num] = tabStreamCon[player_num].openOutputStream();
+        writeInt(tabOutStream[player_num], Message.OK);
+        writeInt(tabOutStream[player_num], player_num);
+        new Thread(new BTServerClientProcessor(tabInStream[player_num])).start();
+      }
+    }
+  }
+
+  public writeInt(DataOutputStream os, int i) {
+    try {
+      sychronized(os) {
+        os.writeInt(i);
+      }
+    } catch(IOException e) {}
+  }
+}
+public class BTConnectionServer{
+  public void run() {
+    while(notFin) {
+      try {
+        int msg = readInt(in);
+        switch(msg) {
+          case Message.PLAYER_MOVE:
+            int movej = readInt(in); // numero joueur
+            int movex = readInt(in);
+            int movey = readInt(in);
+            for (int j=0; j < player_num; j++) {
+              if(j != movej) {
+                writeInt(tabOutStream[j], Message.PLAYER_MOVE);
+                writeInt(tabOutStream[j], movej;
+                writeInt(tabOutStream[j], movex);
+                writeInt(tabOutStream[j], movey);
+              }
+            }
+            break;
+\end{lstlisting}
