@@ -1,0 +1,8 @@
+MIDlet-1: Tiny_mripard, Tiny_mripard.png, TinyMIDlet
+MIDlet-Jar-Size: 100
+MIDlet-Jar-URL: Tiny_mripard.jar
+MIDlet-Name: Tiny_mripard
+MIDlet-Vendor: Unknown
+MIDlet-Version: 1.0
+MicroEdition-Configuration: CLDC-1.0
+MicroEdition-Profile: MIDP-2.0

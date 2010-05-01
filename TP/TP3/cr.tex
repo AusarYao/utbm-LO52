@@ -1,0 +1,94 @@
+\documentclass[a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[francais]{babel}
+\usepackage{listings}
+\usepackage{color} % on en a besoin pour utiliser les couleurs
+\definecolor{grey}{rgb}{0.95,0.95,0.95}
+
+\usepackage[top=2.5cm, bottom=2cm, left=2.5cm, right=2cm]{geometry}
+
+\lstset{tabsize=2, frame=single, basicstyle=\footnotesize, xleftmargin=12mm,
+    backgroundcolor=\color{grey}, showtabs=false, showspaces=false,
+    showstringspaces=false, numbers=left, numberstyle=\footnotesize,
+    framexleftmargin=13mm, language=Java}
+
+\title{TP3 : J2ME\\LO52}
+\author{Maxime Ripard}
+\date{Printemps 2010}
+
+\begin{document}
+\large
+\maketitle
+\newpage
+
+\section{Objectif du TP}
+
+Il s'agit ici de développer des applications pour téléphone mobile en J2ME.
+Le WTK permet de créer de nouveaux projets, de les compiler et de les
+exécuter grâce à l'application \og ktoolbar \fg, mais pas d'éditer le code
+source correspondant. Il est muni d’un émulateur permettant le test de ces
+applications.
+
+\section{Utilisation de WTK}
+
+L'objectif de cette partie est de prendre en main le toolkit, en se faisant
+à la navigation, la saisie de texte et la communication par Bluetooth.
+
+\section{Création d'une MiniMIDLet}
+
+La première étape consiste ici à nous faire réaliser un \og Hello World! \fg
+. Il nous faut ensuite ajouter un bouton permettant d'afficher ce message
+lors de l'appui. Il nous faut pour cela utiliser une instance de la
+classe \verb?Command? en utilisant l'identifieur \verb?Command.ITEM?.\\
+
+Il nous fallait ensuite ajouter un bouton de retour à l'état initial du
+programme. Nous avons donc ici aussi utilisé la classe \verb?Command?.\\
+
+Voici le programme final:
+\lstinputlisting{Tiny/src/TinyMIDlet.java}
+
+\section{Création d'une Application Client/Serveur}
+Ce qui nous est demandé ici est mettre en place une connexion entre deux
+appareils Bluetooth : un serveur qui met à disposition un service et un
+client qui s'y connecte. Les deux spécifient une chaîne hexadécimale pour
+s'identifier.
+\subsection{Création du serveur}
+Ici nous voulons créer un serveur affichant à l'écran chaque information
+reçue. Ce serveur héritera de \verb?Runnable?, ce qui signifie qu'il sera
+lancé dans un thread séparé, permettant d'être exécuté en tâche de fond par
+le système.
+\lstinputlisting{BTServer/src/BTServer.java}
+
+\subsection{Création du client}
+Le client doit également hériter de \verb?Runnable? et utiliser le Bluetooth.
+
+\lstinputlisting{BTClient/src/BTClient.java}
+
+\subsection{Création d'une application Client/Serveur}
+Pour finir, nous avons fait fusionner les deux applications précédentes afin
+qu'elles puissent jouer à la fois les rôles de client et de serveur. Pour
+cela, l'application tente de se connecter à un serveur. Nous sommes donc en
+mode client. Si toutefois cette connexion échoue, nous partons du principe
+qu'il n'y a pas de serveur. L'application passe donc en mode serveur,
+servant les requêtes des futurs clients.
+
+\lstinputlisting{BTCliServ/src/BTCliServ.java}
+
+
+\section{Conclusion}
+Ce TP aura été l'occasion de prendre en main J2ME, une plateforme largement
+diffusée sur les systèmes mobiles. On peut s'apercevoir que la syntaxe et
+les paradigmes utilisés restent fidèles à Java, la transition est donc
+facilitée d'une plateforme plus traditionnelle. L'API Bluetooth permet de
+connecter facilement 2 appareils entre eux afin d'échanger des données.\\
+
+Le J2ME Wireless Toolkit permet également de tester et valider facilement
+nos applications, et ce sur plusieurs mobiles simultanément, ce qui permet
+donc de pouvoir développer et déployer rapidement des applications à
+destination de périphériques mobiles sans avoir à disposition le matériel
+nécessaire.\\
+
+Le seul regret que nous pourrions avoir est de n'avoir finalement disposé
+que de 3 heures pour se familiariser avec cette plateforme.
+\end{document}
