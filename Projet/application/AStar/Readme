@@ -1,1 +1,7 @@
 Lancer AStarExampleBis.py pour tester.
+
+Modifier la fonction __init__ dans AStarExempleBis.py pour ajouter des murs où changer les zones de départ et de fin.
+
+Remarque :
+x : colonne,
+y : ligne
