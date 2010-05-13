@@ -1,3 +1,5 @@
+// Bluetooth API and structures
+
 #ifndef _LO52_BT_H
 #define _LO52_BT_H
 

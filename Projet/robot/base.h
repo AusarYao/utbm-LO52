@@ -1,3 +1,4 @@
+// Main definitions of constants
 #ifndef _LO52_BASE_H
 #define _LO52_BASE_H
 
