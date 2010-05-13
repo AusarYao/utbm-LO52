@@ -1,4 +1,4 @@
-#ifdef _LO52_BT_H
+#ifndef _LO52_BT_H
 #define _LO52_BT_H
 
 #include "structures.h"
