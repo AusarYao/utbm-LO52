@@ -1,12 +1,11 @@
 #include <stdlib.h>
 
 #include "base.h"
-#include "structures.h"
 #include "bt.h"
 #include "move.h"
 
 S8 main(U8 argc, char* argv) {
-  struct robot_struct *robot = malloc(sizeof(robot_struct));
+  struct robot_struct *robot = malloc(sizeof(struct robot_struct));
   U8 **map = malloc(MAP_X_SIZE * MAP_Y_SIZE * sizeof(U8));
   robot->mode = MODE_AUTONOMOUS;
 

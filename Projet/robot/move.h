@@ -19,10 +19,10 @@
 #define MOVE_WHEEL_DIAMETER 55
 
 // Handle an obstacle by notifying the application and escaping from it.
-void move_handle_obstacle(robot_struct*, U8**);
+void move_handle_obstacle(struct robot_struct*, U8**);
 // Move following the instructions given by the application.
-void handle_mode_guided(robot_struct*);
+void handle_mode_guided(struct robot_struct*);
 // Move in autonomous mode, exploring the field.
-void move_handle_autonomous(robot_struct*, U8**);
+void move_handle_autonomous(struct robot_struct*, U8**);
 
 #endif

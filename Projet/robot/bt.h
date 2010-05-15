@@ -37,6 +37,6 @@ struct bt_message {
 bool bt_is_active(void);
 
 // Process the pending messages on the Bluetooth stack.
-void bt_check_connec(robot_struct*);
+void bt_check_connec(struct robot_struct*);
 
 #endif
