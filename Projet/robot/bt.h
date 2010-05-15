@@ -1,9 +1,10 @@
 // Bluetooth API and structures
-
 #ifndef _LO52_BT_H
 #define _LO52_BT_H
 
-#include "structures.h"
+#include "base/drivers/bt.h"
+
+#include "base.h"
 
 // Different message types sent over the BT connection.
 // Position request from the app.

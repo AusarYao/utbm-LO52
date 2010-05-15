@@ -1,8 +1,10 @@
 // Movement functions and constants
-
 #ifndef _LO52_MOVE_H
 #define _LO52_MOVE_H
 
+#include "base/drivers/motors.h"
+
+#include "base.h"
 #include "structures.h"
 
 #define MOVE_SPEED          80
