@@ -23,12 +23,13 @@
 
 struct bt_message {
   // Message type.
-  int type;
+  U8 type;
   // Relevant positions
-  int X;
-  int Y;
+  S32 X,
+      Y;
   // If a wall's concerned, here is the relevant mask giving its position.
-  int wall_mask;
+  // If not, we hereby give the robot orientation.
+  U8 mask;
 };
 
 // Check if the connection is not down.
