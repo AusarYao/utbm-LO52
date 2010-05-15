@@ -11,3 +11,5 @@ void move_handle_obstacle(robot_struct*, unsigned short**);
 void handle_mode_guided(robot_struct*);
 // Move in autonomous mode, exploring the field.
 void move_handle_autonomous(robot_struct*, unsigned short**);
+
+#endif
