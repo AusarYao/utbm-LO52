@@ -4,6 +4,8 @@
 
 struct robot_struct {
   U8 mode;
+  S32 X, Y;
+  U8 orientation;
 };
 
 #endif
