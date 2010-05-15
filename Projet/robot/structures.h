@@ -3,7 +3,7 @@
 #define _LO52_STRUCTURES_H
 
 struct robot_struct {
-  int mode;
+  U8 mode;
 };
 
 #endif

@@ -5,10 +5,9 @@
 #include "bt.h"
 #include "move.h"
 
-int main(int argc, char* argv) {
+S8 main(U8 argc, char* argv) {
   struct robot_struct *robot = malloc(sizeof(robot_struct));
-  unsigned short **map = malloc(MAP_X_SIZE * MAP_Y_SIZE *
-      sizeof(unsigned short));
+  U8 **map = malloc(MAP_X_SIZE * MAP_Y_SIZE * sizeof(U8));
   robot->mode = MODE_AUTONOMOUS;
 
   while(1) {
