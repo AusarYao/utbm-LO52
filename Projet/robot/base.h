@@ -15,5 +15,6 @@
 // Size of the map
 #define MAP_X_SIZE            3
 #define MAP_Y_SIZE            3
+#define MAP_SUB_SIZE          30
 
 #endif

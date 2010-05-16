@@ -11,4 +11,6 @@
 #define SENSORS_LIGHT     1
 #define SENSORS_RADAR     2
 
+#define SENSORS_TOUCH_THRESHOLD   500
+
 #endif
