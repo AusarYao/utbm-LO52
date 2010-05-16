@@ -8,3 +8,20 @@ int bt_init(void) {
 
   return nx_bt_open_port();
 }
+
+//TODO
+// Check if the connection is not down.
+bool bt_is_active(void) {
+  return TRUE;
+}
+
+//TODO
+// Process the pending messages on the Bluetooth stack.
+void bt_check_connect(struct robot_struct *robot) {
+}
+
+//TODO
+// Send a bt_message structure
+int bt_msg_send(struct bt_message *msg) {
+  return 1;
+}
