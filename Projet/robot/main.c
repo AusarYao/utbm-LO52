@@ -8,6 +8,8 @@ S8 main(void) {
   struct robot_struct robot = {MODE_AUTONOMOUS, 0, 0, 0};
   U8 **map = malloc(MAP_X_SIZE * MAP_Y_SIZE * sizeof(U8));
 
+  base_init();
+
   while(1) {
     if(move_is_obstacle())
       move_handle_obstacle(&robot, map);

@@ -33,6 +33,9 @@ struct bt_message {
   U8 mask;
 };
 
+// Bluetooth initialisation
+void bt_init(void);
+
 // Check if the connection is not down.
 bool bt_is_active(void);
 

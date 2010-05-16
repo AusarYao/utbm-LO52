@@ -17,4 +17,6 @@
 #define MAP_Y_SIZE            3
 #define MAP_SUB_SIZE          30
 
+void base_init(void);
+
 #endif
