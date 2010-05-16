@@ -12,16 +12,19 @@ S8 main(void) {
   while(1) {
     if(move_is_obstacle())
       move_handle_obstacle(robot, map);
+
     bt_check_connect(robot);
+
     switch(robot->mode) {
       case MODE_AUTONOMOUS:
-        move_handle_autonomous(robot, map);
+        move_autonomous(robot, map);
         break;
+
       case MODE_GUIDED:
         if(bt_is_active())
-          move_handle_guided(robot);
+          move_guided(robot);
         else
-          move_handle_autonomous(robot, map);
+          move_autonomous(robot, map);
         break;
     }
   }
