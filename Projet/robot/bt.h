@@ -6,6 +6,9 @@
 
 #include "base.h"
 
+// BlueTooth device name
+#define BT_DEVICE_NAME      "NXT-GROUPE-E"
+
 // Different message types sent over the BT connection.
 // Position request from the app.
 #define BT_MSG_POSITION     1
@@ -34,7 +37,7 @@ struct bt_message {
 };
 
 // Bluetooth initialisation
-void bt_init(void);
+int bt_init(void);
 
 // Check if the connection is not down.
 bool bt_is_active(void);
