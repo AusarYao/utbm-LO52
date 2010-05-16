@@ -12,7 +12,8 @@ static void move_escape_wall(void) {
 }
 
 // Handle an obstacle by notifying the application and escaping from it.
-void move_handle_obstacle(struct robot_struct *robot, U8 **map) {
+void move_handle_obstacle(struct robot_struct *robot,
+    U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
   struct bt_message msg = {BT_MSG_LST_WALL, robot->X, robot->Y,
                     robot->orientation};
   bt_msg_send(&msg);
@@ -38,7 +39,8 @@ void move_guided(struct robot_struct *robot) {
 
 //TODO
 // Move in autonomous mode, exploring the field.
-void move_autonomous(struct robot_struct *robot, U8 **map) {
+void move_autonomous(struct robot_struct *robot,
+    U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
 }
 
 // Return TRUE if an obstacle has been encountered, FALSE otherwise.

@@ -6,8 +6,6 @@
 #include "base/core.h"
 #include "base/types.h"
 
-#include "structures.h"
-
 // Definitions of the different modes used by the robot.
 #define MODE_AUTONOMOUS       1
 #define MODE_GUIDED           2
@@ -16,6 +14,8 @@
 #define MAP_X_SIZE            3
 #define MAP_Y_SIZE            3
 #define MAP_SUB_SIZE          30
+
+#include "structures.h"
 
 void base_init(void);
 

@@ -6,8 +6,9 @@
 
 S8 main(void) {
   struct robot_struct robot = {MODE_AUTONOMOUS, 0, 0, 0};
-  U8 **map = malloc(MAP_X_SIZE * MAP_Y_SIZE * sizeof(U8));
+  U8 map[MAP_X_SIZE][MAP_Y_SIZE];
 
+  struct_map_init(map);
   base_init();
 
   while(1) {

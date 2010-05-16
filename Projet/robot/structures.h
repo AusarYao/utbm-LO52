@@ -8,4 +8,7 @@ struct robot_struct {
   U8 orientation;
 };
 
+
+void struct_map_init(U8[MAP_X_SIZE][MAP_Y_SIZE]);
+
 #endif
