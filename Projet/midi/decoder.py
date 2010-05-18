@@ -4,7 +4,7 @@
 
 Prototype of a reader of MIDI music files for the LO52 project."""
 
-import math, sys
+import math, sys, os
 import struct
 
 MIDI_F0 = 16.35
@@ -29,7 +29,6 @@ def get_freq_from_tone(tone_offset):
 def parse_midi_header(fd):
     fd.seek(0)
     raw_headers = fd.read(MIDI_HEADER_SIZE)
-    print raw_headers
     data =  struct.unpack('!4s' # File Format
                           'i'   # Rest of header Size, should almays be 6
                           'h'   # Subformat
@@ -56,67 +55,66 @@ def parse_track_headers(fd):
 
     return headers
 
-def handle_meta_event(data):
-    meta_type, data = struct.unpack('!B%ds' % (len(data) - 1), data)
-    length, data = struct.unpack('!B%ds' % (len(data) - 1), data)
-    event_data, data = struct.unpack('!%ds%ds' % (length,
-        len(data) - length), data)
-    return data
+def handle_meta_event(fd):
+    meta_type = struct.unpack('!B', fd.read(1))[0]
+    length = struct.unpack('!B', fd.read(1))[0]
+    event_data = struct.unpack('!%ds' % length, fd.read(length))[0]
 
-def handle_sysex_event(data):
-    length, data = struct.unpack('!B%ds' % (len(data) - 1), data)
-    event_data, data = struct.unpack('!%ds%ds' % (length,
-        len(data) - length), data)
-    return data
+def handle_sysex_event(fd):
+    length = struct.unpack('!B', fd.read(1))
+    event_data = struct.unpack('!%ds' % length, fd.read(length))
 
-def handle_midi_event(event, data):
+def handle_midi_event(fd, track, pending, event):
     channel = event & 0b1111
     event = (event & 0b11110000) >> 4
     if event ==  MIDI_EVENT_PITCH_CHANGE:
-        bottom, top, data = struct.unpack('!BB%ds' % (len(data) - 2),
-                data)
-    elif event == MIDI_EVENT_CHANNEL_AFTER_TOUCH:
-        channel_nb, data = struct.unpack('!B%ds' % (len(data) - 1), data)
-    elif event == MIDI_EVENT_PATCH_CHANGE:
-        program, data = struct.unpack('!B%ds' % (len(data) - 1), data)
-    elif event == MIDI_EVENT_CONTROL_CHANGE:
-        ctrler_nb, value, data = struct.unpack('!BB%ds' % (len(data) - 2),
-                data)
-    elif event == MIDI_EVENT_KEY_AFTER_TOUCH:
-        note_nb, velocity, data = struct.unpack('!BB%ds' % (len(data) - 2),
-                data)
-    elif event == MIDI_EVENT_NOTE_ON:
-        note_nb, velocity, data = struct.unpack('!BB%ds' % (len(data) - 2),
-                data)
-    elif event == MIDI_EVENT_NOTE_OFF:
-        note_nb, velocity, data = struct.unpack('!BB%ds' % (len(data) - 2),
-                data)
+        bottom, top = struct.unpack('!BB', fd.read(2))
 
-    return data
+    elif event == MIDI_EVENT_CHANNEL_AFTER_TOUCH:
+        channel_nb = struct.unpack('!B', fd.read(1))
+
+    elif event == MIDI_EVENT_PATCH_CHANGE:
+        program = struct.unpack('!B', fd.read(1))
+
+    elif event == MIDI_EVENT_CONTROL_CHANGE:
+        ctrler_nb, value = struct.unpack('!BB', fd.read(2))
+
+    elif event == MIDI_EVENT_KEY_AFTER_TOUCH:
+        note_nb, velocity = struct.unpack('!BB', fd.read(2))
+
+    elif event == MIDI_EVENT_NOTE_ON:
+        note_nb, volume = struct.unpack('!BB', fd.read(2))
+
+    elif event == MIDI_EVENT_NOTE_OFF:
+        note_nb, velocity = struct.unpack('!BB', fd.read(2))
 
 def parse_track_data(fd, track_size):
-    data = fd.read(track_size)
-    while data:
-        delta, data = struct.unpack('!B%ds' % (len(data) - 1), data)
+    track = list()
+    pending = list()
+
+    print "Parsing track ..."
+
+    while True:
+        delta = struct.unpack('!B', fd.read(1))[0]
         delta_time = delta
         while delta > 0x7F:
-            delta, data = struct.unpack('!B%ds' % (len(data) - 1), data)
+            delta = struct.unpack('!B', fd.read(1))[0]
             delta_time += delta
 
-        print 'Delta time : %d' % delta_time
-        event, data = struct.unpack('!B%ds' % (len(data) - 1), data)
-        print 'Event : 0x%X' % event
+        event = struct.unpack('!B', fd.read(1))[0]
 
         if event == MIDI_EVENT_META:
+            data = fd.read(2)
             if data.startswith('\x2f\x00'):
                 print 'Found End of Track ...'
                 break
             else:
-                data = handle_meta_event(data)
+                fd.seek(-2, os.SEEK_CUR)
+                handle_meta_event(fd)
         elif event == MIDI_EVENT_SYSEX1 or event == MIDI_EVENT_SYSEX2:
-            data = handle_sysex_event(data)
+            handle_sysex_event(fd)
         else:
-            data = handle_midi_event(event, data)
+            handle_midi_event(fd, track, pending, event)
 
 if __name__ == '__main__':
     midi_file = open(sys.argv[1])
