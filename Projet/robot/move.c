@@ -53,9 +53,9 @@ void move_handle_obstacle(struct robot_struct *robot,
     move_escape_wall();
   }
   else {
-    struct bt_message abort = {BT_MSG_ABORT_LST, robot->X, robot->Y,
+    struct bt_message abort_msg = {BT_MSG_ABORT_LST, robot->X, robot->Y,
                       robot->orientation};
-    bt_msg_send(&abort);
+    bt_msg_send(&abort_msg);
     map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] -= \
         robot->orientation;
   }
