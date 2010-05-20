@@ -3,6 +3,7 @@
 #define _LO52_MOVE_H
 
 #include "base/drivers/motors.h"
+#include "base/drivers/systick.h"
 
 #include "base.h"
 #include "structures.h"

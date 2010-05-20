@@ -4,7 +4,7 @@
 #include "bt.h"
 #include "sensors.h"
 
-static void rotate_angle(struct robot_struct robot, U32 angle) {
+static void rotate_angle(struct robot_struct *robot, U32 angle) {
   float distance = 2. * M_PI * angle * MOVE_WHEEL_SPACING / 360.;
   float wheel_rotations = distance / (2. * M_PI * MOVE_WHEEL_DIAMETER);
   float angle_rotation = wheel_rotations * 360;
@@ -21,8 +21,12 @@ static void rotate_angle(struct robot_struct robot, U32 angle) {
     nx_motors_rotate_angle(MOVE_LEFT_MOTOR, -MOVE_TURN_SPEED, \
         abs((U32)angle_rotation), TRUE);
   }
-  // TODO
+
+  nx_systick_wait_ms(abs(600 * angle / 90));
+
   // Modify the robot's orientation
+  robot->orientation = pow(2, \
+      ((int)log(robot->orientation) + angle / 90) % 4);
 }
 
 //TODO

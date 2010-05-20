@@ -2,6 +2,8 @@
 #ifndef _LO52_BASE_H
 #define _LO52_BASE_H
 
+#include <stdlib.h>
+
 // Include the systems' headers
 #include "base/core.h"
 #include "base/types.h"
