@@ -20,17 +20,17 @@ class Game(object):
         l = data.split(":")
         l = [int(l[x]) for x in xrange(len(l))]
         self.r.update(l[0],l[1],l[2])
-        self.m.addWall(l[0],l[1],l[3])
+        self.m.add_wall(l[0],l[1],l[3])
         if l[4] != 0:
-            self.f.addFlag(l[0],l[1])
-        self.m.printMap()
+            self.f.add_flag(l[0],l[1])
+        self.m.print_map()
 
-    def shortestPath(self):
+    def shortest_path(self):
         """find the shortest path and nearest flag"""
         Lm = []
         first = True
         for x in range(len(self.f.mapdata)):
-            L = self.m.findPath(self.r.x,self.r.y,self.f.mapdata[x][0],self.f.mapdata[x][1])
+            L = self.m.find_path(self.r.x,self.r.y,self.f.mapdata[x][0],self.f.mapdata[x][1])
             print L
             if first:
                 Lm = L
@@ -38,11 +38,11 @@ class Game(object):
                 Lm = L
         return Lm
 
-    def findDir(self):
+    def find_dir(self):
         """find the direction and the move to the robot"""
         Lr = []
         st = time()
-        L = self.shortestPath()
+        L = self.shortest_path()
         et = time()
         if L==[]:
             print "No path found"

@@ -37,20 +37,20 @@ class BT(object):
         sock.send("ok")
         print "ack"
 
-    def sendMove(self,l):
+    def send_move(self,l):
         for x in range(len(l)):
             if l[x]==1:
-                self.sendLeft()
+                self.send_left()
             if l[x]==2:
-                self.sendRight()
+                self.send_rightt()
             if l[x]==0:
                 self.sendGo()
 
-    def sendRight(self):
+    def send_rightt(self):
         sock.send("d\x00")
         print "Droite"
 
-    def sendLeft(self):
+    def send_left(self):
         sock.send("\x00d")
         print "Gauche"
 

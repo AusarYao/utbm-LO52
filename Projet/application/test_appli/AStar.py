@@ -142,24 +142,24 @@ class MapHandler:
         dl = dest
         
         #Decompose the value of wall
-        wall_decompose = Tools.Sum_pow2(self.m[(cl.x,cl.y)]['wall'])
+        wall_decompose = Tools.sum_pow2(self.m[(cl.x,cl.y)]['wall'])
         list_wall = [1,2,4,8]
         for i in wall_decompose:
             list_wall.remove(i)
         #Test for each value if a wall exist
-        if Tools.Search_in_liste(list_wall,2):
+        if Tools.search_in_liste(list_wall,2):
             n = self._handleNode(cl.x+1,cl.y,curnode,dl.x,dl.y)
             result.append(n)
 
-        if Tools.Search_in_liste(list_wall,8):
+        if Tools.search_in_liste(list_wall,8):
             n = self._handleNode(cl.x-1,cl.y,curnode,dl.x,dl.y)
             result.append(n)
             
-        if Tools.Search_in_liste(list_wall,4):
+        if Tools.search_in_liste(list_wall,4):
             n = self._handleNode(cl.x,cl.y+1,curnode,dl.x,dl.y)
             result.append(n)
             
-        if Tools.Search_in_liste(list_wall,1):
+        if Tools.search_in_liste(list_wall,1):
             n = self._handleNode(cl.x,cl.y-1,curnode,dl.x,dl.y)
             result.append(n)
 

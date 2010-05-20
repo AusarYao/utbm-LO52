@@ -12,7 +12,7 @@ game = G.Game(3,3)
 
 #Affichage et connection
 bt.connect()
-game.m.printMap()
+game.m.print_map()
 
 #mode exploration
 if MODE == 0:
@@ -25,9 +25,9 @@ if MODE == 0:
 
 if MODE == 1:
     if (bt.isconnected):
-        ldata = game.findDir()
+        ldata = game.find_dir()
         if ldata != []:
-            bt.sendMove(ldata)
+            bt.send_move(ldata)
         else:
             print "No direction"
     else:

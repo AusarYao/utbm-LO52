@@ -1,6 +1,6 @@
 # -*- coding:Utf-8 -*-
 
-def Sum_pow2(n):
+def sum_pow2(n):
         L = [2**i for i in range( 0, n + 1) if 2**i <= n]
         L.reverse()
         S = 0
@@ -14,7 +14,7 @@ def Sum_pow2(n):
                 return "N'est pas decomposable en somme de carres d'entiers"
         return L2
 
-def Search_in_liste(L,value):
+def search_in_liste(L,value):
     for i in L:
         if i == value:
             return True
