@@ -1,6 +1,5 @@
 #include "bt.h"
 
-#define MSG_SIZE 4
 
 // Bluetooth initialisation. Return port handle or -1 in case of errors.
 int bt_init(void) {

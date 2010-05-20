@@ -8,6 +8,7 @@
 
 // BlueTooth device name
 #define BT_DEVICE_NAME      "NXT-GROUPE-E"
+#define MSG_SIZE 4
 
 // Different message types sent over the BT connection.
 // Position request from the app.
