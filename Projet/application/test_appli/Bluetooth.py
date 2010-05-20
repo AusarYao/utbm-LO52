@@ -19,7 +19,7 @@ class BT(object):
 
     def connect(self):
         """Connection"""
-        try : sock.connect((bd_addr, port))
+        try : self.sock.connect((self.bd_addr, self.port))
         except:
             self.isconnected = False
             print "Unable to connect to device"
@@ -29,12 +29,12 @@ class BT(object):
 
     def recept(self):
         """Recept a string data"""
-        data=sock.recv(1024)
+        data=self.sock.recv(1024)
         print data
         return data
 
     def ack(self):
-        sock.send("ok")
+        self.sock.send("ok")
         print "ack"
 
     def send_move(self,l):
@@ -47,13 +47,13 @@ class BT(object):
                 self.sendGo()
 
     def send_rightt(self):
-        sock.send("d\x00")
+        self.sock.send("d\x00")
         print "Droite"
 
     def send_left(self):
-        sock.send("\x00d")
+        self.sock.send("\x00d")
         print "Gauche"
 
     def sendGo(self):
-        sock.send("dd")
+        self.sock.send("dd")
         print "Avance"
