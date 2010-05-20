@@ -24,12 +24,12 @@ void bt_check_connect(struct robot_struct *robot) {
 // Send a bt_message structure
 int bt_msg_send(struct bt_message *msg) {
 
-  U8 data[MSG_SIZE];
+  U8 data[BT_MSG_SIZE];
   data[0]=msg->type;
   data[1]=msg->X;
   data[2]=msg->Y;
   data[3]=msg->mask;
 
-  nx_bt_stream_write((U8 *)data, MSG_SIZE);
+  nx_bt_stream_write((U8 *)data, BT_MSG_SIZE);
   return 1;
 }
