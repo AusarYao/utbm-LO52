@@ -9,6 +9,7 @@ static void rotate_angle(struct robot_struct *robot, U32 angle) {
   float distance = 2. * M_PI * angle * MOVE_WHEEL_SPACING / 360.;
   float wheel_rotations = distance / (2. * M_PI * MOVE_WHEEL_DIAMETER);
   float angle_rotation = wheel_rotations * 360;
+  int power;
 
   if(angle_rotation > 0) {
     nx_motors_rotate_angle(MOVE_LEFT_MOTOR, MOVE_TURN_SPEED, \
@@ -26,8 +27,8 @@ static void rotate_angle(struct robot_struct *robot, U32 angle) {
   nx_systick_wait_ms(abs(600 * angle / 90));
 
   // Modify the robot's orientation
-  robot->orientation = pow(2, \
-      ((int)log(robot->orientation) + angle / 90) % 4);
+  power = (int)(log(robot->orientation) + angle / 90.) % 4;
+  robot->orientation = pow(2., power);
 }
 
 //TODO
