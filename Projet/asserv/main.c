@@ -12,17 +12,17 @@
 
 #include "bt.h"
 
-#define MSG_SIZE 2
+#define MSG_SIZE 4
 
 #define HIGH_SPEED 90 // Vitesse Rapide
 #define MEDIUM_SPEED 80 // Vitesse Lente
 #define LOW_SPEED 70 // Vitesse Lente
-#define TURN_SPEED 80//vitesse pour tourner	
+#define TURN_SPEED 80//vitesse pour tourner
 
 #define LEFT_MOTOR 2
 #define RIGHT_MOTOR 0
 
-#define WHEEL_SPACING 116
+#define WHEEL_SPACING 98 //116 est la largeur entre les milieux
 #define WHEEL_HEIGHT 55
 #define PI 3.141593
 
@@ -42,17 +42,15 @@
 
 volatile bool	quit = FALSE;
 
-//ne sert à rien mais si je l'enlève le programme de boote pas... je ne sais pas pourquoi (dans le main)
-int	uouih = 0;
-
-
+int iPositionX=0;
+int iPositionY=0;
+int iOrientation=0;
+U32 pos1Global=0;
+U32 pos2Global=0;
 
 // Déclaration des différentes fonctions
-void vTurnRight(void);
-void vForward(U32 distance);
-void vTurn(void);
-void vHalfTurn(void);
 
+void vForward(U32 distance);
 
 void init(void);
 void die(void);
@@ -61,7 +59,9 @@ void detect_obstacle(void);
 void handle_cmd(void);
 void vPlaySond(void);
 void vDisplaySensorsValues(void);
+void vCalculDeplacement(int deplacement);
 void vTurnLeft(U32 *last_left_counter, U32 *last_right_counter);
+void vTurnRight(U32 *last_left_counter, U32 *last_right_counter);
 void vForwardUntilWall(U32 *last_left_counter, U32 *last_right_counter);
 void vForwardUntilWhite(U32 *last_left_counter, U32 *last_right_counter);
 void vDetectMurDroit(void);
@@ -80,15 +80,19 @@ static void watchdog(void) {
 			nx_motors_stop(LEFT_MOTOR, TRUE);
 			nx_core_halt();
 		case BUTTON_OK:
+			nx_systick_wait_ms(1000);
+			nx_motors_rotate(LEFT_MOTOR,MEDIUM_SPEED);
+			nx_motors_rotate(RIGHT_MOTOR, MEDIUM_SPEED);
+
 			break;
 		case BUTTON_LEFT:
-			data[0]=98;	
+			data[0]=98;
 			data[1]=98;
 			nx_bt_stream_write((U8 *)data, 2);
 			nx_systick_wait_ms(1000);
 			break;
 		case BUTTON_RIGHT:
-			data[0]=99;	
+			data[0]=99;
 			data[1]=99;
 			nx_bt_stream_write((U8 *)data, 2);
 			nx_systick_wait_ms(1000);
@@ -126,7 +130,7 @@ void vGetPosition(U32 *last_left_counter, U32 *last_right_counter, int *left, in
 
 	*left=(int)left_position;
 	*right=(int)right_position;
-	
+
 }
 
 
@@ -242,18 +246,50 @@ void vForward(U32 distance) {
 }
 
 
+
+
 /**
- * Cette fonction permet de faire tourner le robot vers la gauche
+ * Cette fonction permet de faire tourner le robot vers la droite
  */
-void vTurnRight() {
-	float angle;
-	angle=360*PI*WHEEL_SPACING/(4*PI*55);
+void vTurnRight(U32 *last_left_counter, U32 *last_right_counter) {
 
 
+	U32 pos1=*last_left_counter;
+	U32 pos2=*last_right_counter;
 
-	nx_motors_rotate_angle(LEFT_MOTOR, TURN_SPEED, (U32)angle, TRUE);
-	nx_motors_rotate_angle(RIGHT_MOTOR, -TURN_SPEED, (U32)angle, TRUE);	
-	nx_systick_wait_ms(600);	
+	float fAngle;
+	fAngle=360*PI*WHEEL_SPACING/(4*PI*55);
+	U32 uAngle=(U32)fAngle;
+	
+	iOrientation=(iOrientation+1)%4;
+
+	nx_motors_rotate(LEFT_MOTOR, 80);
+	nx_motors_rotate(RIGHT_MOTOR,-80);
+
+	while(pos1<*(last_left_counter+uAngle) && pos2>(*last_right_counter-uAngle)) {
+		pos1=nx_motors_get_tach_count(LEFT_MOTOR);
+		pos2=nx_motors_get_tach_count(RIGHT_MOTOR);
+		nx_systick_wait_ms(1);
+	}
+
+	if (pos1<=*last_left_counter+uAngle) {
+		nx_motors_stop(LEFT_MOTOR, TRUE);
+		while(pos2>*last_right_counter-uAngle) {			
+			pos2=nx_motors_get_tach_count(RIGHT_MOTOR);
+			nx_systick_wait_ms(1);
+		}
+		nx_motors_stop(RIGHT_MOTOR, TRUE);
+	}
+	else{
+		nx_motors_stop(RIGHT_MOTOR, TRUE);
+		while(pos1<*last_left_counter+uAngle) {			
+			pos1=nx_motors_get_tach_count(LEFT_MOTOR);
+			nx_systick_wait_ms(1);
+		}
+		nx_motors_stop(LEFT_MOTOR, TRUE);
+	}
+		*last_left_counter=nx_motors_get_tach_count(LEFT_MOTOR);
+		*last_right_counter=nx_motors_get_tach_count(RIGHT_MOTOR);
 }
 
 
@@ -270,6 +306,7 @@ void vTurnLeft(U32 *last_left_counter, U32 *last_right_counter) {
 	fAngle=360*PI*WHEEL_SPACING/(4*PI*55);
 	U32 uAngle=(U32)fAngle;
 
+	iOrientation=(iOrientation-1)%4;
 
 	nx_motors_rotate(LEFT_MOTOR, -80);
 	nx_motors_rotate(RIGHT_MOTOR, 80);
@@ -300,23 +337,6 @@ void vTurnLeft(U32 *last_left_counter, U32 *last_right_counter) {
 		*last_right_counter=nx_motors_get_tach_count(RIGHT_MOTOR);
 }
 
-void vHalfTurn() {		nx_systick_wait_ms(1);
-	float angle;
-	angle=360*PI*WHEEL_SPACING/(2*PI*55);
-
-	nx_motors_rotate_angle(LEFT_MOTOR, -TURN_SPEED, (U32)angle, TRUE);
-	nx_motors_rotate_angle(RIGHT_MOTOR, TURN_SPEED, (U32)angle, TRUE);
-	nx_systick_wait_ms(1200);
-}
-
-void vTurn() {
-	float angle;
-	angle=360*PI*WHEEL_SPACING/(PI*55);
-
-	nx_motors_rotate_angle(LEFT_MOTOR, -TURN_SPEED, (U32)angle, TRUE);
-	nx_motors_rotate_angle(RIGHT_MOTOR, TURN_SPEED, (U32)angle, TRUE);
-	nx_systick_wait_ms(2400);
-}
 
 void vPlaySond() {
 	//Play sound
@@ -375,6 +395,13 @@ void vForwardUntilWall(U32 *last_left_counter, U32 *last_right_counter) {
 			nx_motors_stop(RIGHT_MOTOR, TRUE);
 			nx_motors_stop(LEFT_MOTOR, TRUE);
 
+			S8 data[MSG_SIZE];
+			data[0]=1;
+			data[1]=iPositionX;
+			data[2]=iPositionY;
+			data[3]=iOrientation;
+			nx_bt_stream_write((U8 *)data, MSG_SIZE);
+
 			*last_left_counter=nx_motors_get_tach_count(LEFT_MOTOR);
 			*last_right_counter=nx_motors_get_tach_count(RIGHT_MOTOR);
 
@@ -397,6 +424,14 @@ void vForwardUntilWhite(U32 *last_left_counter, U32 *last_right_counter) {
 			nx_motors_stop(RIGHT_MOTOR, TRUE);
 			nx_motors_stop(LEFT_MOTOR, TRUE);
 
+			//envoi message
+			S8 data[MSG_SIZE];
+			data[0]=2;
+			data[1]=iPositionX;
+			data[2]=iPositionY;
+			data[3]=iOrientation;
+			nx_bt_stream_write((U8 *)data, MSG_SIZE);
+
 			*last_left_counter=nx_motors_get_tach_count(LEFT_MOTOR);
 			*last_right_counter=nx_motors_get_tach_count(RIGHT_MOTOR);
 
@@ -410,20 +445,6 @@ void vForwardUntilWhite(U32 *last_left_counter, U32 *last_right_counter) {
 			//avance
 			nx_motors_rotate(LEFT_MOTOR,MEDIUM_SPEED);
 			nx_motors_rotate(RIGHT_MOTOR, MEDIUM_SPEED);
-	}
-}
-
-/**
- * Detecte s'il y'a un mur à droite
- */
-void vDetectMurDroit() {
-	if (nx_radar_read_distance(RADAR_SENSOR, 0)<20) {
-		nx_display_cursor_set_pos(0, 6);
-		nx_display_string("Mur droit");
-	}
-	else{
-		nx_display_cursor_set_pos(0, 6);
-		nx_display_string("         ");
 	}
 }
 
@@ -479,28 +500,36 @@ void die(void)
 }
 
 
-/**
- * Envoi des donnée en bluetooth
- */
-void send_data(void)
-{
-	S8 data[MSG_SIZE];
-	data[0]=100;	
-	data[1]=100;
 
-	nx_bt_stream_write((U8 *)data, 2);
-}
 
 
 /**
- * Detecte si la valeur est inferieure à 25 et envoi un message
+ * Detecte si la valeur est inferieure à 20 et envoie un message
  */
 void detect_obstacle(void)
 {
-	if (nx_radar_read_distance(RADAR_SENSOR, 0) <= 25) {
-		send_data();
+	if (nx_radar_read_distance(RADAR_SENSOR, 0) <= 20) {
+		S8 data[MSG_SIZE];
+		data[0]=0;
+		data[1]=iPositionX;
+		data[2]=iPositionY;
+		data[3]=iOrientation;
+
+		nx_bt_stream_write((U8 *)data, MSG_SIZE);
 
 	}
+}
+
+void vCalculDeplacement(int deplacement)
+{
+	if(iOrientation==0)
+		iPositionY+=deplacement;
+	if(iOrientation==1)
+		iPositionX+=deplacement;
+	if(iOrientation==2)
+		iPositionY-=deplacement;
+	if(iOrientation==3)
+		iPositionX-=deplacement;
 }
 
 void handle_cmd(void)
@@ -508,11 +537,19 @@ void handle_cmd(void)
 	S8 speed[MSG_SIZE];
 	//reception du message
 	nx_bt_stream_read((U8 *)speed, MSG_SIZE);
+
+
+
 	while (!quit && nx_bt_stream_data_read() < 1) {
 		detect_obstacle();
-		nx_systick_wait_ms(100);
-	}		
-	
+		vForwardUntilWall(&pos1Global,&pos2Global);
+		vForwardUntilWhite(&pos1Global,&pos2Global);
+		nx_systick_wait_ms(10);
+
+	nx_display_cursor_set_pos(0, 5);
+	nx_display_string("boucle");
+	}
+
 
 	if (speed[0] > 100 || speed[0] < -100
 	 || speed[1] > 100 || speed[1] < -100)
@@ -528,13 +565,55 @@ return;
 
 void main(void)
 {
-	uouih=0; //ne sert à rien mais si je l'enlève le programme de boote pas... je ne sais pas pourquoi
+
 	init();
+		nx_systick_wait_ms(5000);
+/*
+vDisplaySensorsValues();
+U32 pos1=0;
+	U32 pos2=0;
+	vForwardStop(&pos1,&pos2,500);
+		nx_systick_wait_ms(1000);
+	vTurnRight(&pos1,&pos2);
+		nx_systick_wait_ms(1000);
+	vForwardStop(&pos1,&pos2,250);
+		nx_systick_wait_ms(1000);
+	vTurnLeft(&pos1,&pos2);
+		nx_systick_wait_ms(1000);
+	vForwardStop(&pos1,&pos2,250);
+		nx_systick_wait_ms(1000);
+	vTurnRight(&pos1,&pos2);
+		nx_systick_wait_ms(1000);
+	vForwardStop(&pos1,&pos2,250);
+		nx_systick_wait_ms(1000);
+	vTurnRight(&pos1,&pos2);
+		nx_systick_wait_ms(1000);
+	vForwardStop(&pos1,&pos2,500);
+		nx_systick_wait_ms(1000);
+	vTurnRight(&pos1,&pos2);
+		nx_systick_wait_ms(1000);
+	vForwardStop(&pos1,&pos2,250);
+		nx_systick_wait_ms(1000);
+	vTurnLeft(&pos1,&pos2);
+		nx_systick_wait_ms(1000);
+	vForwardStop(&pos1,&pos2,250);
+*/
+	nx_display_cursor_set_pos(0, 5);
+	nx_display_string("en attente");
+
 	while (!quit) {
 		if (!nx_bt_stream_opened() || nx_bt_connection_pending())
 			bt_wait_connection();
 		else
+		{
+			nx_sound_freq(DO, 200);
+			nx_sound_freq(DO, 200);
+			nx_sound_freq(DO, 200);
 			handle_cmd();
+
+		}
 	}
+
+
 	die();
 }

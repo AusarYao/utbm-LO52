@@ -1,5 +1,7 @@
 #include "bt.h"
 
+#define MSG_SIZE 4
+
 // Bluetooth initialisation. Return port handle or -1 in case of errors.
 int bt_init(void) {
   nx_bt_init();
@@ -20,8 +22,15 @@ bool bt_is_active(void) {
 void bt_check_connect(struct robot_struct *robot) {
 }
 
-//TODO
 // Send a bt_message structure
 int bt_msg_send(struct bt_message *msg) {
+
+  U8 data[MSG_SIZE];
+  data[0]=msg->type;
+  data[1]=msg->X;
+  data[2]=msg->Y;
+  data[3]=msg->mask;
+
+  nx_bt_stream_write((U8 *)data, MSG_SIZE);
   return 1;
 }

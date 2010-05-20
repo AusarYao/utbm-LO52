@@ -17,6 +17,7 @@ class Game(object):
 
     def update(self,data):
         """update data, robot and flags"""
+        print data
         l = data.split(":")
         l = [int(l[x]) for x in xrange(len(l))]
         self.r.update(l[0],l[1],l[2])

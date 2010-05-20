@@ -29,8 +29,8 @@ struct bt_message {
   // Message type.
   U8 type;
   // Relevant positions
-  S32 X,
-      Y;
+  U8 X,
+     Y;
   // If a wall's concerned, here is the relevant mask giving its position.
   // If not, we hereby give the robot orientation.
   U8 mask;
