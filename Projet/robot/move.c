@@ -1,6 +1,29 @@
+#include <math.h>
+
 #include "move.h"
 #include "bt.h"
 #include "sensors.h"
+
+static void rotate_angle(struct robot_struct robot, U32 angle) {
+  float distance = 2. * M_PI * angle * MOVE_WHEEL_SPACING / 360.;
+  float wheel_rotations = distance / (2. * M_PI * MOVE_WHEEL_DIAMETER);
+  float angle_rotation = wheel_rotations * 360;
+
+  if(angle_rotation > 0) {
+    nx_motors_rotate_angle(MOVE_LEFT_MOTOR, MOVE_TURN_SPEED, \
+        (U32)angle_rotation, TRUE);
+    nx_motors_rotate_angle(MOVE_RIGHT_MOTOR, -MOVE_TURN_SPEED, \
+        (U32)angle_rotation, TRUE);
+  }
+  else {
+    nx_motors_rotate_angle(MOVE_RIGHT_MOTOR, MOVE_TURN_SPEED, \
+        abs((U32)angle_rotation), TRUE);
+    nx_motors_rotate_angle(MOVE_LEFT_MOTOR, -MOVE_TURN_SPEED, \
+        abs((U32)angle_rotation), TRUE);
+  }
+  // TODO
+  // Modify the robot's orientation
+}
 
 //TODO
 static bool move_retry(void) {

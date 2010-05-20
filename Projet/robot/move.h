@@ -8,9 +8,9 @@
 #include "structures.h"
 
 #define MOVE_SPEED          80
-#define MOVE_HIGH_SPEED     (SPEED + 10)
-#define MOVE_LOW_SPEED      (SPEED - 10)
-#define MOVE_TURN_SPEED     (SPEED)
+#define MOVE_HIGH_SPEED     (MOVE_SPEED + 10)
+#define MOVE_LOW_SPEED      (MOVE_SPEED - 10)
+#define MOVE_TURN_SPEED     (MOVE_SPEED)
 
 #define MOVE_LEFT_MOTOR     2
 #define MOVE_RIGHT_MOTOR    0
