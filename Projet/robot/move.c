@@ -4,6 +4,7 @@
 #include "bt.h"
 #include "sensors.h"
 
+// Make the robot turn by the given angle, in degrees.
 static void rotate_angle(struct robot_struct *robot, U32 angle) {
   float distance = 2. * M_PI * angle * MOVE_WHEEL_SPACING / 360.;
   float wheel_rotations = distance / (2. * M_PI * MOVE_WHEEL_DIAMETER);
