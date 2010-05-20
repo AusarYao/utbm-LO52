@@ -11,9 +11,9 @@
 #define MODE_GUIDED           2
 
 // Size of the map
-#define MAP_X_SIZE            3
-#define MAP_Y_SIZE            3
-#define MAP_SUB_SIZE          30
+#define MAP_X_SIZE            8
+#define MAP_Y_SIZE            4
+#define MAP_SUB_SIZE          25
 
 #include "structures.h"
 
