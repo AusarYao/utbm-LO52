@@ -16,19 +16,19 @@ game.m.printMap()
 
 #mode exploration
 if MODE == 0:
-	if (bt.isconnected):
-		data = bt.recept()
-		game.update(data)
-		bt.ack()
-	else:
-		print "Signal lost"
+    if (bt.isconnected):
+        data = bt.recept()
+        game.update(data)
+        bt.ack()
+    else:
+        print "Signal lost"
 
 if MODE == 1:
-	if (bt.isconnected):
-		ldata = game.findDir()
-		if ldata != []:
-			bt.sendMove(ldata)
-		else:
-			print "No direction"
-	else:
-		print "Signal lost"
+    if (bt.isconnected):
+        ldata = game.findDir()
+        if ldata != []:
+            bt.sendMove(ldata)
+        else:
+            print "No direction"
+    else:
+        print "Signal lost"
