@@ -5,7 +5,7 @@ import Tools
 
 class Location:
     """Represent simple map Location implementation"""
-    def __init__(self,x,y):
+    def __init__(self, x, y):
         self.x = x
         self.y = y
 
@@ -17,13 +17,13 @@ class Location:
 
 class Path:
     """Contains the path of nodes"""
-    def __init__(self,nodes, totalCost):
+    def __init__(self, nodes, totalCost):
         self.nodes = nodes;
         self.totalCost = totalCost;
 
 class Node:
     """Main element to compute the path"""
-    def __init__(self,location,mCost,lid,wall=0,parent=None):
+    def __init__(self, location, mCost, lid, wall=0, parent=None):
         self.location = location # where is this node located
         self.mCost = mCost # total move cost to reach this node
         self.parent = parent # parent node
@@ -39,11 +39,11 @@ class Node:
 
 class AStar:
     """To calculate the path in labyrinth"""
-    def __init__(self,maphandler):
+    def __init__(self, maphandler):
         self.mh = maphandler
                 
     def _getBestOpenNode(self):
-        bestNode = None        
+        bestNode = None
         for n in self.on:
             if not bestNode:
                 bestNode = n
@@ -52,11 +52,11 @@ class AStar:
                     bestNode = n
         return bestNode
 
-    def _tracePath(self,n):
+    def _tracePath(self, n):
         nodes = [];
         totalCost = n.mCost;
         p = n.parent;
-        nodes.insert(0,n);       
+        nodes.insert(0,n);
         
         while 1:
             if p.parent is None: 
@@ -67,7 +67,7 @@ class AStar:
         
         return Path(nodes,totalCost)
 
-    def _handleNode(self,node,end):        
+    def _handleNode(self, node, end):
         i = self.o.index(node.lid)
         self.on.pop(i)
         self.o.pop(i)
@@ -93,12 +93,12 @@ class AStar:
                     self.o.append(n.lid);
             else:
                 # new node, append to open list
-                self.on.append(n);                
+                self.on.append(n);
                 self.o.append(n.lid);
 
         return None
 
-    def findPath(self,fromlocation, tolocation):
+    def findPath(self, fromlocation, tolocation):
         self.o = []
         self.on = []
         self.c = []
@@ -107,11 +107,11 @@ class AStar:
         firstNode = self.mh.getNode(fromlocation)
         self.on.append(firstNode)
         self.o.append(firstNode.lid)
-        nextNode = firstNode 
+        nextNode = firstNode
                
         while nextNode is not None:
             finish = self._handleNode(nextNode,end)
-            if finish:                
+            if finish:
                 return self._tracePath(finish)
             nextNode=self._getBestOpenNode()
                 
@@ -120,7 +120,7 @@ class AStar:
 class MapHandler:
     """Square map implementation"""
 
-    def __init__(self,mapdata,width,height):
+    def __init__(self, mapdata, width, height):
         self.m = mapdata
         self.w = width
         self.h = height
@@ -132,10 +132,10 @@ class MapHandler:
         if x<0 or x>=self.w or y<0 or y>=self.h:
             return None
         w = self.m[(x,y)]['wall'] # wall
-        return Node(location,0,((y*self.w)+x),w);                
+        return Node(location,0,((y*self.w)+x),w)
 
     def getAdjacentNodes(self, curnode, dest):
-        """MUST BE IMPLEMENTED"""        
+        """MUST BE IMPLEMENTED"""
         result = []
        
         cl = curnode.location
@@ -165,7 +165,7 @@ class MapHandler:
 
         return result
 
-    def _handleNode(self,x,y,fromnode,destx,desty):
+    def _handleNode(self, x, y, fromnode, destx, desty):
         n = self.getNode(Location(x,y))
         dx = max(x,destx) - min(x,destx)
         dy = max(y,desty) - min(y,desty)

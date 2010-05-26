@@ -7,7 +7,7 @@ class MapData(object):
     """
         
     """
-    def __init__(self,w,h):
+    def __init__(self, w, h):
         """Initialize the map"""
         self.mapdata = dict()
         self.mapw = w
@@ -26,7 +26,7 @@ class MapData(object):
                 self.mapdata[(x,y)] = {'wall' : z}
 
 
-    def add_wall(self,x,y,value):
+    def add_wall(self, x, y, value):
         """Add the wall in the adjacent case"""
         Li = [1,2,4,8]
         if T.search_in_liste(Li,value): #If value is multiple of 2
@@ -60,7 +60,7 @@ class MapData(object):
         else:
             print "Error value (%d)"%(value)
 
-    def is_wall_here(self,x,y,value):
+    def is_wall_here(self, x, y, value):
         """Check if a wall exist"""
         liste = T.sum_pow2(self.mapdata[(x,y)]['wall'])
         return [True for element in liste if element == value]
@@ -71,12 +71,12 @@ class MapData(object):
             for y in range(self.maph):
                 print "(",x,",",y,") ",self.mapdata[(x,y)]
 
-    def find_path(self,start_x,start_y,end_x,end_y):
+    def find_path(self, start_x, start_y, end_x, end_y):
         astar = AS.AStar(AS.MapHandler(self.mapdata,self.mapw,self.maph))
         start = AS.Location(start_x,start_y)
         end = AS.Location(end_x,end_y)
 
-        path = astar.find_path(start,end)
+        path = astar.findPath(start,end)
 
         if not path:
             print "No path found !"

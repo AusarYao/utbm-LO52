@@ -14,7 +14,7 @@ def sum_pow2(n):
                 return "N'est pas decomposable en somme de carres d'entiers"
         return L2
 
-def search_in_liste(L,value):
+def search_in_liste(L, value):
     for i in L:
         if i == value:
             return True
