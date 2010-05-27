@@ -1,0 +1,18 @@
+Lancer l'interface à l'aide de Interface.py
+
+L'interface contient quelques options pour le moment :
+	- gestion d'un log,
+	- affichage de la map
+
+
+Gestion du log :
+	- Ajoute un message à chaque action (Connect/disconnect)
+	- Effacer le log
+	- Scroll pour voir les log précédents
+
+Affichage de la map:
+	- Ne marche que pour l'initialisation pour le moment
+	- Robot : rouge
+	- Flag non pris : vert
+	- Flag pris : orange
+	- Mur : trait plus épais
