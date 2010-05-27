@@ -4,11 +4,16 @@
 #include "bt.h"
 #include "sensors.h"
 
+// Compute the angle to rotate the wheels for the given distance
+static double move_compute_angle(double distance) {
+  double wheel_rotations = distance / (2. * M_PI * MOVE_WHEEL_DIAMETER);
+  return wheel_rotations * 360;
+}
+
 // Make the robot turn by the given angle, in degrees.
 static void rotate_angle(struct robot_struct *robot, U32 angle) {
-  float distance = 2. * M_PI * angle * MOVE_WHEEL_SPACING / 360.;
-  float wheel_rotations = distance / (2. * M_PI * MOVE_WHEEL_DIAMETER);
-  float angle_rotation = wheel_rotations * 360;
+  double distance = 2. * M_PI * angle * MOVE_WHEEL_SPACING / 360.;
+  double angle_rotation = move_compute_angle(distance);
   int power;
 
   if(angle_rotation > 0) {
