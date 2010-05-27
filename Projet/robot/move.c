@@ -11,7 +11,7 @@ static double move_compute_angle(double distance) {
 }
 
 // Make the robot turn by the given angle, in degrees.
-static void rotate_angle(struct robot_struct *robot, U32 angle) {
+static void move_rotate_angle(struct robot_struct *robot, U32 angle) {
   double distance = 2. * M_PI * angle * MOVE_WHEEL_SPACING / 360.;
   double angle_rotation = move_compute_angle(distance);
   int power;
