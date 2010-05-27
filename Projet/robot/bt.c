@@ -20,20 +20,20 @@ bool bt_is_active(void) {
 // Process the pending messages on the Bluetooth stack.
 void bt_check_connect(struct robot_struct *robot) {
 
-	S8 data[MSG_SIZE];
-	//reception du message
-	nx_bt_stream_read((U8 *)data, MSG_SIZE);
-  
+  S8 data[BT_MSG_SIZE];
+  //reception du message
+  nx_bt_stream_read((U8*)data, BT_MSG_SIZE);
+
   switch(data[0]){
     case BT_MSG_POSITION:
 
     break;
     // Last wall's position request.
-    case BT_LST_WALL;
+    case BT_MSG_LST_WALL:
 
     break;
     // Last captured flag position request.
-    case BT_CPT_FLAG :
+    case BT_MSG_CPT_FLAG:
 
     break;
     // Position recalibration request.
@@ -53,7 +53,6 @@ void bt_check_connect(struct robot_struct *robot) {
 
     break;
   }
- 
 }
 
 // Send a bt_message structure
