@@ -31,3 +31,11 @@ class Flag(object):
             if self.mapdata[L[x]] == False:
                 Lr.append(L[x])
         return Lr
+
+    def search_flag(self, x, y):
+        """Search if a flag exist at this coordonnates"""
+        L = self.mapdata.keys()
+        for i in range(len(L)):
+            if L[i] == (x,y):
+                return True
+        return False
