@@ -15,6 +15,9 @@ class Interface(object):
         self.interface = gtk.Builder()
         self.interface.add_from_file("interface.glade")
 
+        self.robot_x= self.interface.get_object("robotX")
+        self.robot_y= self.interface.get_object("robotY")
+
         #Log control
         self.log = Log.MyLog(self.interface.get_object("log"),self.interface.get_object("scrollLog"))
 
@@ -27,7 +30,7 @@ class Interface(object):
 
         self.game.m.print_map()
         self.game.f.add_flag(2,2)
-        self.game.f.init_flag()
+#        self.game.f.init_flag()
 
     def on_btnConnect_clicked(self, widget):
         btnCo = self.interface.get_object("btnConnect")
@@ -39,17 +42,19 @@ class Interface(object):
             self.log.add("Connected")
 
     def on_btnReset_clicked(self,widget):
-        i = 0
-        while self.map[i] != 5 and i < 25-1:
-            i += 1
-        if i < 25-1:
-            self.map[i+1] = 5
-        else:
-            self.map[0] = 5
-        self.map[i] = 1
+        self.log.add("I'm useless")
         self.on_canvas_expose_event()
-        s = "Move("+str(i)+" to "+str(i+1)+")"
-        self.log.add(s)
+
+    def on_btnRobot_clicked(self, widget):
+        x = self.robot_x.get_text()
+        y = self.robot_y.get_text()
+        if int(x) < self.game.m.mapw and int(x) >= 0 and \
+           int(y) < self.game.m.maph and int(y) >= 0:
+            self.game.r.update(int(x), int(y))
+            self.on_canvas_expose_event()
+            self.log.add("New position for the robot("+x+","+y+")")
+        else:
+            self.log.add("Error new position robot")
 
     def on_btnResetLog_clicked(self,widget):
         self.log.clean()
