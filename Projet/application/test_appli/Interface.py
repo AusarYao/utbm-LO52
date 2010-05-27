@@ -21,29 +21,69 @@ class Interface(object):
         #Log control
         self.log = Log.MyLog(self.interface.get_object("log"),self.interface.get_object("scrollLog"))
 
-        #Dessin
+        #Init the game, connection
         self.bt = BT.BT()
-        self.game = G.Game(3,3)
-        self.canvas = Canvas.MyCanvas(self.interface.get_object("canvas"),self.game)
+        self.game = G.Game(12,6)
+        self.mode = 0
 
+        #Dessin
+        self.canvas = Canvas.MyCanvas(self.interface.get_object("canvas"),self.game)
         self.interface.connect_signals(self)
 
-        self.game.m.print_map()
         self.game.f.add_flag(2,2)
-#        self.game.f.init_flag()
+        self.game.f.init_flag()
+#        self.game.m.add_wall(1,1,2)
 
     def on_btnConnect_clicked(self, widget):
         btnCo = self.interface.get_object("btnConnect")
         if not btnCo.get_active():
             btnCo.set_label("Connection")
             self.log.add("Disconnected")
+            #BT.CONNECT()
         else:
             btnCo.set_label("Disconnection")
             self.log.add("Connected")
+            #BT.DISCONNECT()
 
-    def on_btnReset_clicked(self,widget):
-        self.log.add("I'm useless")
-        self.on_canvas_expose_event()
+    def on_btnStart_clicked(self, widget):
+        btnStart = self.interface.get_object("btnStart")
+        if not btnStart.get_active():
+            btnStart.set_label("Start")
+            self.log.add("Stop")
+            #STOP THE ALGO
+        else:
+            btnStart.set_label("Stop")
+            self.log.add("Start")
+            #LAUNCH THE ALGO TO RECEIVE OR SEND DATA
+            if self.mode == 0: #exploration
+                bt_m = self.bt.recept()
+                s = "%s" % (bt_m,)
+                self.log.add("Message receive :"+s)
+                self.game.update(bt_m)
+                self.bt.ack()
+            elif self.mode == 1: #guiding
+                ldata = self.game.find_next_move()
+                s = "%s" %(ldata,)
+                self.log.add("Next move:"+s)
+                if ldata != []:
+                    self.bt.send_move(ldata)
+                    self.game.r.update(ldata[0],ldata[1])
+                else:
+                    self.log.add("No direction")
+            self.on_canvas_expose_event()
+
+    def on_btnMode_clicked(self, widget):
+        btnMode = self.interface.get_object("btnMode")
+        if not btnMode.get_active():
+            btnMode.set_label("Guiding")
+            self.log.add("Exploration mode")
+            #SET_MODE(GUIDAGE)
+            self.mode = 0
+        else:
+            btnMode.set_label("Explorate")
+            self.log.add("Guiding mode")
+            #SET_MODE(EXPLORATION)
+            self.mode = 1
 
     def on_btnRobot_clicked(self, widget):
         x = self.robot_x.get_text()

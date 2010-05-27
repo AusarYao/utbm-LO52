@@ -39,38 +39,96 @@
         </child>
         <child>
           <object class="GtkHBox" id="hbox1">
+            <property name="height_request">300</property>
             <property name="visible">True</property>
             <child>
-              <object class="GtkVButtonBox" id="vbuttonbox1">
-                <property name="width_request">150</property>
+              <object class="GtkVBox" id="vbox4">
+                <property name="width_request">200</property>
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
-                <property name="spacing">10</property>
-                <property name="layout_style">center</property>
                 <child>
-                  <object class="GtkLabel" id="label_bt">
+                  <object class="GtkVButtonBox" id="vbuttonbox1">
+                    <property name="height_request">145</property>
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Bluetooth</property>
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">10</property>
+                    <property name="layout_style">center</property>
+                    <child>
+                      <object class="GtkLabel" id="label_bt">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Bluetooth</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToggleButton" id="btnConnect">
+                        <property name="label" translatable="yes">Connection</property>
+                        <property name="width_request">85</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_btnConnect_clicked"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToggleButton" id="btnConnect">
-                    <property name="label" translatable="yes">Connection</property>
-                    <property name="width_request">85</property>
+                  <object class="GtkHSeparator" id="hseparator3">
+                    <property name="height_request">10</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <signal name="clicked" handler="on_btnConnect_clicked"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="fill">False</property>
                     <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkVButtonBox" id="vbuttonbox3">
+                    <property name="height_request">145</property>
+                    <property name="visible">True</property>
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">10</property>
+                    <property name="layout_style">center</property>
+                    <child>
+                      <object class="GtkLabel" id="label_start">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Start</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToggleButton" id="btnStart">
+                        <property name="label" translatable="yes">Start</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_btnStart_clicked"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">2</property>
                   </packing>
                 </child>
               </object>
@@ -89,26 +147,64 @@
               </packing>
             </child>
             <child>
-              <object class="GtkVButtonBox" id="vbuttonbox2">
-                <property name="width_request">300</property>
+              <object class="GtkVBox" id="vbox3">
+                <property name="width_request">200</property>
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
-                <property name="layout_style">center</property>
+                <property name="spacing">5</property>
                 <child>
-                  <object class="GtkLabel" id="label_astar">
+                  <object class="GtkVButtonBox" id="vbuttonbox2">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">A Star</property>
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">10</property>
+                    <property name="layout_style">center</property>
+                    <child>
+                      <object class="GtkLabel" id="label_mode">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Mode</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkToggleButton" id="btnMode">
+                        <property name="label" translatable="yes">Guiding</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Mode exploration : receive information from the robot and save this information in the map
+Mode guidage : send the next position for the robot</property>
+                        <signal name="clicked" handler="on_btnMode_clicked"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkHSeparator" id="hseparator1">
+                    <property name="visible">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkVButtonBox" id="vbuttonbox4">
+                    <property name="height_request">165</property>
                     <property name="visible">True</property>
                     <property name="orientation">vertical</property>
+                    <property name="spacing">5</property>
                     <child>
                       <object class="GtkLabel" id="label_robot">
                         <property name="visible">True</property>
@@ -137,7 +233,7 @@
                             <property name="width_request">20</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="max_length">1</property>
+                            <property name="max_length">2</property>
                           </object>
                           <packing>
                             <property name="position">1</property>
@@ -167,7 +263,7 @@
                             <property name="width_request">20</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="max_length">1</property>
+                            <property name="max_length">2</property>
                           </object>
                           <packing>
                             <property name="position">1</property>
@@ -187,6 +283,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Change the position of the robot</property>
                         <signal name="clicked" handler="on_btnRobot_clicked"/>
                       </object>
                       <packing>
@@ -199,7 +296,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
-                    <property name="position">1</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
               </object>
@@ -219,12 +316,12 @@
             </child>
             <child>
               <object class="GtkVBox" id="vbox2">
-                <property name="width_request">350</property>
+                <property name="width_request">400</property>
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkLabel" id="lbl_log">
-                    <property name="height_request">5</property>
+                    <property name="height_request">20</property>
                     <property name="visible">True</property>
                     <property name="label" translatable="yes">Log</property>
                   </object>
@@ -234,6 +331,7 @@
                 </child>
                 <child>
                   <object class="GtkScrolledWindow" id="scrollLog">
+                    <property name="height_request">225</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hscrollbar_policy">automatic</property>
@@ -254,6 +352,7 @@
                   <object class="GtkHButtonBox" id="hbuttonbox1">
                     <property name="height_request">30</property>
                     <property name="visible">True</property>
+                    <property name="layout_style">center</property>
                     <child>
                       <object class="GtkButton" id="btnResetLog">
                         <property name="label" translatable="yes">Clean</property>
@@ -262,6 +361,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Clean the log</property>
                         <signal name="clicked" handler="on_btnResetLog_clicked"/>
                       </object>
                       <packing>

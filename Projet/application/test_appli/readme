@@ -3,7 +3,8 @@ Lancer l'interface à l'aide de Interface.py
 L'interface contient quelques options pour le moment :
 	- gestion d'un log,
 	- affichage de la map
-
+	- start algo
+	- mode (exploration/guidage)
 
 Gestion du log :
 	- Ajoute un message à chaque action (Connect/disconnect)
@@ -16,3 +17,11 @@ Affichage de la map:
 	- Flag non pris : vert
 	- Flag pris : orange
 	- Mur : trait plus épais
+
+Start algo:
+	- L'algo ne boucle pas pour le moment, il faut le lancer puis le stoper puis de relancer
+	- Ne pas oubliez de choisir son mode avant de lancer l'algorithme
+
+Mode:
+	- Exploration : Reçoit des données provenant du Bluetooth (pour le moment mock)
+	- Guidage : Choisit le flag le plus proche, envoie la prochaine position
