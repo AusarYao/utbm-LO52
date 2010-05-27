@@ -48,13 +48,16 @@ class Interface(object):
     def on_btnRobot_clicked(self, widget):
         x = self.robot_x.get_text()
         y = self.robot_y.get_text()
-        if int(x) < self.game.m.mapw and int(x) >= 0 and \
-           int(y) < self.game.m.maph and int(y) >= 0:
-            self.game.r.update(int(x), int(y))
-            self.on_canvas_expose_event()
-            self.log.add("New position for the robot("+x+","+y+")")
+        if x.isdigit() and y.isdigit():
+            if int(x) < self.game.m.mapw and int(x) >= 0 and \
+               int(y) < self.game.m.maph and int(y) >= 0:
+                self.game.r.update(int(x), int(y))
+                self.on_canvas_expose_event()
+                self.log.add("New position for the robot("+x+","+y+")")
+            else:
+                self.log.add("Error new position robot")
         else:
-            self.log.add("Error new position robot")
+            self.log.add("Value are not integer")
 
     def on_btnResetLog_clicked(self,widget):
         self.log.clean()

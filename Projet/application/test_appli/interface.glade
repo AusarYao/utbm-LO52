@@ -29,7 +29,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkHSeparator" id="hseparator1">
+          <object class="GtkHSeparator" id="hseparator2">
             <property name="visible">True</property>
           </object>
           <packing>
@@ -93,7 +93,6 @@
                 <property name="width_request">300</property>
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
-                <property name="spacing">10</property>
                 <property name="layout_style">center</property>
                 <child>
                   <object class="GtkLabel" id="label_astar">
@@ -107,31 +106,13 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btnReset">
-                    <property name="label" translatable="yes">Reset</property>
+                  <object class="GtkVButtonBox" id="vbuttonbox4">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="xalign">0.55000001192092896</property>
-                    <signal name="clicked" handler="on_btnReset_clicked"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkHButtonBox" id="hbuttonbox2">
-                    <property name="width_request">280</property>
-                    <property name="height_request">40</property>
-                    <property name="visible">True</property>
+                    <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkEntry" id="robotX">
-                        <property name="width_request">40</property>
+                      <object class="GtkLabel" id="label_robot">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="max_length">1</property>
+                        <property name="label" translatable="yes">Change position of the robot</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -140,11 +121,28 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEntry" id="robotY">
-                        <property name="width_request">40</property>
+                      <object class="GtkHBox" id="hbox2">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="max_length">1</property>
+                        <child>
+                          <object class="GtkLabel" id="label_robotX">
+                            <property name="visible">True</property>
+                            <property name="label" translatable="yes">X :</property>
+                          </object>
+                          <packing>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="robotX">
+                            <property name="width_request">20</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="max_length">1</property>
+                          </object>
+                          <packing>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -153,8 +151,38 @@
                       </packing>
                     </child>
                     <child>
+                      <object class="GtkHBox" id="hbox3">
+                        <property name="visible">True</property>
+                        <child>
+                          <object class="GtkLabel" id="label_robotY">
+                            <property name="visible">True</property>
+                            <property name="label" translatable="yes">Y :</property>
+                          </object>
+                          <packing>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="robotY">
+                            <property name="width_request">20</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="max_length">1</property>
+                          </object>
+                          <packing>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkButton" id="btnRobot">
-                        <property name="label" translatable="yes">Change robot position</property>
+                        <property name="label" translatable="yes">Change</property>
                         <property name="width_request">40</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -164,14 +192,14 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="position">2</property>
+                        <property name="position">3</property>
                       </packing>
                     </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
-                    <property name="position">2</property>
+                    <property name="position">1</property>
                   </packing>
                 </child>
               </object>
