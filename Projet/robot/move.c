@@ -36,6 +36,77 @@ static void move_rotate_angle(struct robot_struct *robot, U32 angle) {
   robot->orientation = pow(2., power);
 }
 
+// Make the robot move forward on the given distance in centimeters.
+// Start and stop gradually.
+static void move_forward(struct robot_struct *robot, U32 distance) {
+  double wheel_angle = move_compute_angle(distance);
+  U32 init_tach[2];
+
+  // Change the position of the robot.
+  switch(robot->orientation) {
+    case MOVE_UP:
+      robot->Y += (U8)distance;
+      break;
+    case MOVE_DOWN:
+      robot->Y -= (U8)distance;
+      break;
+    case MOVE_LEFT:
+      robot->X -= (U8)distance;
+      break;
+    case MOVE_RIGHT:
+      robot->X += (U8)distance;
+      break;
+  }
+
+  // Get the initial state of the motors.
+  init_tach[0] = nx_motors_get_tach_count(MOVE_LEFT_MOTOR);
+  init_tach[1] = nx_motors_get_tach_count(MOVE_RIGHT_MOTOR);
+
+  // Make the motors turn at a low speed.
+  nx_motors_rotate(MOVE_LEFT_MOTOR, MOVE_LOW_SPEED);
+  nx_motors_rotate(MOVE_RIGHT_MOTOR, MOVE_LOW_SPEED);
+
+  // Wait until the first step is reached.
+  while((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
+      (MOVE_STEP * wheel_angle));
+
+  // Make the motors turn at normal speed.
+  nx_motors_rotate(MOVE_LEFT_MOTOR, MOVE_SPEED);
+  nx_motors_rotate(MOVE_RIGHT_MOTOR, MOVE_SPEED);
+
+  // Wait until the second step is reached.
+  while((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
+      (2 * MOVE_STEP * wheel_angle));
+
+  // Make the motors turn at high speed.
+  nx_motors_rotate(MOVE_LEFT_MOTOR, MOVE_HIGH_SPEED);
+  nx_motors_rotate(MOVE_RIGHT_MOTOR, MOVE_HIGH_SPEED);
+
+  // Wait until we reach the final part.
+  while((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
+      ((1 - (2 * MOVE_STEP)) * wheel_angle));
+
+  // Make the motors turn at normal speed.
+  nx_motors_rotate(MOVE_LEFT_MOTOR, MOVE_SPEED);
+  nx_motors_rotate(MOVE_RIGHT_MOTOR, MOVE_SPEED);
+
+  // Wait until we reach the final step.
+  while((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
+      ((1 - MOVE_STEP) * wheel_angle));
+
+  // Make the motors turn at low speed.
+  nx_motors_rotate(MOVE_LEFT_MOTOR, MOVE_LOW_SPEED);
+  nx_motors_rotate(MOVE_RIGHT_MOTOR, MOVE_LOW_SPEED);
+
+  // Wait until we reach the end of our move.
+  while((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
+      wheel_angle);
+
+  // We stop the motors.
+  nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
+  nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
+}
+
 //TODO
 static bool move_retry(void) {
   return TRUE;

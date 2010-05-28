@@ -13,6 +13,15 @@
 #define MOVE_LOW_SPEED      (MOVE_SPEED - 10)
 #define MOVE_TURN_SPEED     (MOVE_SPEED)
 
+// Step to increase and decrease speed when moving.
+#define MOVE_STEP           (2. / 100.)
+
+// Robot's different orientations.
+#define MOVE_UP             0b0001
+#define MOVE_RIGHT          0b0010
+#define MOVE_DOWN           0b0100
+#define MOVE_LEFT           0b1000
+
 #define MOVE_LEFT_MOTOR     2
 #define MOVE_RIGHT_MOTOR    0
 
