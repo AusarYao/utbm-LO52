@@ -17,6 +17,12 @@
 #define MAP_Y_SIZE            4
 #define MAP_SUB_SIZE          25
 
+// Robot's different orientations.
+#define BASE_UP             0b0001
+#define BASE_RIGHT          0b0010
+#define BASE_DOWN           0b0100
+#define BASE_LEFT           0b1000
+
 #include "structures.h"
 
 void base_init(void);
