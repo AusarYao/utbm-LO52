@@ -183,7 +183,9 @@ static bool move_retry(void) {
 }
 
 //TODO
-static void move_escape_wall(void) {
+static void move_escape_wall(struct robot_struct *robot) {
+  move_backward(robot, 10);
+  move_rotate_angle(robot, -90);
 }
 
 // Handle an obstacle by notifying the application and escaping from it.
@@ -196,7 +198,7 @@ void move_handle_obstacle(struct robot_struct *robot,
       robot->orientation;
 
   if(move_retry()) {
-    move_escape_wall();
+    move_escape_wall(robot);
   }
   else {
     struct bt_message abort_msg = {BT_MSG_ABORT_LST, robot->X, robot->Y,
