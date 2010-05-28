@@ -3,6 +3,7 @@
 #include "base.h"
 #include "bt.h"
 #include "move.h"
+#include "sensors.h"
 
 S8 main(void) {
   struct robot_struct robot = {MODE_AUTONOMOUS, 0, 0, 0};
@@ -12,7 +13,7 @@ S8 main(void) {
   base_init();
 
   while(1) {
-    if(move_is_obstacle())
+    if(sensors_contact())
       move_handle_obstacle(&robot, map);
 
     bt_check_connect(&robot);

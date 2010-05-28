@@ -12,5 +12,12 @@
 #define SENSORS_RADAR     2
 
 #define SENSORS_TOUCH_THRESHOLD   500
+#define SENSORS_RADAR_THRESHOLD   20
+
+// Return TRUE if an obstacle has been encountered, FALSE otherwise.
+bool sensors_contact(void);
+
+// Return TRUE if a wall is detected on the right of the robot.
+bool sensors_wall(void);
 
 #endif

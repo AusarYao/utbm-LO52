@@ -220,10 +220,3 @@ void move_autonomous(struct robot_struct *robot,
     U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
 }
 
-// Return TRUE if an obstacle has been encountered, FALSE otherwise.
-bool move_is_obstacle(void) {
-  if (nx_sensors_analog_get(SENSORS_TOUCH) < SENSORS_TOUCH_THRESHOLD)
-    return TRUE;
-
-  return FALSE;
-}

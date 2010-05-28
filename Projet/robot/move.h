@@ -28,7 +28,4 @@ void move_handle_obstacle(struct robot_struct*, U8[MAP_X_SIZE][MAP_Y_SIZE]);
 void move_guided(struct robot_struct*);
 // Move in autonomous mode, exploring the field.
 void move_autonomous(struct robot_struct*, U8[MAP_X_SIZE][MAP_Y_SIZE]);
-// Return TRUE if an obstacle has been encountered, FALSE otherwise.
-bool move_is_obstacle(void);
-
 #endif
