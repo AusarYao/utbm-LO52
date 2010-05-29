@@ -33,15 +33,16 @@ static void move_rotate_angle(struct robot_struct *robot, U32 angle) {
         (U32)angle_rotation, TRUE);
     nx_motors_rotate_angle(MOVE_RIGHT_MOTOR, -MOVE_TURN_SPEED, \
         (U32)angle_rotation, TRUE);
+    nx_systick_wait_ms(600 * angle / 90);
   }
   else {
     nx_motors_rotate_angle(MOVE_RIGHT_MOTOR, MOVE_TURN_SPEED, \
-        abs((U32)angle_rotation), TRUE);
+        -angle_rotation, TRUE);
     nx_motors_rotate_angle(MOVE_LEFT_MOTOR, -MOVE_TURN_SPEED, \
-        abs((U32)angle_rotation), TRUE);
+        -angle_rotation, TRUE);
+    nx_systick_wait_ms(-(600 * angle / 90));
   }
 
-  nx_systick_wait_ms(abs(600 * angle / 90));
 
   // Modify the robot's orientation
   power = (move_log(robot->orientation) + angle / 90) % 4;
