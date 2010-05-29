@@ -9,7 +9,14 @@ bool sensors_contact(void) {
 
 // Return TRUE if a wall is detected on the right of the robot.
 bool sensors_wall(void) {
-  if (nx_radar_read_distance(SENSORS_RADAR, 0) <= SENSORS_RADAR_THRESHOLD)
+  if (nx_radar_read_distance(SENSORS_RADAR, 0) < SENSORS_RADAR_THRESHOLD)
+    return TRUE;
+  return FALSE;
+}
+
+// Return TRUE if we are on a flag.
+bool sensors_flag(void) {
+  if (nx_sensors_analog_get(SENSORS_LIGHT) < SENSORS_LIGHT_THRESHOLD)
     return TRUE;
   return FALSE;
 }

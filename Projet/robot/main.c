@@ -13,9 +13,6 @@ S8 main(void) {
   base_init();
 
   while(1) {
-    if(sensors_contact())
-      move_handle_obstacle(&robot, map);
-
     bt_check_connect(&robot);
 
     switch(robot.mode) {
