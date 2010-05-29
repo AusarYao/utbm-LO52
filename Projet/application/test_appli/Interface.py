@@ -9,8 +9,55 @@ import Canvas
 import Log
 import Bluetooth as BT
 import Game as G
+import threading as T
+import time
+import gobject
+
+gobject.threads_init()
 
 class Interface(object):
+    class StartAlgo(T.Thread):
+        """Thread to run the algo"""
+        def __init__(self, interface):
+            T.Thread.__init__(self)
+            self.interface = interface
+            self.terminated = False
+            self.start()
+
+        def run(self):
+            while 1:
+                while self.terminated:
+                    print "\n########## New time ########"
+                    if self.interface.mode == 0:
+                        print "Exploration"
+                        bt_m = self.interface.bt.recept()
+                        s = "%s" % (bt_m,)
+                        self.interface.log.add("Message receive :"+s)
+                        self.interface.game.update(bt_m)
+                        self.interface.bt.ack()
+                    else:
+                        print "Guidage"
+                        ldata = self.interface.game.find_next_move()
+                        s = "%s" %(ldata,)
+                        self.interface.log.add("Next move:"+s)
+                        if ldata != []:
+                            self.interface.bt.send_move(ldata)
+                            self.interface.game.r.update(ldata[0],ldata[1])
+                        else:
+                            self.interface.log.add("No direction")
+                    self.interface.on_canvas_expose_event()
+                    time.sleep(0.01)
+
+        def stop(self):
+            self.terminated = False
+            print "stop"
+
+        def restart(self, interface):
+            self.terminated = True
+            self.interface = interface
+            print "restart"
+
+
     def __init__(self):
         self.interface = gtk.Builder()
         self.interface.add_from_file("interface.glade")
@@ -30,7 +77,11 @@ class Interface(object):
         self.canvas = Canvas.MyCanvas(self.interface.get_object("canvas"),self.game)
         self.interface.connect_signals(self)
 
-        self.game.f.add_flag(2,2)
+        #Thread
+        self.algo = self.StartAlgo(self)
+
+        self.game.f.add_flag(4,2)
+        self.game.f.add_flag(5,5)
         self.game.f.init_flag()
 #        self.game.m.add_wall(1,1,2)
 
@@ -47,30 +98,16 @@ class Interface(object):
 
     def on_btnStart_clicked(self, widget):
         btnStart = self.interface.get_object("btnStart")
-        if not btnStart.get_active():
-            btnStart.set_label("Start")
-            self.log.add("Stop")
-            #STOP THE ALGO
-        else:
+        if btnStart.get_active():
             btnStart.set_label("Stop")
             self.log.add("Start")
             #LAUNCH THE ALGO TO RECEIVE OR SEND DATA
-            if self.mode == 0: #exploration
-                bt_m = self.bt.recept()
-                s = "%s" % (bt_m,)
-                self.log.add("Message receive :"+s)
-                self.game.update(bt_m)
-                self.bt.ack()
-            elif self.mode == 1: #guiding
-                ldata = self.game.find_next_move()
-                s = "%s" %(ldata,)
-                self.log.add("Next move:"+s)
-                if ldata != []:
-                    self.bt.send_move(ldata)
-                    self.game.r.update(ldata[0],ldata[1])
-                else:
-                    self.log.add("No direction")
-            self.on_canvas_expose_event()
+            self.algo.restart(self)
+        else:
+            btnStart.set_label("Start")
+            self.log.add("Stop")
+            #STOP THE ALGO
+            self.algo.stop()
 
     def on_btnMode_clicked(self, widget):
         btnMode = self.interface.get_object("btnMode")
@@ -103,6 +140,7 @@ class Interface(object):
         self.log.clean()
 
     def on_interface_destroy(self, widget):
+        self.algo._Thread__stop()
         gtk.main_quit()
 
     def on_canvas_expose_event(self, *args):

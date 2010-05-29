@@ -19,8 +19,9 @@ Affichage de la map:
 	- Mur : trait plus épais
 
 Start algo:
-	- L'algo ne boucle pas pour le moment, il faut le lancer puis le stoper puis de relancer
+	- L'algo boucle maintenant
 	- Ne pas oubliez de choisir son mode avant de lancer l'algorithme
+	- Affichage d'information complémentaire dans le terminal
 
 Mode:
 	- Exploration : Reçoit des données provenant du Bluetooth (pour le moment mock)

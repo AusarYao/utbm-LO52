@@ -3,6 +3,7 @@
 
 #import bluetooth
 import struct
+import time
 
 class BT(object):
     """
@@ -34,6 +35,7 @@ class BT(object):
         data = '\x02\x01\x01\x02'
         l =struct.unpack('BBBB',data)
         print "Recept data, l:",l," ; data:",data
+        time.sleep(2)
         return l
 
 
@@ -41,6 +43,7 @@ class BT(object):
         data = 5
         data = struct.pack('B',data)
 #        self.sock.send(data)
+        time.sleep(1)
         print "Ack : ",data
 
     def send_move(self, l):
@@ -49,6 +52,8 @@ class BT(object):
             data = struct.pack('BBB',int(data[0]),int(data[1]),int(data[2]))
             print "Send move ",data
 #            self.sock.send(data)
+#           wait ack
+            time.sleep(2)
         else:
             print "Error send message"
 

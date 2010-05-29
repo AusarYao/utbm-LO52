@@ -23,8 +23,6 @@ class Game(object):
         elif data[0] == 3: #Add Flag
             self.f.add_flag(data[1],data[2])
 
-        self.m.print_map()
-
     def shortest_path(self):
         """find the shortest path and nearest flag"""
         Lm = []
@@ -33,9 +31,10 @@ class Game(object):
         print "List flag: ",Lf   
         for i in range(len(Lf)):
             L = self.m.find_path(self.r.x,self.r.y,Lf[i][0],Lf[i][1])
-            print L
+            print "Path n°",i,": ",L
             if first:
                 Lm = L
+                first = False
             elif len(L) < len(Lm):
                 Lm = L
         return Lm
@@ -51,8 +50,8 @@ class Game(object):
             print "No path found"
         else:
             print "Path found in %d moves and %f times" %(len(L), et-st)
-            print L
-            print "[x:%d,y:%d,dir:%d]"%(self.r.x,self.r.y,self.r.dir)
+            print "Shortest Path: ",L
+            print "Robot: [x:%d,y:%d,dir:%d]"%(self.r.x,self.r.y,self.r.dir)
             for i in range(len(L)):
                 if L[i][0] == self.r.x or L[i][1] == self.r.y:
                     Lr = L[i]
