@@ -4,6 +4,18 @@
 #include "bt.h"
 #include "sensors.h"
 
+static U8 move_pow(U8 a, U8 b) {
+  return a << (b-1);
+}
+
+static U8 move_log(U8 a) {
+  U8 count = 0;
+  for(; a > 1; count++)
+    a >> 1;
+  return count;
+}
+
+
 // Compute the angle to rotate the wheels for the given distance
 static double move_compute_angle(double distance) {
   double wheel_rotations = distance / (2. * M_PI * MOVE_WHEEL_DIAMETER);
@@ -32,8 +44,8 @@ static void move_rotate_angle(struct robot_struct *robot, U32 angle) {
   nx_systick_wait_ms(abs(600 * angle / 90));
 
   // Modify the robot's orientation
-  power = (int)(log(robot->orientation) + angle / 90.) % 4;
-  robot->orientation = pow(2., power);
+  power = (move_log(robot->orientation) + angle / 90) % 4;
+  robot->orientation = move_pow(2, power);
 }
 
 // Make the robot move forward on the given distance in centimeters.
@@ -182,7 +194,6 @@ static bool move_retry(void) {
   return TRUE;
 }
 
-//TODO
 static void move_escape_wall(struct robot_struct *robot) {
   move_backward(robot, 10);
   move_rotate_angle(robot, -90);
