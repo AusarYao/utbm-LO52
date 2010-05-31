@@ -205,7 +205,8 @@ static void move_forward(struct robot_struct *robot, U32 distance,
 
 //TODO
 // Move following the instructions given by the application.
-void move_guided(struct robot_struct *current_robot,struct robot_struct *next_robot) {
+void move_guided(struct robot_struct *current_robot,\
+                 struct robot_struct *next_robot) {
 int orientation=0;
 
   if(current_robot->orientation==BASE_RIGHT){
@@ -238,7 +239,7 @@ int orientation=0;
   {
     //we have to go down
     if(current_robot->Y==next_robot->Y+1){
-      move_rotate_angle(current_robot,-orientation*90);      
+      move_rotate_angle(current_robot,-orientation*90);
     }
     //we have to go up
     else
@@ -247,7 +248,7 @@ int orientation=0;
     }
 
   }
-  
+
   move_forward(current_robot,25,TRUE);
 }
 
@@ -331,7 +332,7 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
 static void move_stop(struct robot_struct *robot) {
   nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
   nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
-  
+
   //add just to compile
   robot->X=robot->X;
 }
