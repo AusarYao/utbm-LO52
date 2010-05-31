@@ -15,13 +15,20 @@ class Game(object):
         self.r = R.Robot(x,y,dir)
         self.f = F.Flag()
 
-    def update(self, data):
+    def update_explore(self, data):
         """update data, robot and flags"""
         self.r.update(data[1],data[2])
         if data[0] == 2: #Add Wall
             self.m.add_wall(data[1],data[2],data[3])
         elif data[0] == 3: #Add Flag
             self.f.add_flag(data[1],data[2])
+
+    def update_guiding(self,x,y):
+        """update robot and if flags are token"""
+        self.r.update(x,y)
+        if self.f.search_flag(x,y):
+            if not self.f.mapdata[(x,y)]:
+                self.f.mapdata[(x,y)] = True
 
     def shortest_path(self):
         """find the shortest path and nearest flag"""

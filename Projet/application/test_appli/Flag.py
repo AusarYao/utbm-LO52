@@ -22,7 +22,7 @@ class Flag(object):
         L = self.mapdata.keys()
         for x in range(len(L)):
             self.mapdata[L[x]] = False
-      
+
     def list_flag(self):
         """List the coordonnates of the case where the flag are not taken"""
         Lr = []
