@@ -133,5 +133,6 @@ class MyCanvas(object):
                 else:
                     self.draw.drawLine(Coord(x,y),Coord(x,y+1))
 
-    def update(self):
+    def update(self, game):
+        self.game = game
         self.drawMap()

@@ -12,16 +12,15 @@ Gestion du log :
 	- Scroll pour voir les log précédents
 
 Affichage de la map:
-	- Ne marche que pour l'initialisation pour le moment
+	- Problème d'affichage, l'app plante au bout de 15 sec (pb refresh)
 	- Robot : rouge
 	- Flag non pris : vert
 	- Flag pris : orange
 	- Mur : trait plus épais
 
 Start algo:
-	- L'algo boucle maintenant
+	- L'algo boucle
 	- Ne pas oubliez de choisir son mode avant de lancer l'algorithme
-	- Affichage d'information complémentaire dans le terminal
 
 Mode:
 	- Exploration : Reçoit des données provenant du Bluetooth (pour le moment mock)
