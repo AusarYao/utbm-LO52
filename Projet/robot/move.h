@@ -19,7 +19,7 @@
 #define MOVE_LEFT_MOTOR     2
 #define MOVE_RIGHT_MOTOR    0
 
-#define MOVE_WHEEL_SPACING  116
+#define MOVE_WHEEL_SPACING  96
 #define MOVE_WHEEL_DIAMETER 55
 
 // Freeze time in seconds when on a flag.
@@ -28,5 +28,6 @@
 // Move in autonomous mode, exploring the field.
 void move_autonomous(struct robot_struct*, U8[MAP_X_SIZE][MAP_Y_SIZE]);
 // Move following the instructions given by the application.
-void move_guided(struct robot_struct*);
+void move_guided(struct robot_struct* ,struct robot_struct*);
+
 #endif

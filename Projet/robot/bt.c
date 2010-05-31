@@ -1,5 +1,5 @@
 #include "bt.h"
-
+#include "move.h"
 
 // Bluetooth initialisation. Return port handle or -1 in case of errors.
 int bt_init(void) {
@@ -21,37 +21,41 @@ bool bt_is_active(void) {
 void bt_check_connect(struct robot_struct *robot) {
 
   S8 data[BT_MSG_SIZE];
-  //reception du message
+  //recept message
   nx_bt_stream_read((U8*)data, BT_MSG_SIZE);
 
-  switch(data[0]){
-    case BT_MSG_POSITION:
+  //if we received data
+  if(nx_bt_stream_data_read()>1){
+    struct robot_struct robot_next = {MODE_GUIDED, data[1], data[2], data[3]};
+    switch(data[0]){
+      case BT_MSG_POSITION:
+        move_guided(robot,&robot_next);
+      break;
+      // Last wall's position request.
+      case BT_MSG_LST_WALL:
 
-    break;
-    // Last wall's position request.
-    case BT_MSG_LST_WALL:
+      break;
+      // Last captured flag position request.
+      case BT_MSG_CPT_FLAG:
 
-    break;
-    // Last captured flag position request.
-    case BT_MSG_CPT_FLAG:
+      break;
+      // Position recalibration request.
+      case BT_MSG_RECAL_POS:
 
-    break;
-    // Position recalibration request.
-    case BT_MSG_RECAL_POS:
+      break;
+      // Abort last instruction.
+      case BT_MSG_ABORT_LST:
 
-    break;
-    // Abort last instruction.
-    case BT_MSG_ABORT_LST:
+      break;
+      // Ping the other end.
+      case BT_MSG_PING:
 
-    break;
-    // Ping the other end.
-    case BT_MSG_PING:
+      break;
+      // ACK
+      case BT_MSG_ACK:
 
-    break;
-    // ACK
-    case BT_MSG_ACK:
-
-    break;
+      break;
+    }
   }
 }
 

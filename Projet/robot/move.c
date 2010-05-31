@@ -20,8 +20,10 @@ static U8 move_log(U8);
 static U8 move_pow(U8, U8);
 static bool move_retry(void);
 // Make the robot turn by the given angle, in degrees.
-static void move_rotate_angle(struct robot_struct*, U32);
+static void move_rotate_angle(struct robot_struct*, S32);
 static void move_stop(struct robot_struct*);
+
+
 
 // Move in autonomous mode, exploring the field.
 void move_autonomous(struct robot_struct *robot,
@@ -203,8 +205,52 @@ static void move_forward(struct robot_struct *robot, U32 distance,
 
 //TODO
 // Move following the instructions given by the application.
-void move_guided(struct robot_struct *robot) {
+void move_guided(struct robot_struct *current_robot,struct robot_struct *next_robot) {
+int orientation=0;
+
+  if(current_robot->orientation==BASE_RIGHT){
+    orientation=1;
+  }
+
+  if(current_robot->orientation==BASE_DOWN){
+    orientation=2;
+  }
+
+  if(current_robot->orientation==BASE_LEFT){
+    orientation=3;
+  }
+//i can't use log undefined reference to `log'
+//  int orientation=log((double)current_robot->orientation)/log(2);
+
+  //we have to move on X
+  if(current_robot->X!=next_robot->X){
+    //we have to go on the left
+    if(current_robot->X==next_robot->X+1){
+      move_rotate_angle(current_robot,-(orientation-1)*90);
+    }
+    //we have to go on the right
+    else
+    {
+      move_rotate_angle(current_robot,-(orientation+1)*90);
+    }
+  }
+  else
+  {
+    //we have to go down
+    if(current_robot->Y==next_robot->Y+1){
+      move_rotate_angle(current_robot,-orientation*90);      
+    }
+    //we have to go up
+    else
+    {
+      move_rotate_angle(current_robot,-(orientation-2)*90);
+    }
+
+  }
+  
+  move_forward(current_robot,25,TRUE);
 }
+
 
 // Handle an obstacle by notifying the application and escaping from it.
 static void move_handle_obstacle(struct robot_struct *robot,
@@ -244,10 +290,22 @@ static bool move_retry(void) {
 }
 
 // Make the robot turn by the given angle, in degrees.
-static void move_rotate_angle(struct robot_struct *robot, U32 angle) {
-  double distance = 2. * M_PI * angle * MOVE_WHEEL_SPACING / 360.;
-  double angle_rotation = move_compute_angle(distance);
+static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
+  double distance;
+  double angle_rotation;
   int power;
+
+  //reduce the angle if possible
+  if(angle>180){
+    angle-=360;
+  }
+  else if(angle<-180){
+    angle+=360;
+  }
+
+  distance = 2. * M_PI * angle * MOVE_WHEEL_SPACING / 360.;
+  angle_rotation = move_compute_angle(distance);
+
 
   if(angle_rotation > 0) {
     nx_motors_rotate_angle(MOVE_LEFT_MOTOR, MOVE_TURN_SPEED, \
@@ -273,4 +331,7 @@ static void move_rotate_angle(struct robot_struct *robot, U32 angle) {
 static void move_stop(struct robot_struct *robot) {
   nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
   nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
+  
+  //add just to compile
+  robot->X=robot->X;
 }
