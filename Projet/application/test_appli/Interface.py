@@ -31,6 +31,7 @@ class Interface(object):
         def run(self):
             while self.started:
                 time.sleep(0.001)
+                first_time = True
                 while not self.waiting:
                     time.sleep(0.001)
                     if self.interface.bt.isconnected:
@@ -53,8 +54,9 @@ class Interface(object):
                             else:
                                 self.interface.log.add("No direction")
                         self.interface.on_canvas_expose_event()
-                    else:
-                        print "Not connected"
+                    elif first_time:
+                        self.interface.log.add("Not connected")
+                        first_time = False
 
         def wait(self):
             self.waiting = True
