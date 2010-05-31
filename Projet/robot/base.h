@@ -7,6 +7,9 @@
 // Include the systems' headers
 #include "base/core.h"
 #include "base/types.h"
+#include "base/display.h"
+#include "base/drivers/systick.h"
+#include "base/drivers/avr.h"
 
 // Definitions of the different modes used by the robot.
 #define MODE_AUTONOMOUS       1
