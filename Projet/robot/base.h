@@ -18,9 +18,9 @@
 // Size of the map
 #define MAP_X_SIZE            8
 #define MAP_Y_SIZE            4
-#define MAP_SUB_SIZE          25
+#define MAP_SUB_SIZE          250
 
-#define BASE_FLAG_SIZE        15
+#define BASE_FLAG_SIZE        150
 
 // Robot's different orientations.
 #define BASE_UP             0b0001
