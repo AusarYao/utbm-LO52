@@ -29,7 +29,7 @@ void bt_check_connect(struct robot_struct *robot) {
     struct robot_struct robot_next = {MODE_GUIDED, data[1], data[2], data[3]};
     switch(data[0]){
       case BT_MSG_POSITION:
-        move_guided(robot,&robot_next);
+        move_guided(robot, robot->X, robot->Y);
       break;
       // Last wall's position request.
       case BT_MSG_LST_WALL:

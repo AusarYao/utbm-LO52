@@ -217,10 +217,9 @@ static S32 move_get_tach_diff(void) {
 //TODO
 // Move following the instructions given by the application.
 void move_guided(struct robot_struct *current_robot,\
-                 U8 next_X, U8, next_Y) {
+                 U8 next_X, U8 next_Y) {
 
   U8 orientation = move_log(current_robot->orientation);
-  if(
   // We have to move on X
   if(current_robot->X != next_X) {
     // We have to go on the left

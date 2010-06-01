@@ -21,7 +21,7 @@ S8 main(void) {
 
       case MODE_GUIDED:
         if(bt_is_active())
-          move_guided(&robot, &robot);
+          move_guided(&robot, robot.X, robot.Y);
         else
           move_autonomous(&robot, map);
         break;
