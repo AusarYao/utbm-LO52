@@ -142,14 +142,14 @@ static void move_backward(struct robot_struct *robot, U32 distance,
 
 // Compute the angle to rotate the wheels for the given distance
 static double move_compute_angle(double distance) {
-  double wheel_rotations = distance / (2. * M_PI * MOVE_WHEEL_DIAMETER);
+  double wheel_rotations = distance / (M_PI * MOVE_WHEEL_DIAMETER);
   return wheel_rotations * 360;
 }
 
 // Compute the distance for the given angle.
 static double move_compute_distance(double angle) {
   double wheel_rotations = angle / 360;
-  return wheel_rotations * (2 * M_PI * MOVE_WHEEL_DIAMETER);
+  return wheel_rotations * (M_PI * MOVE_WHEEL_DIAMETER);
 }
 
 static void move_escape_wall(struct robot_struct *robot) {
