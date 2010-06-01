@@ -44,7 +44,7 @@ void move_autonomous(struct robot_struct *robot,
   move_update_position(robot);
 
   if(sensors_flag() && \
-      map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] < BASE_FLAG) {
+      map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] & BASE_FLAG) {
 
     move_stop(robot);
     nx_systick_wait_ms(MOVE_FLAG_FREEZE * 1000);
