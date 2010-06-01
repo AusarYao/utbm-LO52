@@ -217,14 +217,14 @@ static S32 move_get_tach_diff(void) {
 //TODO
 // Move following the instructions given by the application.
 void move_guided(struct robot_struct *current_robot,\
-                 struct robot_struct *next_robot) {
+                 U8 next_X, U8, next_Y) {
 
   U8 orientation = move_log(current_robot->orientation);
-
+  if(
   // We have to move on X
-  if(current_robot->X != next_robot->X) {
+  if(current_robot->X != next_X) {
     // We have to go on the left
-    if(current_robot->X == next_robot->X + 1) {
+    if(current_robot->X == next_X + MAP_SUB_SIZE) {
       move_rotate_angle(current_robot, -(orientation - 1) * 90);
     }
     //we have to go on the right
@@ -234,7 +234,7 @@ void move_guided(struct robot_struct *current_robot,\
   }
   else {
     //we have to go down
-    if(current_robot->Y == (next_robot->Y + 1)) {
+    if(current_robot->Y == (next_Y + MAP_SUB_SIZE)) {
       move_rotate_angle(current_robot, -orientation * 90);
     }
     //we have to go up
@@ -242,7 +242,7 @@ void move_guided(struct robot_struct *current_robot,\
       move_rotate_angle(current_robot, -(orientation - 2) * 90);
     }
   }
-  move_forward(current_robot, 25, TRUE);
+  move_forward(current_robot, MAP_SUB_SIZE, TRUE);
 }
 
 
