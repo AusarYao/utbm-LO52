@@ -29,6 +29,7 @@
 #define BASE_LEFT           0b1000
 
 #define BASE_FLAG           0b10000
+#define BASE_VISITED        0b100000
 
 #include "structures.h"
 
