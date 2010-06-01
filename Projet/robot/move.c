@@ -6,8 +6,11 @@
 
 static U32 move_tach_right, move_tach_left;
 
+//add the walls on the right to the map
+static void move_add_wall_to_map(struct robot_struct*,
+    U8[MAP_X_SIZE][MAP_Y_SIZE]);
 // Return the coordinates of an adjacent square
-static void move_adjacent_square(struct robot_struct*, U8, U8*);
+static U8 move_adjacent_square(struct robot_struct*, U8);
 // Make the robot move backward on the given distance in millimeters.
 // Start gradually and stop gradually if stop flag is set.
 static void move_backward(struct robot_struct*, U32, bool);
@@ -26,7 +29,7 @@ static void move_handle_obstacle(struct robot_struct*,
     U8[MAP_X_SIZE][MAP_Y_SIZE]);
 static U8 move_log(U8);
 // Return TRUE if the bot can go to the square, FALSE otherwise
-static bool move_no_wall_to_go(struct robot_struct*, U8,\
+static bool move_no_wall_to_go(struct robot_struct*, U8,
     U8[MAP_X_SIZE][MAP_Y_SIZE]);
 static U8 move_pow(U8, U8);
 static void move_refresh_tach(void);
@@ -36,12 +39,52 @@ static void move_rotate_angle(struct robot_struct*, S32);
 static void move_stop(struct robot_struct*);
 static void move_update_position(struct robot_struct*);
 
-//to get the mask of an adjacent Wall
-static void move_adjacent_square(struct robot_struct *robot, U8 direction,
-    U8 *Wall){
+//add the walls on the right to the map
+static void move_add_wall_to_map(struct robot_struct* robot,
+    U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
+  U8 X_adjacent_square;
+  U8 Y_adjacent_square;
+  U8 mask_adjacent_wall;
+  int power;
 
+  //if there is a wall on the right
+  if(sensors_wall()) {
+    power = (move_log(robot->orientation) + 1) % 4;
+    map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] |= move_pow(2, power);
+    //if the square on the right is in the map
+    if(!(((robot->orientation == BASE_LEFT) && (robot->X == MAP_X_SIZE-1)) || \
+          ((robot->orientation == BASE_RIGHT) && (robot->X == 0)) || \
+          ((robot->orientation == BASE_UP) && (robot->Y == MAP_Y_SIZE-1)) || \
+          ((robot->orientation == BASE_DOWN) && (robot->Y == 0)))) {
+      X_adjacent_square = robot->X;
+      Y_adjacent_square = robot->Y;
+
+      //get the mask of the square on the right of the bot
+      mask_adjacent_wall=move_adjacent_square(robot, BASE_RIGHT);
+      switch(mask_adjacent_wall) {
+        case BASE_RIGHT:
+          X_adjacent_square += 1;
+        break;
+        case BASE_DOWN:
+          Y_adjacent_square -= 1;
+        break;
+        case BASE_LEFT:
+          X_adjacent_square -= 1;
+        break;
+        case BASE_UP:
+          Y_adjacent_square += 1;
+        break;
+      }
+      power = (map - 2) % 4;
+      map[X_adjacent_square][Y_adjacent_square] |= move_pow(2, power);
+    }
+  }
+}
+
+//to get the mask of an adjacent Wall
+static U8 move_adjacent_square(struct robot_struct *robot, U8 direction) {
   int power = (move_log(direction) + move_log(robot->orientation)) % 4;
-  *Wall = move_pow(2, power);
+  return move_pow(2, power);
 }
 
 // Move in autonomous mode, exploring the field.
@@ -289,9 +332,8 @@ static U8 move_log(U8 a) {
 
 //return TRUE if the bot can go to the square, FALSE otherwise
 static bool move_no_wall_to_go(struct robot_struct *robot, U8 direction,
-    U8 map[MAP_X_SIZE][MAP_Y_SIZE]){
-  U8 Wall = 0;
-  move_adjacent_square(robot, direction, &Wall);
+    U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
+  U8 Wall = move_adjacent_square(robot, direction);
 
   //if there is no wall to go on the next case
   if(!(map[robot->X][robot->Y] & Wall)) {
