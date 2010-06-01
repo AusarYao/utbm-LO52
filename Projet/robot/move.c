@@ -8,7 +8,7 @@ static U32 move_tach_right, move_tach_left;
 
 //add the walls on the right to the map
 static void move_add_wall_to_map(struct robot_struct*,
-    U8[MAP_X_SIZE][MAP_Y_SIZE]);
+    U8[MAP_X_SIZE][MAP_Y_SIZE], U8);
 // Return the coordinates of an adjacent square
 static U8 move_adjacent_square(struct robot_struct*, U8);
 // Make the robot move backward on the given distance in millimeters.
@@ -39,46 +39,44 @@ static void move_rotate_angle(struct robot_struct*, S32);
 static void move_stop(struct robot_struct*);
 static void move_update_position(struct robot_struct*);
 
-//add the walls on the right to the map
+//add the walls on the right/top to the map
 static void move_add_wall_to_map(struct robot_struct* robot,
-    U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
+    U8 map[MAP_X_SIZE][MAP_Y_SIZE], U8 side) {
   U8 X_adjacent_square;
   U8 Y_adjacent_square;
   U8 mask_adjacent_wall;
   int power;
 
-  //if there is a wall on the right
-  if(sensors_wall()) {
-    power = (move_log(robot->orientation) + 1) % 4;
-    map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] |= move_pow(2, power);
-    //if the square on the right is in the map
-    if(!(((robot->orientation == BASE_LEFT) && (robot->X == MAP_X_SIZE-1)) || \
-          ((robot->orientation == BASE_RIGHT) && (robot->X == 0)) || \
-          ((robot->orientation == BASE_UP) && (robot->Y == MAP_Y_SIZE-1)) || \
-          ((robot->orientation == BASE_DOWN) && (robot->Y == 0)))) {
-      X_adjacent_square = robot->X;
-      Y_adjacent_square = robot->Y;
+  power = (move_log(robot->orientation) + move_log(side)) % 4;
+  map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] |= move_pow(2, power);
+  //if the square on the right/top is in the map
+  if(!(((move_pow(2, power) == BASE_RIGHT) && (robot->X == MAP_X_SIZE-1)) || \
+        ((move_pow(2, power) == BASE_LEFT) && (robot->X == 0)) || \
+        ((move_pow(2, power) == BASE_DOWN) && (robot->Y == MAP_Y_SIZE-1)) || \
+        ((move_pow(2, power) == BASE_UP) && (robot->Y == 0)))) {
+    X_adjacent_square = robot->X;
+    Y_adjacent_square = robot->Y;
 
-      //get the mask of the square on the right of the bot
-      mask_adjacent_wall=move_adjacent_square(robot, BASE_RIGHT);
-      switch(mask_adjacent_wall) {
-        case BASE_RIGHT:
-          X_adjacent_square += 1;
-        break;
-        case BASE_DOWN:
-          Y_adjacent_square -= 1;
-        break;
-        case BASE_LEFT:
-          X_adjacent_square -= 1;
-        break;
-        case BASE_UP:
-          Y_adjacent_square += 1;
-        break;
-      }
-      power = (map - 2) % 4;
-      map[X_adjacent_square][Y_adjacent_square] |= move_pow(2, power);
+    //get the mask of the square on the right of the bot
+    mask_adjacent_wall=move_adjacent_square(robot, side);
+    switch(mask_adjacent_wall) {
+      case BASE_RIGHT:
+        X_adjacent_square += 1;
+      break;
+      case BASE_DOWN:
+        Y_adjacent_square -= 1;
+      break;
+      case BASE_LEFT:
+        X_adjacent_square -= 1;
+      break;
+      case BASE_UP:
+        Y_adjacent_square += 1;
+      break;
     }
+    power = (power - 2) % 4;
+    map[X_adjacent_square][Y_adjacent_square] |= move_pow(2, power);
   }
+  
 }
 
 //to get the mask of an adjacent Wall
