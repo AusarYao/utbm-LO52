@@ -8,7 +8,7 @@ static U32 move_tach_right, move_tach_left;
 
 // Return the coordinates of an adjacent square
 static void move_adjacent_square(struct robot_struct*, U8, U8*);
-// Make the robot move backward on the given distance in centimeters.
+// Make the robot move backward on the given distance in millimeters.
 // Start gradually and stop gradually if stop flag is set.
 static void move_backward(struct robot_struct*, U32, bool);
 // Compute the angle to rotate the wheels for the given distance
@@ -16,7 +16,7 @@ static double move_compute_angle(double);
 // Compute the distance for the given angle.
 static double move_compute_distance(double);
 static void move_escape_wall(struct robot_struct*);
-// Make the robot move forward on the given distance in centimeters.
+// Make the robot move forward on the given distance in millimeters.
 // Start gradually and stop gradually if the stop flag is set.
 static void move_forward(struct robot_struct*, U32, bool);
 // Get the difference between current tach count and last recorded.
@@ -66,7 +66,7 @@ void move_autonomous(struct robot_struct *robot,
   }
 }
 
-// Make the robot move backward on the given distance in centimeters.
+// Make the robot move backward on the given distance in millimeters.
 // Start gradually and stop gradually if stop flag is set.
 static void move_backward(struct robot_struct *robot, U32 distance,
     bool stop) {
@@ -153,11 +153,13 @@ static double move_compute_distance(double angle) {
 }
 
 static void move_escape_wall(struct robot_struct *robot) {
-  move_backward(robot, 10, TRUE);
+  move_stop(robot);
+  nx_systick_wait_ms(100);
+  move_backward(robot, 30, TRUE);
   move_rotate_angle(robot, -90);
 }
 
-// Make the robot move forward on the given distance in centimeters.
+// Make the robot move forward on the given distance in millimeters.
 // Start gradually and stop gradually if the stop flag is set.
 static void move_forward(struct robot_struct *robot, U32 distance,
     bool stop) {
