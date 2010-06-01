@@ -34,6 +34,9 @@ static void move_update_position(struct robot_struct*);
 // Move in autonomous mode, exploring the field.
 void move_autonomous(struct robot_struct *robot,
     U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
+
+  move_update_position(robot);
+
   if(sensors_flag() && \
       map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] < BASE_FLAG) {
 
@@ -308,6 +311,8 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
   double angle_rotation;
   int power;
 
+  move_update_position(robot);
+
   // Ensure that our angle is in the [-180, 180] range.
   if(angle > 180)
     angle -= 360;
@@ -336,6 +341,8 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
   // Modify the robot's orientation
   power = (move_log(robot->orientation) + angle / 90) % 4;
   robot->orientation = move_pow(2, power);
+
+  move_refresh_tach();
 }
 
 static void move_stop(struct robot_struct *robot) {
