@@ -296,17 +296,15 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
   double angle_rotation;
   int power;
 
-  //reduce the angle if possible
-  if(angle>180){
-    angle-=360;
-  }
-  else if(angle<-180){
-    angle+=360;
-  }
+  // Ensure that our angle is in the [-180, 180] range.
+  if(angle > 180)
+    angle -= 360;
+  else if(angle < -180)
+    angle += 360;
 
+  // Compute the number of rotations, and its associated angle.
   distance = 2. * M_PI * angle * MOVE_WHEEL_SPACING / 360.;
   angle_rotation = move_compute_angle(distance);
-
 
   if(angle_rotation > 0) {
     nx_motors_rotate_angle(MOVE_LEFT_MOTOR, MOVE_TURN_SPEED, \
@@ -323,7 +321,6 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
     nx_systick_wait_ms(-(600 * angle / 90));
   }
 
-
   // Modify the robot's orientation
   power = (move_log(robot->orientation) + angle / 90) % 4;
   robot->orientation = move_pow(2, power);
@@ -332,7 +329,4 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
 static void move_stop(struct robot_struct *robot) {
   nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
   nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
-
-  //add just to compile
-  robot->X=robot->X;
 }
