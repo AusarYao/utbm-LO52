@@ -6,6 +6,8 @@
 
 static U32 move_tach_right, move_tach_left;
 
+// Return the coordinates of an adjacent square
+static void move_adjacent_square(struct robot_struct*, U8, U8*);
 // Make the robot move backward on the given distance in centimeters.
 // Start gradually and stop gradually if stop flag is set.
 static void move_backward(struct robot_struct*, U32, bool);
@@ -23,6 +25,9 @@ static S32 move_get_tach_diff(void);
 static void move_handle_obstacle(struct robot_struct*,
     U8[MAP_X_SIZE][MAP_Y_SIZE]);
 static U8 move_log(U8);
+// Return TRUE if the bot can go to the square, FALSE otherwise
+static bool move_no_wall_to_go(struct robot_struct*, U8,\
+    U8[MAP_X_SIZE][MAP_Y_SIZE]);
 static U8 move_pow(U8, U8);
 static void move_refresh_tach(void);
 static bool move_retry(void);
@@ -30,12 +35,35 @@ static bool move_retry(void);
 static void move_rotate_angle(struct robot_struct*, S32);
 static void move_stop(struct robot_struct*);
 static void move_update_position(struct robot_struct*);
+
 //to get the coordinates of an adjacent square
-static void adjacent_square(struct robot_struct *robot, U8 direction,\
-    U8 *Wall);
-//return TRUE if the bot can go to the square, FALSE otherwise
-static bool no_wall_to_go(struct robot_struct *robot, U8 direction,\
-    U8 map[MAP_X_SIZE][MAP_Y_SIZE]);
+static void move_adjacent_square(struct robot_struct *robot, U8 direction,
+    U8 *Wall){
+  if((robot->orientation==1 && direction==2)|| \
+     (robot->orientation==2 && direction==1)|| \
+     (robot->orientation==4 && direction==8)|| \
+     (robot->orientation==8 && direction==4)){
+    *Wall=BASE_RIGHT;
+  }
+  if((robot->orientation==1 && direction==8)|| \
+     (robot->orientation==2 && direction==4)|| \
+     (robot->orientation==4 && direction==2)|| \
+     (robot->orientation==8 && direction==1)){
+    *Wall=BASE_LEFT;
+  }
+  if((robot->orientation==1 && direction==1)|| \
+     (robot->orientation==2 && direction==8)|| \
+     (robot->orientation==4 && direction==4)|| \
+     (robot->orientation==8 && direction==2)){
+    *Wall=BASE_UP;
+  }
+  if((robot->orientation==1 && direction==4)|| \
+     (robot->orientation==2 && direction==2)|| \
+     (robot->orientation==4 && direction==1)|| \
+     (robot->orientation==8 && direction==8)){
+    *Wall=BASE_DOWN;
+  }
+}
 
 // Move in autonomous mode, exploring the field.
 void move_autonomous(struct robot_struct *robot,
@@ -278,6 +306,19 @@ static U8 move_log(U8 a) {
   return count;
 }
 
+//return TRUE if the bot can go to the square, FALSE otherwise
+static bool move_no_wall_to_go(struct robot_struct *robot, U8 direction,
+    U8 map[MAP_X_SIZE][MAP_Y_SIZE]){
+  U8 Wall = 0;
+  move_adjacent_square(robot, direction, &Wall);
+
+  //if there is no wall to go on the next case
+  if(!(map[robot->X][robot->Y] & Wall)){
+    return TRUE;
+  }
+  return FALSE;
+}
+
 static U8 move_pow(U8 a, U8 b) {
   return a << (b-1);
 }
@@ -366,44 +407,3 @@ static void move_update_position(struct robot_struct *robot) {
 }
 
 
-//to get the coordinates of an adjacent square
-static void adjacent_square(struct robot_struct *robot, U8 direction,
-    U8 *Wall){
-  if((robot->orientation==1 && direction==2)|| \
-     (robot->orientation==2 && direction==1)|| \
-     (robot->orientation==4 && direction==8)|| \
-     (robot->orientation==8 && direction==4)){
-    *Wall=BASE_RIGHT;
-  }
-  if((robot->orientation==1 && direction==8)|| \
-     (robot->orientation==2 && direction==4)|| \
-     (robot->orientation==4 && direction==2)|| \
-     (robot->orientation==8 && direction==1)){
-    *Wall=BASE_LEFT;
-  }
-  if((robot->orientation==1 && direction==1)|| \
-     (robot->orientation==2 && direction==8)|| \
-     (robot->orientation==4 && direction==4)|| \
-     (robot->orientation==8 && direction==2)){
-    *Wall=BASE_UP;
-  }
-  if((robot->orientation==1 && direction==4)|| \
-     (robot->orientation==2 && direction==2)|| \
-     (robot->orientation==4 && direction==1)|| \
-     (robot->orientation==8 && direction==8)){
-    *Wall=BASE_DOWN;
-  }
-}
-
-//return TRUE if the bot can go to the square, FALSE otherwise
-static bool no_wall_to_go(struct robot_struct *robot, U8 direction,
-    U8 map[MAP_X_SIZE][MAP_Y_SIZE]){
-  U8 Wall=0;
-  adjacent_square(robot, direction, &Wall);
-
-  //if there is no wall to go on the next case
-  if(!(map[robot->X][robot->Y] & Wall)){
-    return TRUE;
-  }
-  return FALSE;
-}
