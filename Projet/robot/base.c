@@ -1,6 +1,7 @@
 #include "base.h"
-#include "sensors.h"
 #include "bt.h"
+#include "move.h"
+#include "sensors.h"
 
 //add the possibility to use the buttons
 static void watchdog(void) {
@@ -41,4 +42,7 @@ void base_init(void) {
   nx_radar_init(SENSORS_RADAR);
   nx_sensors_analog_enable(SENSORS_TOUCH);
   nx_sensors_analog_enable(SENSORS_LIGHT);
+
+  // Initialisation de la partie déplacement.
+  move_init();
 }

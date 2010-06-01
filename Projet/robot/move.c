@@ -4,15 +4,21 @@
 #include "bt.h"
 #include "sensors.h"
 
+static U32 move_tach_right, move_tach_left;
+
 // Make the robot move backward on the given distance in centimeters.
 // Start gradually and stop gradually if stop flag is set.
 static void move_backward(struct robot_struct*, U32, bool);
 // Compute the angle to rotate the wheels for the given distance
 static double move_compute_angle(double);
+// Compute the distance for the given angle.
+static double move_compute_distance(double);
 static void move_escape_wall(struct robot_struct*);
 // Make the robot move forward on the given distance in centimeters.
 // Start gradually and stop gradually if the stop flag is set.
 static void move_forward(struct robot_struct*, U32, bool);
+// Get the difference between current tach count and last recorded.
+static S32 move_get_tach_diff(void);
 // Handle an obstacle by notifying the application and escaping from it.
 static void move_handle_obstacle(struct robot_struct*,
     U8[MAP_X_SIZE][MAP_Y_SIZE]);
@@ -22,8 +28,7 @@ static bool move_retry(void);
 // Make the robot turn by the given angle, in degrees.
 static void move_rotate_angle(struct robot_struct*, S32);
 static void move_stop(struct robot_struct*);
-
-
+static void move_update_position(struct robot_struct*, S32);
 
 // Move in autonomous mode, exploring the field.
 void move_autonomous(struct robot_struct *robot,
@@ -124,6 +129,12 @@ static double move_compute_angle(double distance) {
   return wheel_rotations * 360;
 }
 
+// Compute the distance for the given angle.
+static double move_compute_distance(double angle) {
+  double wheel_rotations = angle / 360;
+  return wheel_rotations * (2 * M_PI * MOVE_WHEEL_DIAMETER);
+}
+
 static void move_escape_wall(struct robot_struct *robot) {
   move_backward(robot, 10, TRUE);
   move_rotate_angle(robot, -90);
@@ -135,22 +146,6 @@ static void move_forward(struct robot_struct *robot, U32 distance,
     bool stop) {
   double wheel_angle = move_compute_angle(distance);
   U32 init_tach[2];
-
-  // Change the position of the robot.
-  switch(robot->orientation) {
-    case BASE_UP:
-      robot->Y += (U8)distance;
-      break;
-    case BASE_DOWN:
-      robot->Y -= (U8)distance;
-      break;
-    case BASE_LEFT:
-      robot->X -= (U8)distance;
-      break;
-    case BASE_RIGHT:
-      robot->X += (U8)distance;
-      break;
-  }
 
   // Get the initial state of the motors.
   init_tach[0] = nx_motors_get_tach_count(MOVE_LEFT_MOTOR);
@@ -201,6 +196,12 @@ static void move_forward(struct robot_struct *robot, U32 distance,
     nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
     nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
   }
+}
+
+static S32 move_get_tach_diff(void) {
+  U32 tach_left = nx_motors_get_tach_count(MOVE_LEFT_MOTOR),
+      tach_right = nx_motors_get_tach_count(MOVE_RIGHT_MOTOR);
+  return (tach_left - move_tach_left + tach_right - move_tach_right) / 2;
 }
 
 //TODO
@@ -274,6 +275,11 @@ static void move_handle_obstacle(struct robot_struct *robot,
   }
 }
 
+void move_init(void) {
+  move_tach_left = nx_motors_get_tach_count(MOVE_LEFT_MOTOR);
+  move_tach_right = nx_motors_get_tach_count(MOVE_RIGHT_MOTOR);
+}
+
 static U8 move_log(U8 a) {
   U8 count = 0;
   for(; a > 1; count++)
@@ -327,6 +333,31 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
 }
 
 static void move_stop(struct robot_struct *robot) {
+  S32 tach_diff, dist_diff;
+
   nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
   nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
+
+  // Compute the new position.
+  tach_diff = move_get_tach_diff();
+  dist_diff = move_compute_distance(tach_diff);
+  move_update_position(robot, dist_diff);
+}
+
+static void move_update_position(struct robot_struct *robot, S32 diff) {
+  // Change the position of the robot.
+  switch(robot->orientation) {
+    case BASE_UP:
+      robot->Y += (U8)diff;
+      break;
+    case BASE_DOWN:
+      robot->Y -= (U8)diff;
+      break;
+    case BASE_LEFT:
+      robot->X -= (U8)diff;
+      break;
+    case BASE_RIGHT:
+      robot->X += (U8)diff;
+      break;
+  }
 }

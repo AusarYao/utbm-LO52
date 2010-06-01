@@ -29,5 +29,6 @@
 void move_autonomous(struct robot_struct*, U8[MAP_X_SIZE][MAP_Y_SIZE]);
 // Move following the instructions given by the application.
 void move_guided(struct robot_struct* ,struct robot_struct*);
-
+// Initialisation function.
+void move_init(void);
 #endif
