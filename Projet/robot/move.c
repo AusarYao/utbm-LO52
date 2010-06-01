@@ -24,11 +24,12 @@ static void move_handle_obstacle(struct robot_struct*,
     U8[MAP_X_SIZE][MAP_Y_SIZE]);
 static U8 move_log(U8);
 static U8 move_pow(U8, U8);
+static void move_refresh_tach(void);
 static bool move_retry(void);
 // Make the robot turn by the given angle, in degrees.
 static void move_rotate_angle(struct robot_struct*, S32);
 static void move_stop(struct robot_struct*);
-static void move_update_position(struct robot_struct*, S32);
+static void move_update_position(struct robot_struct*);
 
 // Move in autonomous mode, exploring the field.
 void move_autonomous(struct robot_struct *robot,
@@ -291,6 +292,11 @@ static U8 move_pow(U8 a, U8 b) {
   return a << (b-1);
 }
 
+static void move_refresh_tach(void) {
+  move_tach_left = nx_motors_get_tach_count(MOVE_LEFT_MOTOR);
+  move_tach_right = nx_motors_get_tach_count(MOVE_RIGHT_MOTOR);
+}
+
 //TODO
 static bool move_retry(void) {
   return TRUE;
@@ -333,31 +339,34 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
 }
 
 static void move_stop(struct robot_struct *robot) {
-  S32 tach_diff, dist_diff;
 
   nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
   nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
 
   // Compute the new position.
-  tach_diff = move_get_tach_diff();
-  dist_diff = move_compute_distance(tach_diff);
-  move_update_position(robot, dist_diff);
+  move_update_position(robot);
 }
 
-static void move_update_position(struct robot_struct *robot, S32 diff) {
+static void move_update_position(struct robot_struct *robot) {
+  S32 tach_diff, dist_diff;
+
+  tach_diff = move_get_tach_diff();
+  move_refresh_tach();
+  dist_diff = move_compute_distance(tach_diff);
+
   // Change the position of the robot.
   switch(robot->orientation) {
     case BASE_UP:
-      robot->Y += (U8)diff;
+      robot->Y += (U8)dist_diff;
       break;
     case BASE_DOWN:
-      robot->Y -= (U8)diff;
+      robot->Y -= (U8)dist_diff;
       break;
     case BASE_LEFT:
-      robot->X -= (U8)diff;
+      robot->X -= (U8)dist_diff;
       break;
     case BASE_RIGHT:
-      robot->X += (U8)diff;
+      robot->X += (U8)dist_diff;
       break;
   }
 }
