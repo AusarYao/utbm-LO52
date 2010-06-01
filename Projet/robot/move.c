@@ -36,33 +36,12 @@ static void move_rotate_angle(struct robot_struct*, S32);
 static void move_stop(struct robot_struct*);
 static void move_update_position(struct robot_struct*);
 
-//to get the coordinates of an adjacent square
+//to get the mask of an adjacent Wall
 static void move_adjacent_square(struct robot_struct *robot, U8 direction,
     U8 *Wall){
-  if((robot->orientation==1 && direction==2)|| \
-     (robot->orientation==2 && direction==1)|| \
-     (robot->orientation==4 && direction==8)|| \
-     (robot->orientation==8 && direction==4)){
-    *Wall=BASE_RIGHT;
-  }
-  if((robot->orientation==1 && direction==8)|| \
-     (robot->orientation==2 && direction==4)|| \
-     (robot->orientation==4 && direction==2)|| \
-     (robot->orientation==8 && direction==1)){
-    *Wall=BASE_LEFT;
-  }
-  if((robot->orientation==1 && direction==1)|| \
-     (robot->orientation==2 && direction==8)|| \
-     (robot->orientation==4 && direction==4)|| \
-     (robot->orientation==8 && direction==2)){
-    *Wall=BASE_UP;
-  }
-  if((robot->orientation==1 && direction==4)|| \
-     (robot->orientation==2 && direction==2)|| \
-     (robot->orientation==4 && direction==1)|| \
-     (robot->orientation==8 && direction==8)){
-    *Wall=BASE_DOWN;
-  }
+
+  int power = (move_log(direction) + move_log(robot->orientation)) % 4;
+  *Wall = move_pow(2, power);
 }
 
 // Move in autonomous mode, exploring the field.
@@ -313,7 +292,7 @@ static bool move_no_wall_to_go(struct robot_struct *robot, U8 direction,
   move_adjacent_square(robot, direction, &Wall);
 
   //if there is no wall to go on the next case
-  if(!(map[robot->X][robot->Y] & Wall)){
+  if(!(map[robot->X][robot->Y] & Wall)) {
     return TRUE;
   }
   return FALSE;
