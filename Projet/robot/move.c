@@ -9,7 +9,7 @@ static U32 move_tach_right, move_tach_left;
 //add the walls on the right to the map
 static void move_add_wall_to_map(struct robot_struct*,
     U8[MAP_X_SIZE][MAP_Y_SIZE], U8);
-// Return the coordinates of an adjacent square
+// Return the mask of an adjacent wall
 static U8 move_adjacent_square(struct robot_struct*, U8);
 // Make the robot move backward on the given distance in millimeters.
 // Start gradually and stop gradually if stop flag is set.
@@ -22,6 +22,7 @@ static void move_escape_wall(struct robot_struct*);
 // Make the robot move forward on the given distance in millimeters.
 // Start gradually and stop gradually if the stop flag is set.
 static void move_forward(struct robot_struct*, U32, bool);
+static void move_get_coordinates(struct robot_struct*, U8, U8*, U8*);
 // Get the difference between current tach count and last recorded.
 static S32 move_get_tach_diff(void);
 // Handle an obstacle by notifying the application and escaping from it.
@@ -36,15 +37,19 @@ static void move_refresh_tach(void);
 static bool move_retry(void);
 // Make the robot turn by the given angle, in degrees.
 static void move_rotate_angle(struct robot_struct*, S32);
+//Return TRUE if the adjacent square has never been visited, FALSE otherwise
+static bool move_square_unknown(struct robot_struct*,
+    U8[MAP_X_SIZE][MAP_Y_SIZE], U8);
 static void move_stop(struct robot_struct*);
 static void move_update_position(struct robot_struct*);
+
+
 
 //add the walls on the right/top to the map
 static void move_add_wall_to_map(struct robot_struct* robot,
     U8 map[MAP_X_SIZE][MAP_Y_SIZE], U8 side) {
   U8 X_adjacent_square;
   U8 Y_adjacent_square;
-  U8 mask_adjacent_wall;
   int power;
 
   power = (move_log(robot->orientation) + move_log(side)) % 4;
@@ -54,29 +59,13 @@ static void move_add_wall_to_map(struct robot_struct* robot,
         ((move_pow(2, power) == BASE_LEFT) && (robot->X == 0)) || \
         ((move_pow(2, power) == BASE_DOWN) && (robot->Y == MAP_Y_SIZE-1)) || \
         ((move_pow(2, power) == BASE_UP) && (robot->Y == 0)))) {
-    X_adjacent_square = robot->X;
-    Y_adjacent_square = robot->Y;
-
-    //get the mask of the square on the right of the bot
-    mask_adjacent_wall=move_adjacent_square(robot, side);
-    switch(mask_adjacent_wall) {
-      case BASE_RIGHT:
-        X_adjacent_square += 1;
-      break;
-      case BASE_DOWN:
-        Y_adjacent_square -= 1;
-      break;
-      case BASE_LEFT:
-        X_adjacent_square -= 1;
-      break;
-      case BASE_UP:
-        Y_adjacent_square += 1;
-      break;
-    }
+    X_adjacent_square = robot->X / 25;
+    Y_adjacent_square = robot->Y / 25;
+    move_get_coordinates(robot, side, &X_adjacent_square, &Y_adjacent_square);
     power = (power - 2) % 4;
     map[X_adjacent_square][Y_adjacent_square] |= move_pow(2, power);
   }
-  
+
 }
 
 //to get the mask of an adjacent Wall
@@ -102,8 +91,26 @@ void move_autonomous(struct robot_struct *robot,
   else if (sensors_contact()) {
     move_handle_obstacle(robot, map);
   }
-  else {
+  else if(move_square_unknown(robot, map, BASE_UP) && \
+         (move_no_wall_to_go(robot, BASE_UP, map))){
     move_forward(robot, MAP_SUB_SIZE, FALSE);
+  }
+  else if(move_square_unknown(robot, map, BASE_RIGHT) && \
+         (move_no_wall_to_go(robot, BASE_RIGHT, map))){
+    move_rotate_angle(robot, 90);
+    move_forward(robot, MAP_SUB_SIZE, FALSE);
+  }
+  else if(move_square_unknown(robot, map, BASE_LEFT) && \
+         (move_no_wall_to_go(robot, BASE_LEFT, map))){
+    move_rotate_angle(robot, -90);
+    move_forward(robot, MAP_SUB_SIZE, FALSE);
+  }
+  else if(move_no_wall_to_go(robot, BASE_UP, map)){
+    move_forward(robot, MAP_SUB_SIZE, FALSE);
+  }
+  else {
+    move_rotate_angle(robot, 180);
+    move_backward(robot, MAP_SUB_SIZE, FALSE);
   }
 }
 
@@ -258,6 +265,26 @@ static void move_forward(struct robot_struct *robot, U32 distance,
   }
 }
 
+static void move_get_coordinates(struct robot_struct *robot, U8 side,
+    U8 *X_adjacent_square, U8 *Y_adjacent_square) {
+ //get the mask of the square on the right of the bot
+  U8 mask_adjacent_wall=move_adjacent_square(robot, side);
+  switch(mask_adjacent_wall) {
+    case BASE_RIGHT:
+      *X_adjacent_square += 1;
+    break;
+    case BASE_DOWN:
+      *Y_adjacent_square -= 1;
+    break;
+    case BASE_LEFT:
+      *X_adjacent_square -= 1;
+    break;
+    case BASE_UP:
+      *Y_adjacent_square += 1;
+    break;
+  }
+}
+
 static S32 move_get_tach_diff(void) {
   U32 tach_left = nx_motors_get_tach_count(MOVE_LEFT_MOTOR),
       tach_right = nx_motors_get_tach_count(MOVE_RIGHT_MOTOR);
@@ -392,6 +419,17 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
   robot->orientation = move_pow(2, power);
 
   move_refresh_tach();
+}
+
+//Return TRUE if the adjacent square has never been visited, FALSE otherwise
+static bool move_square_unknown(struct robot_struct *robot,
+  U8 map[MAP_X_SIZE][MAP_Y_SIZE], U8 side) {
+  U8 X_adjacent_square = robot->X / 25;
+  U8 Y_adjacent_square = robot->Y / 25;
+  move_get_coordinates(robot, side, &X_adjacent_square, &Y_adjacent_square);
+  if(map[X_adjacent_square][Y_adjacent_square] & side)
+    return FALSE;
+  return TRUE;
 }
 
 static void move_stop(struct robot_struct *robot) {
