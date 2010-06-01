@@ -212,49 +212,31 @@ static S32 move_get_tach_diff(void) {
 // Move following the instructions given by the application.
 void move_guided(struct robot_struct *current_robot,\
                  struct robot_struct *next_robot) {
-int orientation=0;
 
-  if(current_robot->orientation==BASE_RIGHT){
-    orientation=1;
-  }
+  U8 orientation = move_log(current_robot->orientation);
 
-  if(current_robot->orientation==BASE_DOWN){
-    orientation=2;
-  }
-
-  if(current_robot->orientation==BASE_LEFT){
-    orientation=3;
-  }
-//i can't use log undefined reference to `log'
-//  int orientation=log((double)current_robot->orientation)/log(2);
-
-  //we have to move on X
-  if(current_robot->X!=next_robot->X){
-    //we have to go on the left
-    if(current_robot->X==next_robot->X+1){
-      move_rotate_angle(current_robot,-(orientation-1)*90);
+  // We have to move on X
+  if(current_robot->X != next_robot->X) {
+    // We have to go on the left
+    if(current_robot->X == next_robot->X + 1) {
+      move_rotate_angle(current_robot, -(orientation - 1) * 90);
     }
     //we have to go on the right
-    else
-    {
-      move_rotate_angle(current_robot,-(orientation+1)*90);
+    else {
+      move_rotate_angle(current_robot, -(orientation + 1) * 90);
     }
   }
-  else
-  {
+  else {
     //we have to go down
-    if(current_robot->Y==next_robot->Y+1){
-      move_rotate_angle(current_robot,-orientation*90);
+    if(current_robot->Y == (next_robot->Y + 1)) {
+      move_rotate_angle(current_robot, -orientation * 90);
     }
     //we have to go up
-    else
-    {
-      move_rotate_angle(current_robot,-(orientation-2)*90);
+    else {
+      move_rotate_angle(current_robot, -(orientation - 2) * 90);
     }
-
   }
-
-  move_forward(current_robot,25,TRUE);
+  move_forward(current_robot, 25, TRUE);
 }
 
 
