@@ -5,7 +5,7 @@
 #include "sensors.h"
 
 S8 main(void) {
-  struct robot_struct robot = {MODE_AUTONOMOUS, 0, 0, 0};
+  struct robot_struct robot = {MODE_AUTONOMOUS, 0, 0, BASE_UP};
   U8 map[MAP_X_SIZE][MAP_Y_SIZE];
 
   struct_map_init(map);
