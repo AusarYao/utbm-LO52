@@ -54,11 +54,13 @@ static void move_add_wall_to_map(struct robot_struct* robot,
 
   power = (move_log(robot->orientation) + move_log(side)) % 4;
   map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] |= move_pow(2, power);
-  //if the square on the right/top is in the map
-  
+
   X_adjacent_square = robot->X / MAP_SUB_SIZE;
   Y_adjacent_square = robot->Y / MAP_SUB_SIZE;
-  if(move_get_coordinates(robot, side, &X_adjacent_square, &Y_adjacent_square)) {
+
+  //if the square on the side is in the map
+  if(move_get_coordinates(robot, side, &X_adjacent_square,\
+                                       &Y_adjacent_square)) {
     power = (power - 2) % 4;
     map[X_adjacent_square][Y_adjacent_square] |= move_pow(2, power);
   }
@@ -88,26 +90,30 @@ void move_autonomous(struct robot_struct *robot,
   else if (sensors_contact()) {
     move_handle_obstacle(robot, map);
   }
+  //if the up case has never been visited and there is no walls
   else if(move_square_unknown(robot, map, BASE_UP) && \
          (move_no_wall_to_go(robot, BASE_UP, map))){
     move_forward(robot, MAP_SUB_SIZE, TRUE);
   }
+  //if the right case has never been visited and there is no walls
   else if(move_square_unknown(robot, map, BASE_RIGHT) && \
          (move_no_wall_to_go(robot, BASE_RIGHT, map))){
     move_rotate_angle(robot, 90);
     move_forward(robot, MAP_SUB_SIZE, TRUE);
   }
+  //if the left case has never been visited and there is no walls
   else if(move_square_unknown(robot, map, BASE_LEFT) && \
          (move_no_wall_to_go(robot, BASE_LEFT, map))){
     move_rotate_angle(robot, -90);
     move_forward(robot, MAP_SUB_SIZE, TRUE);
   }
+  //if there is no walls to go straight on
   else if(move_no_wall_to_go(robot, BASE_UP, map)){
     move_forward(robot, MAP_SUB_SIZE, TRUE);
   }
   else {
     move_rotate_angle(robot, 180);
-    move_backward(robot, MAP_SUB_SIZE, TRUE);
+    move_forward(robot, MAP_SUB_SIZE, TRUE);
   }
 }
 
@@ -287,7 +293,7 @@ static bool move_get_coordinates(struct robot_struct *robot, U8 side,
         *Y_adjacent_square += 1;
       break;
     }
-  return TRUE;
+    return TRUE;
   }
   return FALSE;
 }
@@ -433,6 +439,7 @@ static bool move_square_unknown(struct robot_struct *robot,
   U8 X_adjacent_square = robot->X / MAP_SUB_SIZE;
   U8 Y_adjacent_square = robot->Y / MAP_SUB_SIZE;
   if(move_get_coordinates(robot, side, &X_adjacent_square, &Y_adjacent_square))
+    //if the adjacent case has already been visited
     if(map[X_adjacent_square][Y_adjacent_square] & BASE_VISITED)
       return FALSE;
   return TRUE;
