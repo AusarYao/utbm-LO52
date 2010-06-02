@@ -12,9 +12,9 @@ void struct_map_init(U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
       if (i == (MAP_X_SIZE - 1))
         map[i][j] += BASE_RIGHT;
       if (!j)
-        map[i][j] += BASE_UP;
-      if (j == (MAP_Y_SIZE - 1))
         map[i][j] += BASE_DOWN;
+      if (j == (MAP_Y_SIZE - 1))
+        map[i][j] += BASE_UP;
     }
   }
 }
