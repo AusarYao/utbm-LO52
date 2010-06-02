@@ -22,7 +22,7 @@ static void move_escape_wall(struct robot_struct*);
 // Make the robot move forward on the given distance in millimeters.
 // Start gradually and stop gradually if the stop flag is set.
 static void move_forward(struct robot_struct*, U32, bool);
-static void move_get_coordinates(struct robot_struct*, U8, U8*, U8*);
+static bool move_get_coordinates(struct robot_struct*, U8, U8*, U8*);
 // Get the difference between current tach count and last recorded.
 static S32 move_get_tach_diff(void);
 // Handle an obstacle by notifying the application and escaping from it.
@@ -55,13 +55,10 @@ static void move_add_wall_to_map(struct robot_struct* robot,
   power = (move_log(robot->orientation) + move_log(side)) % 4;
   map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] |= move_pow(2, power);
   //if the square on the right/top is in the map
-  if(!(((move_pow(2, power) == BASE_RIGHT) && (robot->X == MAP_X_SIZE-1)) || \
-        ((move_pow(2, power) == BASE_LEFT) && (robot->X == 0)) || \
-        ((move_pow(2, power) == BASE_DOWN) && (robot->Y == MAP_Y_SIZE-1)) || \
-        ((move_pow(2, power) == BASE_UP) && (robot->Y == 0)))) {
-    X_adjacent_square = robot->X / MAP_SUB_SIZE;
-    Y_adjacent_square = robot->Y / MAP_SUB_SIZE;
-    move_get_coordinates(robot, side, &X_adjacent_square, &Y_adjacent_square);
+  
+  X_adjacent_square = robot->X / MAP_SUB_SIZE;
+  Y_adjacent_square = robot->Y / MAP_SUB_SIZE;
+  if(move_get_coordinates(robot, side, &X_adjacent_square, &Y_adjacent_square)) {
     power = (power - 2) % 4;
     map[X_adjacent_square][Y_adjacent_square] |= move_pow(2, power);
   }
@@ -265,24 +262,34 @@ static void move_forward(struct robot_struct *robot, U32 distance,
   }
 }
 
-static void move_get_coordinates(struct robot_struct *robot, U8 side,
+static bool move_get_coordinates(struct robot_struct *robot, U8 side,
     U8 *X_adjacent_square, U8 *Y_adjacent_square) {
  //get the mask of the square on the right of the bot
   U8 mask_adjacent_wall=move_adjacent_square(robot, side);
-  switch(mask_adjacent_wall) {
-    case BASE_RIGHT:
-      *X_adjacent_square += 1;
-    break;
-    case BASE_DOWN:
-      *Y_adjacent_square -= 1;
-    break;
-    case BASE_LEFT:
-      *X_adjacent_square -= 1;
-    break;
-    case BASE_UP:
-      *Y_adjacent_square += 1;
-    break;
+  int power = (move_log(robot->orientation) + move_log(side)) % 4;
+
+  if(!(((move_pow(2, power) == BASE_RIGHT) && (robot->X == MAP_X_SIZE-1)) || \
+          ((move_pow(2, power) == BASE_LEFT) && (robot->X == 0)) || \
+          ((move_pow(2, power) == BASE_DOWN) && (robot->Y == MAP_Y_SIZE-1)) || \
+          ((move_pow(2, power) == BASE_UP) && (robot->Y == 0)))) {
+
+    switch(mask_adjacent_wall) {
+      case BASE_RIGHT:
+        *X_adjacent_square += 1;
+      break;
+      case BASE_DOWN:
+        *Y_adjacent_square -= 1;
+      break;
+      case BASE_LEFT:
+        *X_adjacent_square -= 1;
+      break;
+      case BASE_UP:
+        *Y_adjacent_square += 1;
+      break;
+    }
+  return TRUE;
   }
+  return FALSE;
 }
 
 static S32 move_get_tach_diff(void) {
@@ -361,10 +368,9 @@ static bool move_no_wall_to_go(struct robot_struct *robot, U8 direction,
   U8 Wall = move_adjacent_square(robot, direction);
 
   //if there is no wall to go on the next case
-  if(!(map[robot->X][robot->Y] & Wall)) {
-    return TRUE;
-  }
-  return FALSE;
+  if(map[robot->X / MAP_SUB_SIZE ][robot->Y / MAP_SUB_SIZE] & direction)
+    return FALSE;
+  return TRUE;
 }
 
 static U8 move_pow(U8 a, U8 b) {
@@ -426,9 +432,9 @@ static bool move_square_unknown(struct robot_struct *robot,
   U8 map[MAP_X_SIZE][MAP_Y_SIZE], U8 side) {
   U8 X_adjacent_square = robot->X / MAP_SUB_SIZE;
   U8 Y_adjacent_square = robot->Y / MAP_SUB_SIZE;
-  move_get_coordinates(robot, side, &X_adjacent_square, &Y_adjacent_square);
-  if(map[X_adjacent_square][Y_adjacent_square] & side)
-    return FALSE;
+  if(move_get_coordinates(robot, side, &X_adjacent_square, &Y_adjacent_square))
+    if(map[X_adjacent_square][Y_adjacent_square] & BASE_VISITED)
+      return FALSE;
   return TRUE;
 }
 
