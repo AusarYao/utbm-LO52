@@ -351,7 +351,7 @@ void move_init(void) {
 static U8 move_log(U8 a) {
   U8 count = 0;
   for(; a > 1; count++)
-    a >> 1;
+    a >>= 1;
   return count;
 }
 
