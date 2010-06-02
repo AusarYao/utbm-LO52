@@ -59,8 +59,8 @@ static void move_add_wall_to_map(struct robot_struct* robot,
         ((move_pow(2, power) == BASE_LEFT) && (robot->X == 0)) || \
         ((move_pow(2, power) == BASE_DOWN) && (robot->Y == MAP_Y_SIZE-1)) || \
         ((move_pow(2, power) == BASE_UP) && (robot->Y == 0)))) {
-    X_adjacent_square = robot->X / 25;
-    Y_adjacent_square = robot->Y / 25;
+    X_adjacent_square = robot->X / MAP_SUB_SIZE;
+    Y_adjacent_square = robot->Y / MAP_SUB_SIZE;
     move_get_coordinates(robot, side, &X_adjacent_square, &Y_adjacent_square);
     power = (power - 2) % 4;
     map[X_adjacent_square][Y_adjacent_square] |= move_pow(2, power);
@@ -86,31 +86,31 @@ void move_autonomous(struct robot_struct *robot,
     move_stop(robot);
     nx_systick_wait_ms(MOVE_FLAG_FREEZE * 1000);
     move_forward(robot, BASE_FLAG_SIZE, FALSE);
-    map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] += BASE_FLAG;
+    map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] |= BASE_FLAG;
   }
   else if (sensors_contact()) {
     move_handle_obstacle(robot, map);
   }
   else if(move_square_unknown(robot, map, BASE_UP) && \
          (move_no_wall_to_go(robot, BASE_UP, map))){
-    move_forward(robot, MAP_SUB_SIZE, FALSE);
+    move_forward(robot, MAP_SUB_SIZE, TRUE);
   }
   else if(move_square_unknown(robot, map, BASE_RIGHT) && \
          (move_no_wall_to_go(robot, BASE_RIGHT, map))){
     move_rotate_angle(robot, 90);
-    move_forward(robot, MAP_SUB_SIZE, FALSE);
+    move_forward(robot, MAP_SUB_SIZE, TRUE);
   }
   else if(move_square_unknown(robot, map, BASE_LEFT) && \
          (move_no_wall_to_go(robot, BASE_LEFT, map))){
     move_rotate_angle(robot, -90);
-    move_forward(robot, MAP_SUB_SIZE, FALSE);
+    move_forward(robot, MAP_SUB_SIZE, TRUE);
   }
   else if(move_no_wall_to_go(robot, BASE_UP, map)){
-    move_forward(robot, MAP_SUB_SIZE, FALSE);
+    move_forward(robot, MAP_SUB_SIZE, TRUE);
   }
   else {
     move_rotate_angle(robot, 180);
-    move_backward(robot, MAP_SUB_SIZE, FALSE);
+    move_backward(robot, MAP_SUB_SIZE, TRUE);
   }
 }
 
@@ -328,7 +328,7 @@ static void move_handle_obstacle(struct robot_struct *robot,
   struct bt_message msg = {BT_MSG_LST_WALL, robot->X, robot->Y,
                     robot->orientation};
   bt_msg_send(&msg);
-  map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] += \
+  map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] |= \
       robot->orientation;
 
   if(move_retry()) {
@@ -338,7 +338,7 @@ static void move_handle_obstacle(struct robot_struct *robot,
     struct bt_message abort_msg = {BT_MSG_ABORT_LST, robot->X, robot->Y,
                       robot->orientation};
     bt_msg_send(&abort_msg);
-    map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] -= \
+    map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] ^= \
         robot->orientation;
   }
 }
@@ -424,8 +424,8 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
 //Return TRUE if the adjacent square has never been visited, FALSE otherwise
 static bool move_square_unknown(struct robot_struct *robot,
   U8 map[MAP_X_SIZE][MAP_Y_SIZE], U8 side) {
-  U8 X_adjacent_square = robot->X / 25;
-  U8 Y_adjacent_square = robot->Y / 25;
+  U8 X_adjacent_square = robot->X / MAP_SUB_SIZE;
+  U8 Y_adjacent_square = robot->Y / MAP_SUB_SIZE;
   move_get_coordinates(robot, side, &X_adjacent_square, &Y_adjacent_square);
   if(map[X_adjacent_square][Y_adjacent_square] & side)
     return FALSE;
