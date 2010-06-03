@@ -99,39 +99,41 @@ class MyCanvas(object):
         self.game.m
         x = 0
         y = 0
+        i = 0
         for x in xrange(self.game.m.mapw):
             for y in xrange(self.game.m.maph):
+                i = self.game.m.maph - y -1
                 #Print the map with robot and flags
                 if self.game.r.x == x and self.game.r.y == y:
-                    self.draw.drawRectangle(Area(Coord(x,y),Coord(x+1,y+1)), "red",True)
+                    self.draw.drawRectangle(Area(Coord(x,i),Coord(x+1,i+1)), "red",True)
                 elif self.game.f.search_flag(x,y):
                     if self.game.f.mapdata[(x,y)]:
-                        self.draw.drawRectangle(Area(Coord(x,y),Coord(x+1,y+1)), "green",True)
+                        self.draw.drawRectangle(Area(Coord(x,i),Coord(x+1,i+1)), "green",True)
                     else:
-                        self.draw.drawRectangle(Area(Coord(x,y),Coord(x+1,y+1)), "orange",True)
+                        self.draw.drawRectangle(Area(Coord(x,i),Coord(x+1,i+1)), "orange",True)
                 else:
-                    self.draw.drawRectangle(Area(Coord(x,y),Coord(x+1,y+1)), "white",True)
+                    self.draw.drawRectangle(Area(Coord(x,i),Coord(x+1,i+1)), "white",True)
 
                 #Print the wall
                 if self.game.m.is_wall_here(x,y,1): #Wall on top
-                    self.draw.drawLine(Coord(x,y),Coord(x+1,y),3)
+                    self.draw.drawLine(Coord(x,i),Coord(x+1,i),3)
                 else:
-                    self.draw.drawLine(Coord(x,y),Coord(x+1,y))
+                    self.draw.drawLine(Coord(x,i),Coord(x+1,i))
 
                 if self.game.m.is_wall_here(x,y,4): #Wall on bottom
-                    self.draw.drawLine(Coord(x,y+1),Coord(x+1,y+1),3)
+                    self.draw.drawLine(Coord(x,i+1),Coord(x+1,i+1),3)
                 else:
-                    self.draw.drawLine(Coord(x,y+1),Coord(x+1,y+1))
+                    self.draw.drawLine(Coord(x,i+1),Coord(x+1,i+1))
 
                 if self.game.m.is_wall_here(x,y,2): #Wall on right
-                    self.draw.drawLine(Coord(x+1,y),Coord(x+1,y+1),3)
+                    self.draw.drawLine(Coord(x+1,i),Coord(x+1,i+1),3)
                 else:
-                    self.draw.drawLine(Coord(x+1,y),Coord(x+1,y+1))
+                    self.draw.drawLine(Coord(x+1,i),Coord(x+1,i+1))
 
                 if self.game.m.is_wall_here(x,y,8): #Wall on left
-                    self.draw.drawLine(Coord(x,y),Coord(x,y+1),3)
+                    self.draw.drawLine(Coord(x,i),Coord(x,i+1),3)
                 else:
-                    self.draw.drawLine(Coord(x,y),Coord(x,y+1))
+                    self.draw.drawLine(Coord(x,i),Coord(x,i+1))
 
     def update(self, game):
         self.game = game

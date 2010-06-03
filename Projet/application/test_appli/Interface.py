@@ -156,6 +156,10 @@ class Interface(object):
             #SET_MODE(EXPLORATION)
             self.mode = 1
 
+    def on_btnInit_clicked(self, widget):
+        self.log.add("Map initialization (flag no taken)")
+        self.game.f.init_flag()
+
     def on_btnRobot_clicked(self, widget):
         x = self.robot_x.get_text()
         y = self.robot_y.get_text()

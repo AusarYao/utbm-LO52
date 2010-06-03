@@ -34,7 +34,7 @@ class BT(object):
         """Recept a string data"""
         data = ''
         while data == '':
-#            data=self.sock.recv(1024)
+#            data=self.sock.recv(4)
             data = '\x02\x01\x01\x02'
         l =struct.unpack('BBBB',data)
 #       print "Waiting message"
@@ -44,8 +44,7 @@ class BT(object):
 
 
     def ack(self): ######################### N'AFFICHE PAS DATA
-        data = 5
-        data = struct.pack('B',data)
+        data = struct.pack('BBBB',98,98,98,98)
 #        self.sock.send(data)
 #        print "Sending ACK"
         time.sleep(1)

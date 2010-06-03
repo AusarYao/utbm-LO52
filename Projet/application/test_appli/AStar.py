@@ -156,11 +156,11 @@ class MapHandler:
             result.append(n)
             
         if Tools.search_in_liste(list_wall,4):
-            n = self._handleNode(cl.x,cl.y+1,curnode,dl.x,dl.y)
+            n = self._handleNode(cl.x,cl.y-1,curnode,dl.x,dl.y)
             result.append(n)
             
         if Tools.search_in_liste(list_wall,1):
-            n = self._handleNode(cl.x,cl.y-1,curnode,dl.x,dl.y)
+            n = self._handleNode(cl.x,cl.y+1,curnode,dl.x,dl.y)
             result.append(n)
 
         return result

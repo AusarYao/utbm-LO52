@@ -18,11 +18,11 @@ class MapData(object):
                 if x == 0:
                     z += 8
                 if y == self.maph-1:
-                    z += 4
+                    z += 1
                 if x == self.mapw-1:
                     z += 2
                 if y == 0:
-                    z += 1
+                    z += 4
                 self.mapdata[(x,y)] = {'wall' : z}
 
 
