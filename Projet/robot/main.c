@@ -3,6 +3,7 @@
 #include "bt.h"
 #include "move.h"
 #include "sensors.h"
+#include "base/drivers/sound.h"
 
 S8 main(void) {
   struct robot_struct robot = {MODE_AUTONOMOUS, 6, 3, BASE_UP};
@@ -11,10 +12,13 @@ S8 main(void) {
   struct_map_init(map);
   base_init();
 
-	while(nx_avr_get_button()!=BUTTON_OK)
-	{
-		nx_systick_wait_ms(10);
-	}
+  if (!nx_bt_stream_opened() || nx_bt_connection_pending())
+      bt_wait_connection();
+
+  while(nx_avr_get_button()!=BUTTON_OK)
+  {
+    nx_systick_wait_ms(10);
+  }
 
   while(1) {
     bt_check_connect(&robot);

@@ -1,6 +1,10 @@
 #include "bt.h"
 #include "move.h"
 
+static int btp, bth;
+
+static void bt_close(void);
+
 // Bluetooth initialisation. Return port handle or -1 in case of errors.
 int bt_init(void) {
   nx_bt_init();
@@ -8,6 +12,42 @@ int bt_init(void) {
   nx_bt_set_discoverable(TRUE);
 
   return nx_bt_open_port();
+}
+
+static void bt_close(void) {
+  if(nx_bt_stream_opened())
+    nx_bt_stream_close();
+  if(bth != -1) {
+    nx_bt_close_connection(bth);
+    bth = -1;
+  }
+}
+
+//close the bluetooth connection
+void bt_die(void) {
+  bt_close();
+  if(btp != -1) {
+    nx_bt_close_port(btp);
+    btp = -1;
+  }
+}
+
+//wait for a connection
+void bt_wait_connection(void) {
+  bt_close();
+  nx_display_string("bluetooth ready\n");
+  while (!nx_bt_stream_opened()) {
+    if (nx_bt_has_dev_waiting_for_pin())
+      nx_bt_send_pin(BT_PIN);
+    else if (nx_bt_connection_pending()) {
+      nx_bt_accept_connection(TRUE);
+      while ((bth = nx_bt_connection_established()) == -1)
+        nx_systick_wait_ms(100);
+      nx_bt_stream_open(bth);
+      nx_display_string("connected\n");
+    }
+    nx_systick_wait_ms(100);
+  }
 }
 
 //TODO
@@ -37,7 +77,7 @@ void bt_check_connect(struct robot_struct *robot) {
       break;
       // Last captured flag position request.
       case BT_MSG_CPT_FLAG:
-      
+      //TODO
       break;
       // Position recalibration request.
       case BT_MSG_RECAL_POS:

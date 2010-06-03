@@ -8,7 +8,7 @@
 
 // BlueTooth device name
 #define BT_DEVICE_NAME      "NXT-GROUPE-E"
-
+#define BT_PIN              1234
 // Bluetooth message size, in bytes.
 #define BT_MSG_SIZE         4
 
@@ -42,8 +42,14 @@ struct bt_message {
 // Bluetooth initialisation
 int bt_init(void);
 
+//close bluetooth connection 
+void bt_die(void);
+
 // Check if the connection is not down.
 bool bt_is_active(void);
+
+//Wait for a connection
+void bt_wait_connection(void);
 
 // Process the pending messages on the Bluetooth stack.
 void bt_check_connect(struct robot_struct*);
