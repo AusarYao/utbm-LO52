@@ -8,8 +8,8 @@
 
 // Constants
 #define SENSORS_TOUCH     0
-#define SENSORS_LIGHT     1
-#define SENSORS_RADAR     2
+#define SENSORS_RADAR     1
+#define SENSORS_LIGHT     2
 
 #define SENSORS_TOUCH_THRESHOLD   500
 #define SENSORS_RADAR_THRESHOLD   20
