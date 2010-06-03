@@ -23,13 +23,14 @@
 #define BASE_FLAG_SIZE        15
 
 // Robot's different orientations.
-#define BASE_UP             0b000001
-#define BASE_RIGHT          0b000010
-#define BASE_DOWN           0b000100
-#define BASE_LEFT           0b001000
+#define BASE_UP             0b0000001
+#define BASE_RIGHT          0b0000010
+#define BASE_DOWN           0b0000100
+#define BASE_LEFT           0b0001000
 
-#define BASE_FLAG           0b010000
-#define BASE_VISITED        0b100000
+#define BASE_FLAG           0b0010000
+#define BASE_FLAG_CAPTURED  0b0100000
+#define BASE_VISITED        0b1000000
 
 #include "structures.h"
 
