@@ -17,12 +17,10 @@
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <child>
           <object class="GtkDrawingArea" id="canvas">
             <property name="height_request">300</property>
             <property name="visible">True</property>
-            <signal name="expose_event" handler="on_canvas_expose_event"/>
           </object>
           <packing>
             <property name="position">0</property>
@@ -45,12 +43,10 @@
               <object class="GtkVBox" id="vbox4">
                 <property name="width_request">200</property>
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkVButtonBox" id="vbuttonbox1">
                     <property name="height_request">145</property>
                     <property name="visible">True</property>
-                    <property name="orientation">vertical</property>
                     <property name="spacing">10</property>
                     <property name="layout_style">center</property>
                     <child>
@@ -98,7 +94,6 @@
                   <object class="GtkVButtonBox" id="vbuttonbox3">
                     <property name="height_request">145</property>
                     <property name="visible">True</property>
-                    <property name="orientation">vertical</property>
                     <property name="spacing">10</property>
                     <property name="layout_style">center</property>
                     <child>
@@ -139,7 +134,6 @@
             <child>
               <object class="GtkVSeparator" id="vseparator1">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -150,12 +144,10 @@
               <object class="GtkVBox" id="vbox3">
                 <property name="width_request">200</property>
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <property name="spacing">5</property>
                 <child>
                   <object class="GtkVButtonBox" id="vbuttonbox2">
                     <property name="visible">True</property>
-                    <property name="orientation">vertical</property>
                     <property name="spacing">10</property>
                     <property name="layout_style">center</property>
                     <child>
@@ -203,7 +195,6 @@ Mode guidage : send the next position for the robot</property>
                   <object class="GtkVButtonBox" id="vbuttonbox4">
                     <property name="height_request">165</property>
                     <property name="visible">True</property>
-                    <property name="orientation">vertical</property>
                     <property name="spacing">5</property>
                     <child>
                       <object class="GtkLabel" id="label_robot">
@@ -307,7 +298,6 @@ Mode guidage : send the next position for the robot</property>
             <child>
               <object class="GtkVSeparator" id="vseparator2">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -318,7 +308,6 @@ Mode guidage : send the next position for the robot</property>
               <object class="GtkVBox" id="vbox2">
                 <property name="width_request">400</property>
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkLabel" id="lbl_log">
                     <property name="height_request">20</property>
@@ -395,7 +384,6 @@ Mode guidage : send the next position for the robot</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox1">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child>
           <placeholder/>

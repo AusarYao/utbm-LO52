@@ -12,7 +12,6 @@ Gestion du log :
 	- Scroll pour voir les log précédents
 
 Affichage de la map:
-	- Problème de refresh
 	- Robot : rouge
 	- Flag non pris : vert
 	- Flag pris : orange

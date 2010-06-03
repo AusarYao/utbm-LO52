@@ -23,7 +23,7 @@ class Game(object):
         elif data[0] == 3: #Add Flag
             self.f.add_flag(data[1],data[2])
 
-    def update_guiding(self,x,y):
+    def update_guiding(self, x, y):
         """update robot and if flags are token"""
         self.r.update(x,y)
         if self.f.search_flag(x,y):
@@ -35,7 +35,7 @@ class Game(object):
         Lm = []
         first = True
         Lf = self.f.list_flag()
-        print "List flag: ",Lf   
+        print "List flag: ",Lf
         for i in range(len(Lf)):
             L = self.m.find_path(self.r.x,self.r.y,Lf[i][0],Lf[i][1])
             print "Path n°",i,": ",L
@@ -44,6 +44,8 @@ class Game(object):
                 first = False
             elif len(L) < len(Lm):
                 Lm = L
+        if Lm == []:
+            print "No path found"
         return Lm
 
     def find_next_move(self):
@@ -52,9 +54,9 @@ class Game(object):
         st = time()
         L = self.shortest_path()
         et = time()
-        
+
         if L == []:
-            print "No path found"
+            return Lr
         else:
             print "Path found in %d moves and %f times" %(len(L), et-st)
             print "Shortest Path: ",L

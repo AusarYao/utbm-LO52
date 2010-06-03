@@ -136,3 +136,4 @@ class MyCanvas(object):
     def update(self, game):
         self.game = game
         self.drawMap()
+        return 0

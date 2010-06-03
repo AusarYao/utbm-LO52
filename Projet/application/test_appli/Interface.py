@@ -13,86 +13,86 @@ import threading as T
 import time
 import gobject
 
-gobject.threads_init()
+gtk.gdk.threads_init()
 
-verrou = T.Lock()
+class ThreadCanvas(T.Thread):
+    """Thread to display the map"""
+    def __init__(self, interface):
+        T.Thread.__init__(self)
+        self.interface = interface
+        self.stopevent = T.Event()
+        self.start()
+
+    def run(self):
+        while not self.stopevent.isSet():
+            self.interface.on_canvas_expose_event()
+            #FPS
+            self.stopevent.wait(0.1)
+        print "ThreadCanvas is closed properly"
+
+    def stop(self):
+        self.stopevent.set()
+
+
+class ThreadAlgo(T.Thread):
+    """Thread to run the algo"""
+    def __init__(self, interface):
+        T.Thread.__init__(self)
+        self.interface = interface
+        self.started = T.Event()
+        self.waiting = True
+        self.start()
+
+    def run(self):
+        while not self.started.isSet():
+            self.started.wait(0.001)
+            first_connected = True
+            first_guidage = True
+            while not self.waiting:
+                time.sleep(0.001)
+                if self.interface.bt.isconnected:
+                    print "\n######## New time ########"
+                    if self.interface.mode == 0:
+                        print "Exploration"
+                        bt_m = self.interface.bt.recept()
+                        s = "%s" % (bt_m,)
+                        self.interface.log.add("Message receive :"+s)
+                        self.interface.game.update_explore(bt_m)
+                        self.interface.bt.ack()
+                    else:
+                        print "Guidage"
+                        ldata = self.interface.game.find_next_move()
+                        if ldata != ():
+                            first_guidage = True
+                            s = "%s" %(ldata,)
+                            self.interface.log.add("Next move:"+s)
+                            self.interface.bt.send_move(ldata)
+                            self.interface.game.update_guiding(ldata[0],ldata[1])
+                        elif first_guidage:
+                            first_guidage = False
+                            self.interface.log.add("No direction")
+                elif first_connected:
+                    self.interface.log.add("Not connected")
+                    first_connected = False
+        print "ThreadAlgo is closed properly"
+
+    def wait(self):
+        self.waiting = True
+
+    def notify(self, interface):
+        self.waiting = False
+        self.interface = interface
+
+    def stop(self):
+        self.waiting = True
+        self.started.set()
+
 
 class Interface(object):
-    class ThreadCanvas(T.Thread):
-        """Thread to display the map"""
-        def __init__(self, interface):
-            T.Thread.__init__(self)
-            self.interface = interface
-            self.started = True
-            self.start()
-
-        def run(self):
-            while self.started:
-                time.sleep(2)   #Choose by user
-                self.interface.on_canvas_expose_event()
-
-        def stop(self):
-            self.started = False
-
-
-    class ThreadAlgo(T.Thread):
-        """Thread to run the algo"""
-        def __init__(self, interface):
-            T.Thread.__init__(self)
-            self.interface = interface
-            self.started = True
-            self.waiting = True
-            self.start()
-
-        def run(self):
-            while self.started:
-                time.sleep(0.001)
-                first_connected = True
-                first_guidage = True
-                while not self.waiting:
-                    time.sleep(0.001)
-                    if self.interface.bt.isconnected:
-                        print "\n######## New time ########"
-                        if self.interface.mode == 0:
-                            print "Exploration"
-                            bt_m = self.interface.bt.recept()
-                            s = "%s" % (bt_m,)
-                            self.interface.log.add("Message receive :"+s)
-                            self.interface.game.update_explore(bt_m)
-                            self.interface.bt.ack()
-                        else:
-                            print "Guidage"
-                            ldata = self.interface.game.find_next_move()
-                            if ldata != None:
-                                first_guidage = True
-                                s = "%s" %(ldata,)
-                                self.interface.log.add("Next move:"+s)
-                                self.interface.bt.send_move(ldata)
-                                self.interface.game.update_guiding(ldata[0],ldata[1])
-                            elif first_guidage:
-                                first_guidage = False
-                                self.interface.log.add("No direction")
-                    elif first_connected:
-                        self.interface.log.add("Not connected")
-                        first_connected = False
-
-        def wait(self):
-            self.waiting = True
-            print "stop"
-
-        def notify(self, interface):
-            self.waiting = False
-            self.interface = interface
-            print "restart"
-
-        def stop(self):
-            self.waiting = True
-            self.started = False
-
-
+    """Interface for the robot"""
     def __init__(self):
         self.interface = gtk.Builder()
-        self.interface.add_from_file("interface.glade")
+        self.interface.add_from_file("interface.ui")
 
         self.robot_x= self.interface.get_object("robotX")
         self.robot_y= self.interface.get_object("robotY")
@@ -110,13 +110,14 @@ class Interface(object):
         self.interface.connect_signals(self)
 
         #Thread
-        self.algo = self.ThreadAlgo(self)
-        self.render = self.ThreadCanvas(self)
+        self.algo = ThreadAlgo(self)
+        self.render = ThreadCanvas(self)
 
         self.game.f.add_flag(4,2)
         self.game.f.add_flag(5,5)
         self.game.f.init_flag()
         self.game.m.add_wall(1,1,2)
+        self.game.m.add_wall(1,1,4)
 
     def on_btnConnect_clicked(self, widget):
         btnCo = self.interface.get_object("btnConnect")
@@ -163,7 +164,6 @@ class Interface(object):
                int(y) < self.game.m.maph and int(y) >= 0:
                 self.game.r.update(int(x), int(y))
                 self.log.add("New position for the robot("+x+","+y+")")
-                self.on_canvas_expose_event()
             else:
                 self.log.add("Error new position robot")
         else:
@@ -174,19 +174,16 @@ class Interface(object):
 
     def on_interface_destroy(self, widget):
         print "Destroying threads..."
-        self.algo.stop()
         self.render.stop()
-        self.algo.join()
+        self.algo.stop()
         self.render.join()
-        self.algo._Thread__stop()
+        self.algo.join()
         gtk.main_quit()
 
-    def on_canvas_expose_event(self, *args):
-        self.log.add("Update Canvas")
-        st = time.time()
+    def on_canvas_expose_event(self, * args):
+        gtk.gdk.threads_enter()
         self.canvas.update(self.game)
-        et = time.time()
-        print "Canvas refresh in : %f times" %(et-st)
+        gtk.gdk.threads_leave()
 
     def main(self):
         gtk.main()

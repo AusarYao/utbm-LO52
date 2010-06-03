@@ -78,9 +78,7 @@ class MapData(object):
 
         path = astar.findPath(start,end)
 
-        if not path:
-            print "No path found !"
-        else:
+        if path:
             self.pathlines = []
             for n in path.nodes:
                 self.pathlines.append((n.location.x, n.location.y))
