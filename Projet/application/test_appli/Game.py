@@ -65,7 +65,7 @@ class Game(object):
                 if L[i][0] == self.r.x or L[i][1] == self.r.y:
                     Lr = L[i]
                 else:
-                    None
+                    break
             if len(Lr)==0:
                 Lr = L[0]
             return Lr

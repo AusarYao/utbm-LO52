@@ -45,7 +45,7 @@
                 <property name="visible">True</property>
                 <child>
                   <object class="GtkVButtonBox" id="vbuttonbox1">
-                    <property name="height_request">145</property>
+                    <property name="height_request">95</property>
                     <property name="visible">True</property>
                     <property name="spacing">10</property>
                     <property name="layout_style">center</property>
@@ -92,7 +92,7 @@
                 </child>
                 <child>
                   <object class="GtkVButtonBox" id="vbuttonbox3">
-                    <property name="height_request">145</property>
+                    <property name="height_request">95</property>
                     <property name="visible">True</property>
                     <property name="spacing">10</property>
                     <property name="layout_style">center</property>
@@ -126,27 +126,9 @@
                     <property name="position">2</property>
                   </packing>
                 </child>
-              </object>
-              <packing>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkVSeparator" id="vseparator1">
-                <property name="visible">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkVBox" id="vbox3">
-                <property name="width_request">200</property>
-                <property name="visible">True</property>
-                <property name="spacing">5</property>
                 <child>
                   <object class="GtkVButtonBox" id="vbuttonbox2">
+                    <property name="height_request">95</property>
                     <property name="visible">True</property>
                     <property name="spacing">10</property>
                     <property name="layout_style">center</property>
@@ -167,8 +149,6 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Mode exploration : receive information from the robot and save this information in the map
-Mode guidage : send the next position for the robot</property>
                         <signal name="clicked" handler="on_btnMode_clicked"/>
                       </object>
                       <packing>
@@ -179,8 +159,33 @@ Mode guidage : send the next position for the robot</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">0</property>
+                    <property name="position">3</property>
                   </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVSeparator" id="vseparator1">
+                <property name="visible">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVBox" id="vbox3">
+                <property name="width_request">200</property>
+                <property name="visible">True</property>
+                <property name="spacing">5</property>
+                <child>
+                  <placeholder/>
                 </child>
                 <child>
                   <object class="GtkHSeparator" id="hseparator1">
