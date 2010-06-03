@@ -29,15 +29,15 @@ void bt_check_connect(struct robot_struct *robot) {
     struct robot_struct robot_next = {MODE_GUIDED, data[1], data[2], data[3]};
     switch(data[0]){
       case BT_MSG_POSITION:
-        move_guided(robot, robot->X, robot->Y);
+        move_guided(robot, robot_next.X, robot_next.Y);
       break;
       // Last wall's position request.
       case BT_MSG_LST_WALL:
-
+      //not used for the bot
       break;
       // Last captured flag position request.
       case BT_MSG_CPT_FLAG:
-
+      
       break;
       // Position recalibration request.
       case BT_MSG_RECAL_POS:
@@ -49,7 +49,7 @@ void bt_check_connect(struct robot_struct *robot) {
       break;
       // Ping the other end.
       case BT_MSG_PING:
-
+        bt_msg_send_ack();
       break;
       // ACK
       case BT_MSG_ACK:
@@ -70,4 +70,54 @@ int bt_msg_send(struct bt_message *msg) {
 
   nx_bt_stream_write((U8 *)data, BT_MSG_SIZE);
   return 1;
+}
+
+//send a message to send the position
+void bt_msg_send_position(U8 X, U8 Y, U8 orientation) {
+  U8 data[BT_MSG_SIZE];
+  data[0]=BT_MSG_POSITION;
+  data[1]=X;
+  data[2]=Y;
+  data[3]=orientation;
+  nx_bt_stream_write((U8 *)data, BT_MSG_SIZE);
+}
+
+//send a message with a wall
+void bt_msg_send_wall(U8 X, U8 Y, U8 side) {
+  U8 data[BT_MSG_SIZE];
+  data[0]=BT_MSG_LST_WALL;
+  data[1]=X;
+  data[2]=Y;
+  data[3]=side;
+  nx_bt_stream_write((U8 *)data, BT_MSG_SIZE);
+}
+
+//send a message with a flag
+void bt_msg_send_flag(U8 X, U8 Y, U8 side) {
+  U8 data[BT_MSG_SIZE];
+  data[0]=BT_MSG_CPT_FLAG;
+  data[1]=X;
+  data[2]=Y;
+  data[3]=side;
+  nx_bt_stream_write((U8 *)data, BT_MSG_SIZE);
+}
+
+//send a ping
+void bt_msg_send_ping() {
+  U8 data[BT_MSG_SIZE];
+  data[0]=BT_MSG_PING;
+  data[1]=1;
+  data[2]=1;
+  data[3]=1;
+  nx_bt_stream_write((U8 *)data, BT_MSG_SIZE);
+}
+
+//send ACK
+void bt_msg_send_ack() {
+  U8 data[BT_MSG_SIZE];
+  data[0]=BT_MSG_ACK;
+  data[1]=1;
+  data[2]=1;
+  data[3]=1;
+  nx_bt_stream_write((U8 *)data, BT_MSG_SIZE);
 }

@@ -51,4 +51,15 @@ void bt_check_connect(struct robot_struct*);
 // Send a bt_message structure
 int bt_msg_send(struct bt_message*);
 
+//send a message with the position
+void bt_msg_send_position(U8, U8, U8);
+//send a message with a wall
+void bt_msg_send_wall(U8, U8, U8);
+//send a message with a flag
+void bt_msg_send_flag(U8, U8, U8);
+//send ping
+void bt_msg_send_ping(void);
+//send ack
+void bt_msg_send_ack(void);
+
 #endif
