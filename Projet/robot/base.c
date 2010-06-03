@@ -42,6 +42,7 @@ void base_init(void) {
   nx_radar_init(SENSORS_RADAR);
   nx_sensors_analog_enable(SENSORS_TOUCH);
   nx_sensors_analog_enable(SENSORS_LIGHT);
+	nx_sensors_analog_digi_set(SENSORS_LIGHT, DIGI0);
 
   // Initialisation de la partie déplacement.
   move_init();
