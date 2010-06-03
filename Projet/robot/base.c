@@ -7,7 +7,7 @@
 static void watchdog(void) {
   switch (nx_avr_get_button()) {
     case BUTTON_CANCEL:
-      nx_core_halt();
+      base_kill();
       break;
     case BUTTON_OK:
       break;
@@ -18,6 +18,19 @@ static void watchdog(void) {
     case BUTTON_NONE:
       break;
   }
+}
+
+void base_kill(void) {
+  nx_display_clear();
+  nx_display_cursor_set_pos(0, 0);
+  nx_display_string("End...\n");
+  nx_systick_wait_ms(2000);
+  nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
+  nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
+  nx_radar_close(SENSORS_RADAR);
+  bt_die();
+  nx_systick_wait_ms(2000);
+  nx_core_halt();
 }
 
 void base_init(void) {
@@ -37,6 +50,9 @@ void base_init(void) {
 
   // Initialisation du BlueTooth
   bt_init();
+
+  //initialisation du son
+  nx__sound_init();
 
   // Initialisation des capteurs
   nx_radar_init(SENSORS_RADAR);
