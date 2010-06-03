@@ -129,8 +129,8 @@ static void move_backward(struct robot_struct *robot, U32 distance,
   init_tach[1] = nx_motors_get_tach_count(MOVE_RIGHT_MOTOR);
 
   // Make the motors turn at full speed, backward.
-  nx_motors_rotate(MOVE_LEFT_MOTOR, -MOVE_FULL_SPEED);
-  nx_motors_rotate(MOVE_RIGHT_MOTOR, -MOVE_FULL_SPEED);
+  nx_motors_rotate(MOVE_LEFT_MOTOR, -MOVE_HIGH_SPEED);
+  nx_motors_rotate(MOVE_RIGHT_MOTOR, -MOVE_HIGH_SPEED);
 
   if(stop) {
     // Wait until we reach the final part.
