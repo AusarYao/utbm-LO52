@@ -36,4 +36,6 @@
 
 void base_init(void);
 
+void base_kill(void);
+
 #endif
