@@ -5,11 +5,16 @@
 #include "sensors.h"
 
 S8 main(void) {
-  struct robot_struct robot = {MODE_AUTONOMOUS, 0, 0, BASE_UP};
+  struct robot_struct robot = {MODE_AUTONOMOUS, 6, 3, BASE_UP};
   U8 map[MAP_X_SIZE][MAP_Y_SIZE];
 
   struct_map_init(map);
   base_init();
+
+	while(nx_avr_get_button()!=BUTTON_OK)
+	{
+		nx_systick_wait_ms(10);
+	}
 
   while(1) {
     bt_check_connect(&robot);
