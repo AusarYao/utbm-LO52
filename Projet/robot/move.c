@@ -295,7 +295,7 @@ static bool move_no_wall_to_go(struct robot_struct *robot, U8 direction,
 }
 
 static U8 move_pow(U8 a, U8 b) {
-  if(!b)
+  if(!(b-1))
     return a << (b-1);
   return 1;
 }
