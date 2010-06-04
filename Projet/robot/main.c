@@ -12,10 +12,12 @@ S8 main(void) {
   struct_map_init(map);
   base_init();
 
+/*Connexion bluetooth non utilisée pour les tests
+  //Wait for a bluetooth connection
   if (!nx_bt_stream_opened() || nx_bt_connection_pending())
       bt_wait_connection();
-
-  while(nx_avr_get_button()!=BUTTON_OK)
+*/
+  while(nx_avr_get_button() != BUTTON_OK)
   {
     nx_systick_wait_ms(10);
   }
