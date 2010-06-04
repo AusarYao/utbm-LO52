@@ -289,7 +289,7 @@ static bool move_no_wall_to_go(struct robot_struct *robot, U8 direction,
   U8 Wall = move_adjacent_square(robot, direction);
 
   //if there is no wall to go on the next case
-  if(map[robot->X / MAP_SUB_SIZE ][robot->Y / MAP_SUB_SIZE] & direction)
+  if(map[robot->X / MAP_SUB_SIZE ][robot->Y / MAP_SUB_SIZE] & Wall)
     return FALSE;
   return TRUE;
 }
