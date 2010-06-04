@@ -344,12 +344,12 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
     // We wait for one motor to have reached the target angle.
     while(((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
           angle_rotation) && ((init_tach[1] -
-          nx_motors_get_tach_count(MOVE_RIGHT_MOTOR)) < -angle_rotation));
+          nx_motors_get_tach_count(MOVE_RIGHT_MOTOR)) > -angle_rotation));
 
-    if((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) >
+    if((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
         angle_rotation) {
       nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
-      while((init_tach[1] - nx_motors_get_tach_count(MOVE_RIGHT_MOTOR)) <
+      while((init_tach[1] - nx_motors_get_tach_count(MOVE_RIGHT_MOTOR)) >
           -angle_rotation);
       nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
     }
@@ -366,7 +366,7 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
     nx_motors_rotate(MOVE_LEFT_MOTOR, -MOVE_TURN_SPEED);
 
     // We wait for one motor to have reached the target angle.
-    while(((nx_motors_get_tach_count(MOVE_RIGHT_MOTOR) - init_tach[1]) <
+    while(((nx_motors_get_tach_count(MOVE_RIGHT_MOTOR) - init_tach[1]) >
           angle_rotation) && ((init_tach[0] -
           nx_motors_get_tach_count(MOVE_LEFT_MOTOR)) < -angle_rotation));
 
@@ -379,7 +379,7 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
     }
     else {
       nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
-      while((nx_motors_get_tach_count(MOVE_RIGHT_MOTOR) - init_tach[1]) <
+      while((nx_motors_get_tach_count(MOVE_RIGHT_MOTOR) - init_tach[1]) >
           angle_rotation);
       nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
     }
