@@ -8,7 +8,7 @@
 #include "base.h"
 #include "structures.h"
 
-#define MOVE_SPEED          80
+#define MOVE_SPEED          70
 #define MOVE_HIGH_SPEED     (MOVE_SPEED + 10)
 #define MOVE_LOW_SPEED      (MOVE_SPEED - 10)
 #define MOVE_TURN_SPEED     (MOVE_SPEED)
