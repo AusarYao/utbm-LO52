@@ -26,12 +26,12 @@ class ThreadCanvas(T.Thread):
     def run(self):
         while not self.stopevent.isSet():
             self.interface.on_canvas_expose_event()
-            #FPS
             self.stopevent.wait(0.1)
         print "ThreadCanvas is closed properly"
 
     def stop(self):
         self.stopevent.set()
+
 
 class ThreadBluetooth(T.Thread):
     """Thread for the BT"""
@@ -59,7 +59,8 @@ class ThreadBluetooth(T.Thread):
                 self.interface.log.add("Message receive :"+s)
                 self.interface.game.update_explore(bt_m)
                 self.bt.ack()
-                self.stopevent.wait(0.01)
+                self.interface.updateCombo()
+            self.stopevent.wait(0.01)
         print "ThreadBluetooth is closed properly"
 
     def send(self, data):
@@ -94,6 +95,7 @@ class ThreadAlgo(T.Thread):
                             self.interface.log.add("Next move:"+s)
                             self.interface.bt.send(ldata)
                             self.interface.game.update_guiding(ldata[0],ldata[1])
+                            self.interface.updateCombo()
                         elif first_guidage:
                             first_guidage = False
                             self.interface.log.add("No direction")
@@ -132,6 +134,8 @@ class Interface(object):
 
         #Dessin
         self.canvas = Canvas.MyCanvas(self.interface.get_object("canvas"),self.game)
+        self.combo =  self.interface.get_object("comboFlag")
+        self.interface.connect_signals(self)
 
         #Thread
         self.algo = ThreadAlgo(self)
@@ -144,9 +148,7 @@ class Interface(object):
         self.game.m.add_wall(1,1,2)
         self.game.m.add_wall(1,1,4)
 
-
-        self.combo =  self.interface.get_object("comboFlag")
-        self.interface.connect_signals(self)
+        #init combobox
         self.updateCombo()
 
     def on_btnConnect_clicked(self, widget):
@@ -210,12 +212,15 @@ class Interface(object):
 
     def updateCombo(self):
         list_store = gtk.ListStore(gobject.TYPE_STRING)
+
+
         L = self.game.f.list_flag()
         for x in xrange(len(L)):
             list_store.append([str(L[x][0])+";"+str(L[x][1])])
         self.combo.set_model(list_store)
         self.combo.set_active(0)
         cell = gtk.CellRendererText()
+        self.combo.clear()
         self.combo.pack_start(cell, True)
         self.combo.add_attribute(cell, "text", 0)
 
@@ -237,7 +242,6 @@ class Interface(object):
         self.log.clean()
 
     def on_interface_destroy(self, widget):
-        print "Destroying threads..."
         self.render.stop()
         self.algo.stop()
         self.bt.stop()
