@@ -30,6 +30,15 @@ class BT(object):
             self.isconnected = True
             print "Connected"
 
+    def disconnect(self):
+        """Disconnection"""
+        self.isconnected = False
+        print "Disconnected"
+
+    def isconnect(self):
+        """return true if bluetooth is connected"""
+        return self.isconnected
+
     def recept(self):
         """Recept a string data"""
         data = ''

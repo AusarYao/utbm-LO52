@@ -23,13 +23,21 @@ class Flag(object):
         for x in range(len(L)):
             self.mapdata[L[x]] = False
 
-    def list_flag(self):
+    def list_flag_no_taken(self):
         """List the coordonnates of the case where the flag are not taken"""
         Lr = []
         L = self.mapdata.keys()
         for x in range(len(L)):
             if self.mapdata[L[x]] == False:
                 Lr.append(L[x])
+        return Lr
+
+    def list_flag(self):
+        """List the coordonnates of the case where the flag are not taken"""
+        Lr = []
+        L = self.mapdata.keys()
+        for x in range(len(L)):
+            Lr.append(L[x])
         return Lr
 
     def search_flag(self, x, y):

@@ -45,9 +45,9 @@
                 <property name="visible">True</property>
                 <child>
                   <object class="GtkVButtonBox" id="vbuttonbox1">
-                    <property name="height_request">95</property>
+                    <property name="height_request">75</property>
                     <property name="visible">True</property>
-                    <property name="spacing">10</property>
+                    <property name="spacing">3</property>
                     <property name="layout_style">center</property>
                     <child>
                       <object class="GtkLabel" id="label_bt">
@@ -92,9 +92,9 @@
                 </child>
                 <child>
                   <object class="GtkVButtonBox" id="vbuttonbox3">
-                    <property name="height_request">95</property>
+                    <property name="height_request">75</property>
                     <property name="visible">True</property>
-                    <property name="spacing">10</property>
+                    <property name="spacing">3</property>
                     <property name="layout_style">center</property>
                     <child>
                       <object class="GtkLabel" id="label_start">
@@ -127,10 +127,19 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkVButtonBox" id="vbuttonbox2">
-                    <property name="height_request">95</property>
+                  <object class="GtkHSeparator" id="hseparator4">
                     <property name="visible">True</property>
-                    <property name="spacing">10</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="position">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkVButtonBox" id="vbuttonbox2">
+                    <property name="height_request">75</property>
+                    <property name="visible">True</property>
+                    <property name="spacing">3</property>
                     <property name="layout_style">center</property>
                     <child>
                       <object class="GtkLabel" id="label_mode">
@@ -159,11 +168,53 @@
                     </child>
                   </object>
                   <packing>
-                    <property name="position">3</property>
+                    <property name="position">4</property>
                   </packing>
                 </child>
                 <child>
-                  <placeholder/>
+                  <object class="GtkHSeparator" id="hseparator5">
+                    <property name="visible">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="position">5</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkVButtonBox" id="vbuttonbox6">
+                    <property name="visible">True</property>
+                    <property name="spacing">3</property>
+                    <property name="layout_style">center</property>
+                    <child>
+                      <object class="GtkLabel" id="label_map">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Map</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="btnInit">
+                        <property name="label" translatable="yes">Initialize</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Reinitialize the map (flag become flags not token)</property>
+                        <signal name="clicked" handler="on_btnInit_clicked"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">6</property>
+                  </packing>
                 </child>
               </object>
               <packing>
@@ -187,13 +238,12 @@
                 <child>
                   <object class="GtkVButtonBox" id="vbuttonbox5">
                     <property name="visible">True</property>
+                    <property name="spacing">5</property>
+                    <property name="layout_style">center</property>
                     <child>
-                      <object class="GtkButton" id="btnInit">
-                        <property name="label" translatable="yes">Initialisation Map</property>
+                      <object class="GtkLabel" id="label_flag">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <signal name="clicked" handler="on_btnInit_clicked"/>
+                        <property name="label" translatable="yes">Flag</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -202,7 +252,29 @@
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <object class="GtkComboBox" id="comboFlag">
+                        <property name="visible">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="btnNotTaken">
+                        <property name="label" translatable="yes">Taken</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Change flag to flag not token</property>
+                        <signal name="clicked" handler="on_btnNotTaken_clicked"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">2</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -223,6 +295,7 @@
                     <property name="height_request">165</property>
                     <property name="visible">True</property>
                     <property name="spacing">5</property>
+                    <property name="layout_style">center</property>
                     <child>
                       <object class="GtkLabel" id="label_robot">
                         <property name="visible">True</property>

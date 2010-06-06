@@ -34,7 +34,7 @@ class Game(object):
         """find the shortest path and nearest flag"""
         Lm = []
         first = True
-        Lf = self.f.list_flag()
+        Lf = self.f.list_flag_no_taken()
         print "List flag: ",Lf
         for i in range(len(Lf)):
             L = self.m.find_path(self.r.x,self.r.y,Lf[i][0],Lf[i][1])
