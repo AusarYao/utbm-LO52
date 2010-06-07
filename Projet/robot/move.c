@@ -18,7 +18,7 @@ static void move_backward(struct robot_struct*, U32, bool);
 static double move_compute_angle(double);
 // Compute the distance for the given angle.
 static double move_compute_distance(double);
-static void move_escape_wall(struct robot_struct*);
+static void move_escape_wall(struct robot_struct*, U8[MAP_X_SIZE][MAP_Y_SIZE]);
 // Make the robot move forward on the given distance in millimeters.
 // Start gradually and stop gradually if the stop flag is set.
 static void move_forward(struct robot_struct*, U32, bool);
@@ -89,31 +89,8 @@ void move_autonomous(struct robot_struct *robot,
   else if (sensors_contact()) {
     move_handle_obstacle(robot, map);
   }
-  //if the up case has never been visited and there is no walls
-  else if(move_square_unknown(robot, map, BASE_UP) && \
-         (move_no_wall_to_go(robot, BASE_UP, map))){
-    move_forward(robot, MAP_SUB_SIZE, FALSE);
-  }
-  //if the right case has never been visited and there is no walls
-  else if(move_square_unknown(robot, map, BASE_RIGHT) && \
-         (move_no_wall_to_go(robot, BASE_RIGHT, map))){
-    move_rotate_angle(robot, 90);
-    move_forward(robot, MAP_SUB_SIZE, FALSE);
-  }
-  //if the left case has never been visited and there is no walls
-  else if(move_square_unknown(robot, map, BASE_LEFT) && \
-         (move_no_wall_to_go(robot, BASE_LEFT, map))){
-    move_rotate_angle(robot, -90);
-    move_forward(robot, MAP_SUB_SIZE, FALSE);
-  }
-  //if there is no walls to go straight on
-  else if(move_no_wall_to_go(robot, BASE_UP, map)){
-    move_forward(robot, MAP_SUB_SIZE, FALSE);
-  }
-  else {
-    move_rotate_angle(robot, 180);
-    move_forward(robot, MAP_SUB_SIZE, FALSE);
-  }
+
+  move_forward(robot, BASE_FLAG_SIZE, FALSE);
 }
 
 // Make the robot move backward on the given distance in millimeters.
@@ -152,11 +129,25 @@ static double move_compute_distance(double angle) {
   return wheel_rotations * (M_PI * MOVE_WHEEL_DIAMETER / 10.);
 }
 
-static void move_escape_wall(struct robot_struct *robot) {
+static void move_escape_wall(struct robot_struct *robot,
+    U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
   move_stop(robot);
   nx_systick_wait_ms(100);
-  move_backward(robot, 30, TRUE);
-  move_rotate_angle(robot, -90);
+  move_backward(robot, 10, TRUE);
+
+  //if the right case has never been visited and there is no walls
+  if(move_square_unknown(robot, map, BASE_RIGHT) && \
+         (move_no_wall_to_go(robot, BASE_RIGHT, map))) {
+    move_rotate_angle(robot, 90);
+  }
+  //if the left case has never been visited and there is no walls
+  else if(move_square_unknown(robot, map, BASE_LEFT) && \
+         (move_no_wall_to_go(robot, BASE_LEFT, map))) {
+    move_rotate_angle(robot, -90);
+  }
+  else {
+    move_rotate_angle(robot, 180);
+  }
 }
 
 // Make the robot move forward on the given distance in millimeters.
@@ -265,7 +256,7 @@ static void move_handle_obstacle(struct robot_struct *robot,
       robot->orientation;
 
   if(move_retry()) {
-    move_escape_wall(robot);
+    move_escape_wall(robot, map);
   }
   else {
     struct bt_message abort_msg = {BT_MSG_ABORT_LST, robot->X, robot->Y,
