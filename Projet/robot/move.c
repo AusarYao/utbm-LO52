@@ -92,27 +92,27 @@ void move_autonomous(struct robot_struct *robot,
   //if the up case has never been visited and there is no walls
   else if(move_square_unknown(robot, map, BASE_UP) && \
          (move_no_wall_to_go(robot, BASE_UP, map))){
-    move_forward(robot, MAP_SUB_SIZE, TRUE);
+    move_forward(robot, MAP_SUB_SIZE, FALSE);
   }
   //if the right case has never been visited and there is no walls
   else if(move_square_unknown(robot, map, BASE_RIGHT) && \
          (move_no_wall_to_go(robot, BASE_RIGHT, map))){
     move_rotate_angle(robot, 90);
-    move_forward(robot, MAP_SUB_SIZE, TRUE);
+    move_forward(robot, MAP_SUB_SIZE, FALSE);
   }
   //if the left case has never been visited and there is no walls
   else if(move_square_unknown(robot, map, BASE_LEFT) && \
          (move_no_wall_to_go(robot, BASE_LEFT, map))){
     move_rotate_angle(robot, -90);
-    move_forward(robot, MAP_SUB_SIZE, TRUE);
+    move_forward(robot, MAP_SUB_SIZE, FALSE);
   }
   //if there is no walls to go straight on
   else if(move_no_wall_to_go(robot, BASE_UP, map)){
-    move_forward(robot, MAP_SUB_SIZE, TRUE);
+    move_forward(robot, MAP_SUB_SIZE, FALSE);
   }
   else {
     move_rotate_angle(robot, 180);
-    move_forward(robot, MAP_SUB_SIZE, TRUE);
+    move_forward(robot, MAP_SUB_SIZE, FALSE);
   }
 }
 
@@ -251,7 +251,7 @@ void move_guided(struct robot_struct *current_robot,\
       move_rotate_angle(current_robot, -(orientation - 2) * 90);
     }
   }
-  move_forward(current_robot, dist, TRUE);
+  move_forward(current_robot, dist, FALSE);
 }
 
 
