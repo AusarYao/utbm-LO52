@@ -56,6 +56,7 @@ void base_init(void) {
 
   // Initialisation des capteurs
   nx_radar_init(SENSORS_RADAR);
+  sensors_wall();
   nx_sensors_analog_enable(SENSORS_TOUCH);
   nx_sensors_analog_enable(SENSORS_LIGHT);
   nx_sensors_analog_digi_set(SENSORS_LIGHT, DIGI0);
