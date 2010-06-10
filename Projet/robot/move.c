@@ -18,10 +18,13 @@ static void move_backward(struct robot_struct*, U32, bool);
 static double move_compute_angle(double);
 // Compute the distance for the given angle.
 static double move_compute_distance(double);
+//compute the last position from the last Wall
+static void move_compute_position_from_wall(struct robot_struct*);
 static void move_escape_wall(struct robot_struct*);
 // Make the robot move forward on the given distance in millimeters.
 // Start gradually and stop gradually if the stop flag is set.
-static void move_forward(struct robot_struct*, U32, bool, U8[MAP_X_SIZE][MAP_Y_SIZE]);
+static void move_forward(struct robot_struct*, U32, bool,
+    U8[MAP_X_SIZE][MAP_Y_SIZE]);
 static bool move_get_coordinates(struct robot_struct*, U8, U8*, U8*);
 // Get the difference between current tach count and last recorded.
 static S32 move_get_tach_diff(void);
@@ -59,7 +62,8 @@ static void move_add_wall_to_map(struct robot_struct* robot,
   X_adjacent_square = robot->X / MAP_SUB_SIZE;
   Y_adjacent_square = robot->Y / MAP_SUB_SIZE;
 
-  bt_msg_send_wall(robot->X / MAP_SUB_SIZE, robot->Y / MAP_SUB_SIZE, move_pow(2, power));
+  bt_msg_send_wall(robot->X / MAP_SUB_SIZE, robot->Y / MAP_SUB_SIZE,\
+      move_pow(2, power));
 
 
   //if the square on the side is in the map
@@ -80,6 +84,10 @@ static U8 move_adjacent_square(struct robot_struct *robot, U8 direction) {
 void move_autonomous(struct robot_struct *robot,
     U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
 
+  nx_display_clear();
+  nx_display_cursor_set_pos(0, 0);
+  nx_display_uint(robot->X);
+
     map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] |= BASE_VISITED;
   if(sensors_wall()) {
     move_add_wall_to_map(robot, map, BASE_RIGHT);
@@ -87,8 +95,9 @@ void move_autonomous(struct robot_struct *robot,
 
   if(sensors_flag() && \
       !(map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] & BASE_FLAG)) {
-
+    nx_sound_freq_async(523,200);
     move_stop(robot);
+    bt_msg_send_flag(robot->X / MAP_SUB_SIZE, robot->Y / MAP_SUB_SIZE, 1);
     nx_systick_wait_ms(MOVE_FLAG_FREEZE * 1000);
     move_forward(robot, BASE_FLAG_SIZE, FALSE, map);
     map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] |= BASE_FLAG;
@@ -120,7 +129,7 @@ void move_autonomous(struct robot_struct *robot,
   }
   else {
     move_rotate_angle(robot, 180);
-    move_forward(robot, MAP_SUB_SIZE, TRUE, map);
+    move_forward(robot, MAP_SUB_SIZE-10, TRUE, map);
   }
 }
 
@@ -130,7 +139,7 @@ static void move_backward(struct robot_struct *robot, U32 distance,
     bool stop) {
   double wheel_angle = move_compute_angle(distance);
   U32 init_tach[2];
-  move_update_position(robot);
+
 
   // Get the initial state of the motors.
   init_tach[0] = nx_motors_get_tach_count(MOVE_LEFT_MOTOR);
@@ -160,10 +169,28 @@ static double move_compute_distance(double angle) {
   return wheel_rotations * (M_PI * MOVE_WHEEL_DIAMETER / 10.);
 }
 
+//compute the last position from the last Wall
+static void move_compute_position_from_wall(struct robot_struct *robot) {
+  switch(robot->orientation) {
+    case BASE_UP:
+      robot->Y=(robot->Y / MAP_SUB_SIZE) * 25 + 14;
+    break;
+    case BASE_DOWN:
+      robot->Y=(robot->Y / MAP_SUB_SIZE) * 25 + 11;
+    break;
+    case BASE_RIGHT:
+      robot->X=(robot->Y / MAP_SUB_SIZE) * 25 + 14;
+    break;
+    case BASE_LEFT:
+      robot->X=(robot->Y / MAP_SUB_SIZE) * 25 + 11;
+    break;
+  }
+}
+
 static void move_escape_wall(struct robot_struct *robot) {
   move_stop(robot);
   nx_systick_wait_ms(100);
-  move_backward(robot, 10, TRUE);
+  move_backward(robot, 5, TRUE);
 //  move_rotate_angle(robot, -90);
 }
 
@@ -198,9 +225,10 @@ static void move_forward(struct robot_struct *robot, U32 distance,
 
     if(sensors_flag() && \
         !(map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] & BASE_FLAG)) {
-
-      move_stop(robot);
+       nx_sound_freq_async(523,200);
+      bt_msg_send_flag(robot->X / MAP_SUB_SIZE, robot->Y / MAP_SUB_SIZE, 1);
       nx_systick_wait_ms(MOVE_FLAG_FREEZE * 1000);
+
       move_forward(robot, BASE_FLAG_SIZE, FALSE, map);
       map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] |= BASE_FLAG;
     }
@@ -240,7 +268,8 @@ static bool move_get_coordinates(struct robot_struct *robot, U8 side,
 static S32 move_get_tach_diff(void) {
   U32 tach_left = nx_motors_get_tach_count(MOVE_LEFT_MOTOR),
       tach_right = nx_motors_get_tach_count(MOVE_RIGHT_MOTOR);
-  return ((S32)tach_left - (S32)move_tach_left + (S32)tach_right - (S32)move_tach_right) / 2;
+  return ((S32)tach_left - (S32)move_tach_left + (S32)tach_right -\
+      (S32)move_tach_right) / 2;
 }
 
 //TODO
@@ -347,8 +376,7 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
 
   move_update_position(robot);
 
-      nx_systick_wait_ms(100);
-    
+  nx_systick_wait_ms(100);
 
   // Get the initial state of the motors.
   init_tach[0] = nx_motors_get_tach_count(MOVE_LEFT_MOTOR);
