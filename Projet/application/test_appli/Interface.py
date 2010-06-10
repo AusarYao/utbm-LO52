@@ -19,6 +19,7 @@ class ThreadCanvas(T.Thread):
     """Thread to display the map"""
     def __init__(self, interface):
         T.Thread.__init__(self)
+        time.sleep(1)
         self.interface = interface
         self.stopevent = T.Event()
         self.start()
@@ -38,6 +39,7 @@ class ThreadBluetooth(T.Thread):
     def __init__(self, interface):
         T.Thread.__init__(self)
         self.bt = BT.BT()
+        time.sleep(1)
         self.interface = interface
         self.stopevent = T.Event()
         self.start()
@@ -74,6 +76,7 @@ class ThreadAlgo(T.Thread):
     """Thread to run the algo"""
     def __init__(self, interface):
         T.Thread.__init__(self)
+        time.sleep(1)
         self.interface = interface
         self.started = T.Event()
         self.waiting = True
