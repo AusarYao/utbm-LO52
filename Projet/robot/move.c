@@ -18,10 +18,10 @@ static void move_backward(struct robot_struct*, U32, bool);
 static double move_compute_angle(double);
 // Compute the distance for the given angle.
 static double move_compute_distance(double);
-static void move_escape_wall(struct robot_struct*, U8[MAP_X_SIZE][MAP_Y_SIZE]);
+static void move_escape_wall(struct robot_struct*);
 // Make the robot move forward on the given distance in millimeters.
 // Start gradually and stop gradually if the stop flag is set.
-static void move_forward(struct robot_struct*, U32, bool);
+static void move_forward(struct robot_struct*, U32, bool, U8[MAP_X_SIZE][MAP_Y_SIZE]);
 static bool move_get_coordinates(struct robot_struct*, U8, U8*, U8*);
 // Get the difference between current tach count and last recorded.
 static S32 move_get_tach_diff(void);
@@ -58,10 +58,13 @@ static void move_add_wall_to_map(struct robot_struct* robot,
   X_adjacent_square = robot->X / MAP_SUB_SIZE;
   Y_adjacent_square = robot->Y / MAP_SUB_SIZE;
 
+  bt_msg_send_wall(robot->X / MAP_SUB_SIZE, robot->Y / MAP_SUB_SIZE, move_pow(2, power));
+
+
   //if the square on the side is in the map
   if(move_get_coordinates(robot, side, &X_adjacent_square,\
                                        &Y_adjacent_square)) {
-    power = (power - 2) % 4;
+    power = (power + 2) % 4;
     map[X_adjacent_square][Y_adjacent_square] |= move_pow(2, power);
   }
 }
@@ -76,21 +79,48 @@ static U8 move_adjacent_square(struct robot_struct *robot, U8 direction) {
 void move_autonomous(struct robot_struct *robot,
     U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
 
-  move_update_position(robot);
+    map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] |= BASE_VISITED;
+  if(sensors_wall()) {
+    move_add_wall_to_map(robot, map, BASE_RIGHT);
+  }
 
   if(sensors_flag() && \
       !(map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] & BASE_FLAG)) {
 
     move_stop(robot);
     nx_systick_wait_ms(MOVE_FLAG_FREEZE * 1000);
-    move_forward(robot, BASE_FLAG_SIZE, FALSE);
+    move_forward(robot, BASE_FLAG_SIZE, FALSE, map);
     map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] |= BASE_FLAG;
   }
   else if (sensors_contact()) {
     move_handle_obstacle(robot, map);
+    move_add_wall_to_map(robot, map, BASE_UP);
   }
-
-  move_forward(robot, BASE_FLAG_SIZE, FALSE);
+  //if the up case has never been visited and there is no walls
+  else if(move_square_unknown(robot, map, BASE_UP) && \
+         (move_no_wall_to_go(robot, BASE_UP, map))){
+    move_forward(robot, MAP_SUB_SIZE, TRUE, map);
+  }
+  //if the right case has never been visited and there is no walls
+  else if(move_square_unknown(robot, map, BASE_RIGHT) && \
+         (move_no_wall_to_go(robot, BASE_RIGHT, map))){
+    move_rotate_angle(robot, 90);
+    move_forward(robot, MAP_SUB_SIZE, TRUE, map);
+  }
+  //if the left case has never been visited and there is no walls
+  else if(move_square_unknown(robot, map, BASE_LEFT) && \
+         (move_no_wall_to_go(robot, BASE_LEFT, map))){
+    move_rotate_angle(robot, -90);
+    move_forward(robot, MAP_SUB_SIZE, TRUE, map);
+  }
+  //if there is no walls to go straight on
+  else if(move_no_wall_to_go(robot, BASE_UP, map)){
+    move_forward(robot, MAP_SUB_SIZE, TRUE, map);
+  }
+  else {
+    move_rotate_angle(robot, 180);
+    move_forward(robot, MAP_SUB_SIZE, TRUE, map);
+  }
 }
 
 // Make the robot move backward on the given distance in millimeters.
@@ -99,6 +129,7 @@ static void move_backward(struct robot_struct *robot, U32 distance,
     bool stop) {
   double wheel_angle = move_compute_angle(distance);
   U32 init_tach[2];
+  move_update_position(robot);
 
   // Get the initial state of the motors.
   init_tach[0] = nx_motors_get_tach_count(MOVE_LEFT_MOTOR);
@@ -112,8 +143,8 @@ static void move_backward(struct robot_struct *robot, U32 distance,
     // Wait until we reach the final part.
     while((init_tach[0] - nx_motors_get_tach_count(MOVE_LEFT_MOTOR)) <
         wheel_angle);
-
     move_stop(robot);
+    move_update_position(robot);
   }
 }
 
@@ -129,31 +160,17 @@ static double move_compute_distance(double angle) {
   return wheel_rotations * (M_PI * MOVE_WHEEL_DIAMETER / 10.);
 }
 
-static void move_escape_wall(struct robot_struct *robot,
-    U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
+static void move_escape_wall(struct robot_struct *robot) {
   move_stop(robot);
   nx_systick_wait_ms(100);
   move_backward(robot, 10, TRUE);
-
-  //if the right case has never been visited and there is no walls
-  if(move_square_unknown(robot, map, BASE_RIGHT) && \
-         (move_no_wall_to_go(robot, BASE_RIGHT, map))) {
-    move_rotate_angle(robot, 90);
-  }
-  //if the left case has never been visited and there is no walls
-  else if(move_square_unknown(robot, map, BASE_LEFT) && \
-         (move_no_wall_to_go(robot, BASE_LEFT, map))) {
-    move_rotate_angle(robot, -90);
-  }
-  else {
-    move_rotate_angle(robot, 180);
-  }
+//  move_rotate_angle(robot, -90);
 }
 
 // Make the robot move forward on the given distance in millimeters.
 // Start gradually and stop gradually if the stop flag is set.
 static void move_forward(struct robot_struct *robot, U32 distance,
-    bool stop) {
+    bool stop, U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
   double wheel_angle = move_compute_angle(distance);
   U32 init_tach[2];
 
@@ -168,9 +185,26 @@ static void move_forward(struct robot_struct *robot, U32 distance,
   if(stop) {
     // Wait until we reach the final distance.
     while((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
-        wheel_angle);
+        wheel_angle && !(sensors_contact())) { // && !(sensors_flag())
+        nx_systick_wait_ms(10);
+  }
 
     move_stop(robot);
+    move_update_position(robot);
+
+    if(sensors_contact()) {
+      move_handle_obstacle(robot, map);
+      move_add_wall_to_map(robot, map, BASE_UP);
+    }
+
+    if(sensors_flag() && \
+        !(map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] & BASE_FLAG)) {
+
+      move_stop(robot);
+      nx_systick_wait_ms(MOVE_FLAG_FREEZE * 1000);
+      move_forward(robot, BASE_FLAG_SIZE, FALSE, map);
+      map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] |= BASE_FLAG;
+    }
   }
 }
 
@@ -207,13 +241,13 @@ static bool move_get_coordinates(struct robot_struct *robot, U8 side,
 static S32 move_get_tach_diff(void) {
   U32 tach_left = nx_motors_get_tach_count(MOVE_LEFT_MOTOR),
       tach_right = nx_motors_get_tach_count(MOVE_RIGHT_MOTOR);
-  return (tach_left - move_tach_left + tach_right - move_tach_right) / 2;
+  return ((S32)tach_left - (S32)move_tach_left + (S32)tach_right - (S32)move_tach_right) / 2;
 }
 
 //TODO
 // Move following the instructions given by the application.
 void move_guided(struct robot_struct *current_robot,\
-                 U8 next_X, U8 next_Y) {
+                 U8 next_X, U8 next_Y, U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
 
   U8 orientation = move_log(current_robot->orientation);
   U32 dist = 0;
@@ -242,7 +276,7 @@ void move_guided(struct robot_struct *current_robot,\
       move_rotate_angle(current_robot, -(orientation - 2) * 90);
     }
   }
-  move_forward(current_robot, dist, FALSE);
+  move_forward(current_robot, dist, TRUE, map);
 }
 
 
@@ -251,17 +285,17 @@ static void move_handle_obstacle(struct robot_struct *robot,
     U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
   struct bt_message msg = {BT_MSG_LST_WALL, robot->X, robot->Y,
                     robot->orientation};
-  bt_msg_send(&msg);
+ // bt_msg_send(&msg);
   map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] |= \
       robot->orientation;
 
   if(move_retry()) {
-    move_escape_wall(robot, map);
+    move_escape_wall(robot);
   }
   else {
     struct bt_message abort_msg = {BT_MSG_ABORT_LST, robot->X, robot->Y,
                       robot->orientation};
-    bt_msg_send(&abort_msg);
+  //  bt_msg_send(&abort_msg);
     map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] ^= \
         robot->orientation;
   }
@@ -314,6 +348,9 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
 
   move_update_position(robot);
 
+      nx_systick_wait_ms(100);
+    
+
   // Get the initial state of the motors.
   init_tach[0] = nx_motors_get_tach_count(MOVE_LEFT_MOTOR);
   init_tach[1] = nx_motors_get_tach_count(MOVE_RIGHT_MOTOR);
@@ -335,19 +372,24 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
     // We wait for one motor to have reached the target angle.
     while(((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
           angle_rotation) && ((init_tach[1] -
-          nx_motors_get_tach_count(MOVE_RIGHT_MOTOR)) > -angle_rotation));
-
+          nx_motors_get_tach_count(MOVE_RIGHT_MOTOR)) > -angle_rotation)){
+      nx_systick_wait_ms(10);
+    }
     if((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
         angle_rotation) {
       nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
       while((init_tach[1] - nx_motors_get_tach_count(MOVE_RIGHT_MOTOR)) >
-          -angle_rotation);
+          -angle_rotation){
+        nx_systick_wait_ms(10);
+      }
       nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
     }
     else {
       nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
       while((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
-          angle_rotation);
+          angle_rotation){
+        nx_systick_wait_ms(10);
+      }
       nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
     }
 
@@ -415,18 +457,28 @@ static void move_update_position(struct robot_struct *robot) {
   // Change the position of the robot.
   switch(robot->orientation) {
     case BASE_UP:
-      robot->Y += (U8)dist_diff;
+      robot->Y += dist_diff;
       break;
     case BASE_DOWN:
-      robot->Y -= (U8)dist_diff;
+      robot->Y -= dist_diff;
       break;
     case BASE_LEFT:
-      robot->X -= (U8)dist_diff;
+      robot->X -= dist_diff;
       break;
     case BASE_RIGHT:
-      robot->X += (U8)dist_diff;
+      robot->X += dist_diff;
       break;
   }
+
+bt_msg_send_position((U8)robot->X / MAP_SUB_SIZE,(U8) robot->Y / MAP_SUB_SIZE,(U8) robot->orientation);
+/*  U8 data[BT_MSG_SIZE];
+  data[0]=BT_MSG_POSITION;
+  data[1]=robot->X / MAP_SUB_SIZE;
+  data[2]=robot->Y / MAP_SUB_SIZE;
+  data[3]=robot->orientation;
+  nx_bt_stream_write((U8 *)data, BT_MSG_SIZE);
+
+    */
 }
 
 
