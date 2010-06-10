@@ -69,19 +69,21 @@ void bt_check_connect(struct robot_struct *robot, U8 map[MAP_X_SIZE][MAP_Y_SIZE]
     struct robot_struct robot_next = {MODE_GUIDED, data[1], data[2], data[3]};
     switch(data[0]){
       case BT_MSG_POSITION:
+        //move the bot to the new position
         move_guided(robot, robot_next.X, robot_next.Y, map);
       break;
-      // Last wall's position request.
       case BT_MSG_LST_WALL:
-      //not used for the bot
+        //remove the wall of the map
+        map[data[1]][data[2]] ^⁼ data[3];
       break;
-      // Last captured flag position request.
       case BT_MSG_CPT_FLAG:
-      //TODO
+        //add flag and set as not took
+        map[data[1]][data[2]] ^⁼ BASE_FLAG_CAPTURED;
+        map[data[1]][data[2]] |⁼ BASE_FLAG;
       break;
       // Position recalibration request.
       case BT_MSG_RECAL_POS:
-
+      
       break;
       // Abort last instruction.
       case BT_MSG_ABORT_LST:
