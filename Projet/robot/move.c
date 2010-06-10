@@ -40,6 +40,7 @@ static void move_rotate_angle(struct robot_struct*, S32);
 //Return TRUE if the adjacent square has never been visited, FALSE otherwise
 static bool move_square_unknown(struct robot_struct*,
     U8[MAP_X_SIZE][MAP_Y_SIZE], U8);
+static void move_start(S8, S8);
 static void move_stop(struct robot_struct*);
 static void move_update_position(struct robot_struct*);
 
@@ -136,8 +137,7 @@ static void move_backward(struct robot_struct *robot, U32 distance,
   init_tach[1] = nx_motors_get_tach_count(MOVE_RIGHT_MOTOR);
 
   // Make the motors turn at full speed, backward.
-  nx_motors_rotate(MOVE_LEFT_MOTOR, -MOVE_HIGH_SPEED);
-  nx_motors_rotate(MOVE_RIGHT_MOTOR, -MOVE_HIGH_SPEED);
+  move_start(-MOVE_HIGH_SPEED,-MOVE_HIGH_SPEED);
 
   if(stop) {
     // Wait until we reach the final part.
@@ -179,8 +179,7 @@ static void move_forward(struct robot_struct *robot, U32 distance,
   init_tach[1] = nx_motors_get_tach_count(MOVE_RIGHT_MOTOR);
 
   // Make the motors turn at full speed.
-  nx_motors_rotate(MOVE_LEFT_MOTOR, MOVE_HIGH_SPEED);
-  nx_motors_rotate(MOVE_RIGHT_MOTOR, MOVE_HIGH_SPEED);
+  move_start(MOVE_HIGH_SPEED, MOVE_HIGH_SPEED);
 
   if(stop) {
     // Wait until we reach the final distance.
@@ -366,8 +365,7 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
   angle_rotation = move_compute_angle(distance);
 
   if(angle_rotation > 0) {
-    nx_motors_rotate(MOVE_LEFT_MOTOR, MOVE_TURN_SPEED);
-    nx_motors_rotate(MOVE_RIGHT_MOTOR, -MOVE_TURN_SPEED);
+    move_start(-MOVE_TURN_SPEED, MOVE_TURN_SPEED);
 
     // We wait for one motor to have reached the target angle.
     while(((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
@@ -395,8 +393,7 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
 
   }
   else {
-    nx_motors_rotate(MOVE_RIGHT_MOTOR, MOVE_TURN_SPEED);
-    nx_motors_rotate(MOVE_LEFT_MOTOR, -MOVE_TURN_SPEED);
+    move_start(MOVE_TURN_SPEED, -MOVE_TURN_SPEED);
 
     // We wait for one motor to have reached the target angle.
     while(((nx_motors_get_tach_count(MOVE_RIGHT_MOTOR) - init_tach[1]) >
@@ -438,6 +435,20 @@ static bool move_square_unknown(struct robot_struct *robot,
   return TRUE;
 }
 
+static void move_start(S8 right_speed, S8 left_speed) {
+  static bool state = FALSE;
+  if(state) {
+    nx_motors_rotate(MOVE_LEFT_MOTOR, left_speed);
+    nx_motors_rotate(MOVE_RIGHT_MOTOR, right_speed);
+    state = FALSE;
+  }
+  else {
+    nx_motors_rotate(MOVE_RIGHT_MOTOR, right_speed);
+    nx_motors_rotate(MOVE_LEFT_MOTOR, left_speed);
+    state = TRUE;
+  }
+}
+
 static void move_stop(struct robot_struct *robot) {
 
   nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
@@ -470,7 +481,8 @@ static void move_update_position(struct robot_struct *robot) {
       break;
   }
 
-bt_msg_send_position((U8)robot->X / MAP_SUB_SIZE,(U8) robot->Y / MAP_SUB_SIZE,(U8) robot->orientation);
+  bt_msg_send_position((U8)robot->X / MAP_SUB_SIZE,
+      (U8) robot->Y / MAP_SUB_SIZE,(U8) robot->orientation);
 /*  U8 data[BT_MSG_SIZE];
   data[0]=BT_MSG_POSITION;
   data[1]=robot->X / MAP_SUB_SIZE;
