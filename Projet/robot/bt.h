@@ -52,7 +52,7 @@ bool bt_is_active(void);
 void bt_wait_connection(void);
 
 // Process the pending messages on the Bluetooth stack.
-void bt_check_connect(struct robot_struct*);
+void bt_check_connect(struct robot_struct*, U8[MAP_X_SIZE][MAP_Y_SIZE]);
 
 // Send a bt_message structure
 int bt_msg_send(struct bt_message*);

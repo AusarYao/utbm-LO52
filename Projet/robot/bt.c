@@ -58,7 +58,7 @@ bool bt_is_active(void) {
 
 //TODO
 // Process the pending messages on the Bluetooth stack.
-void bt_check_connect(struct robot_struct *robot) {
+void bt_check_connect(struct robot_struct *robot, U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
 
   S8 data[BT_MSG_SIZE];
   //recept message
@@ -69,7 +69,7 @@ void bt_check_connect(struct robot_struct *robot) {
     struct robot_struct robot_next = {MODE_GUIDED, data[1], data[2], data[3]};
     switch(data[0]){
       case BT_MSG_POSITION:
-        move_guided(robot, robot_next.X, robot_next.Y);
+        move_guided(robot, robot_next.X, robot_next.Y, map);
       break;
       // Last wall's position request.
       case BT_MSG_LST_WALL:
@@ -109,6 +109,7 @@ int bt_msg_send(struct bt_message *msg) {
   data[3]=msg->mask;
 
   nx_bt_stream_write((U8 *)data, BT_MSG_SIZE);
+  nx_systick_wait_ms(100);
   return 1;
 }
 
@@ -120,6 +121,7 @@ void bt_msg_send_position(U8 X, U8 Y, U8 orientation) {
   data[2]=Y;
   data[3]=orientation;
   nx_bt_stream_write((U8 *)data, BT_MSG_SIZE);
+  nx_systick_wait_ms(100);
 }
 
 //send a message with a wall
@@ -130,6 +132,7 @@ void bt_msg_send_wall(U8 X, U8 Y, U8 side) {
   data[2]=Y;
   data[3]=side;
   nx_bt_stream_write((U8 *)data, BT_MSG_SIZE);
+  nx_systick_wait_ms(100);
 }
 
 //send a message with a flag
@@ -140,6 +143,7 @@ void bt_msg_send_flag(U8 X, U8 Y, U8 side) {
   data[2]=Y;
   data[3]=side;
   nx_bt_stream_write((U8 *)data, BT_MSG_SIZE);
+  nx_systick_wait_ms(100);
 }
 
 //send a ping
@@ -150,6 +154,7 @@ void bt_msg_send_ping() {
   data[2]=1;
   data[3]=1;
   nx_bt_stream_write((U8 *)data, BT_MSG_SIZE);
+  nx_systick_wait_ms(100);
 }
 
 //send ACK
@@ -160,4 +165,5 @@ void bt_msg_send_ack() {
   data[2]=1;
   data[3]=1;
   nx_bt_stream_write((U8 *)data, BT_MSG_SIZE);
+  nx_systick_wait_ms(100);
 }

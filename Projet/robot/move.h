@@ -9,7 +9,7 @@
 #include "structures.h"
 
 #define MOVE_SPEED          70
-#define MOVE_HIGH_SPEED     (MOVE_SPEED + 10)
+#define MOVE_HIGH_SPEED     (MOVE_SPEED)
 #define MOVE_LOW_SPEED      (MOVE_SPEED - 10)
 #define MOVE_TURN_SPEED     (MOVE_SPEED)
 
@@ -28,7 +28,7 @@
 // Move in autonomous mode, exploring the field.
 void move_autonomous(struct robot_struct*, U8[MAP_X_SIZE][MAP_Y_SIZE]);
 // Move following the instructions given by the application.
-void move_guided(struct robot_struct* ,U8, U8);
+void move_guided(struct robot_struct* ,U8, U8, U8[MAP_X_SIZE][MAP_Y_SIZE]);
 // Initialisation function.
 void move_init(void);
 #endif
