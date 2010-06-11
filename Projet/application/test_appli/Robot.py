@@ -10,7 +10,7 @@ class Robot(object):
         self.y = y
         self.dir = dir
 
-    def update(self, x, y, dir):
+    def update2(self, x, y, dir):
         self.x = x
         self.y = y
         self.dir = dir

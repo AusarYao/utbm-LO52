@@ -68,6 +68,6 @@ class BT(object):
             time.sleep(2)
             print "ACK Receive"
             self.sock.send(data)
-#           wait ack
+#           wait ack format : "7 1 1 1"
         else:
             print "Error send message"

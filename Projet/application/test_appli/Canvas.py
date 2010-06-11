@@ -106,6 +106,15 @@ class MyCanvas(object):
                 #Print the map with robot and flags
                 if self.game.r.x == x and self.game.r.y == y:
                     self.draw.drawRectangle(Area(Coord(x,i),Coord(x+1,i+1)), "red",True)
+                    if self.game.r.dir == 1:
+                        self.draw.drawLine(Coord(x+0.5,i+0.5),Coord(x+0.5,i),3)
+                    elif self.game.r.dir == 2:
+                        self.draw.drawLine(Coord(x+0.5,i+0.5),Coord(x+1,i+0.5),3)
+                    elif self.game.r.dir == 4:
+                        self.draw.drawLine(Coord(x+0.5,i+0.5),Coord(x+0.5,i+1),3)
+                    elif self.game.r.dir == 8:
+                        self.draw.drawLine(Coord(x+0.5,i+0.5),Coord(x,i+0.5),3)
+
                 elif self.game.f.search_flag(x,y):
                     if self.game.f.mapdata[(x,y)]:
                         self.draw.drawRectangle(Area(Coord(x,i),Coord(x+1,i+1)), "green",True)

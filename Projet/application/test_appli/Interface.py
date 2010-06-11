@@ -127,6 +127,10 @@ class Interface(object):
 
         self.robot_x= self.interface.get_object("robotX")
         self.robot_y= self.interface.get_object("robotY")
+        self.flag_x= self.interface.get_object("flagX")
+        self.flag_y= self.interface.get_object("flagY")
+        self.reposition_x= self.interface.get_object("repositionX")
+        self.reposition_y= self.interface.get_object("repositionY")
 
         #Log control
         self.log = Log.MyLog(self.interface.get_object("log"),self.interface.get_object("scrollLog"))
@@ -140,19 +144,65 @@ class Interface(object):
         self.combo =  self.interface.get_object("comboFlag")
         self.interface.connect_signals(self)
 
+        self.game.f.init_flag()
+        print self.game.r.dir
+
+        #init combobox
+        self.updateCombo()
+        self.comboRobot = self.interface.get_object("comboRobot")
+        self.initCombo(self.comboRobot)
+        self.comboReposition = self.interface.get_object("comboReposition")
+        self.initCombo(self.comboReposition)
+
         #Thread
         self.algo = ThreadAlgo(self)
         self.render = ThreadCanvas(self)
         self.bt = ThreadBluetooth(self)
 
-        #self.game.f.add_flag(4,2)
-        #self.game.f.add_flag(2,3)
-        self.game.f.init_flag()
-        #self.game.m.add_wall(1,1,2)
-        #self.game.m.add_wall(1,1,4)
 
-        #init combobox
-        self.updateCombo()
+    def initCombo(self, combo):
+        list_store = gtk.ListStore(gobject.TYPE_STRING)
+        L = ["Haut", "Bas", "Gauche", "Droite"]
+        for x in xrange(len(L)):
+            list_store.append([L[x]])
+        combo.set_model(list_store)
+        combo.set_active(0)
+        cell = gtk.CellRendererText()
+        combo.clear()
+        combo.pack_start(cell, True)
+        combo.add_attribute(cell, "text", 0)
+
+    def on_btnAddFlag_clicked(self, widget):
+        x = self.flag_x.get_text()
+        y = self.flag_y.get_text()
+        if x.isdigit() and y.isdigit():
+            if int(x) < self.game.m.mapw and int(x) >= 0 and \
+               int(y) < self.game.m.maph and int(y) >= 0:
+                self.game.f.add_flag(int(x), int(y))
+                self.game.f.mapdata[(int(x),int(y))] = False
+                self.log.add("New flag on the map ("+x+","+y+")")
+                self.updateCombo()
+                #self.bt.send_flag()
+            else:
+                self.log.add("Error new flag")
+        else:
+            self.log.add("Value are not integer")
+
+    def on_btnReposition_clicked(self, widget):
+        x = self.reposition_x.get_text()
+        y = self.reposition_y.get_text()
+        value = self.get_active_text(self.comboReposition)
+        value_convert = self.convertCombo(value)
+        if x.isdigit() and y.isdigit():
+            if int(x) < self.game.m.mapw and int(x) >= 0 and \
+               int(y) < self.game.m.maph and int(y) >= 0:
+                self.game.r.update2(int(x), int(y), value_convert)
+                self.log.add("New position for the robot("+x+","+y+","+value+")")
+                #self.bt.send_reposition()
+            else:
+                self.log.add("Error new flag")
+        else:
+            self.log.add("Value are not integer")
 
     def on_btnConnect_clicked(self, widget):
         btnCo = self.interface.get_object("btnConnect")
@@ -215,8 +265,6 @@ class Interface(object):
 
     def updateCombo(self):
         list_store = gtk.ListStore(gobject.TYPE_STRING)
-
-
         L = self.game.f.list_flag()
         for x in xrange(len(L)):
             list_store.append([str(L[x][0])+";"+str(L[x][1])])
@@ -231,11 +279,13 @@ class Interface(object):
     def on_btnRobot_clicked(self, widget):
         x = self.robot_x.get_text()
         y = self.robot_y.get_text()
+        value = self.get_active_text(self.comboRobot)
+        value_convert = self.convertCombo(value)
         if x.isdigit() and y.isdigit():
             if int(x) < self.game.m.mapw and int(x) >= 0 and \
                int(y) < self.game.m.maph and int(y) >= 0:
-                self.game.r.update(int(x), int(y))
-                self.log.add("New position for the robot("+x+","+y+")")
+                self.game.r.update(int(x), int(y), value_convert)
+                self.log.add("New position for the robot("+x+","+y+","+value+")")
             else:
                 self.log.add("Error new position robot")
         else:
@@ -257,6 +307,19 @@ class Interface(object):
         gtk.gdk.threads_enter()
         self.canvas.update(self.game)
         gtk.gdk.threads_leave()
+
+    def convertCombo(self, value):
+        if value == "Haut":
+            value = 1
+        elif value == "Bas":
+            value = 4
+        elif value == "Droite":
+            value = 2
+        elif value == "Gauche":
+            value = 8
+        else:
+            print "Error"
+        return value
 
     def main(self):
         gtk.main()
