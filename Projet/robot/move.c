@@ -173,16 +173,16 @@ static double move_compute_distance(double angle) {
 static void move_compute_position_from_wall(struct robot_struct *robot) {
   switch(robot->orientation) {
     case BASE_UP:
-      robot->Y=(robot->Y / MAP_SUB_SIZE) * 25 + 14;
+      robot->Y=(robot->Y / MAP_SUB_SIZE) * MAP_SUB_SIZE + 14;
     break;
     case BASE_DOWN:
-      robot->Y=(robot->Y / MAP_SUB_SIZE) * 25 + 11;
+      robot->Y=(robot->Y / MAP_SUB_SIZE) * MAP_SUB_SIZE + 11;
     break;
     case BASE_RIGHT:
-      robot->X=(robot->Y / MAP_SUB_SIZE) * 25 + 14;
+      robot->X=(robot->Y / MAP_SUB_SIZE) * MAP_SUB_SIZE + 14;
     break;
     case BASE_LEFT:
-      robot->X=(robot->Y / MAP_SUB_SIZE) * 25 + 11;
+      robot->X=(robot->Y / MAP_SUB_SIZE) * MAP_SUB_SIZE + 11;
     break;
   }
 }
