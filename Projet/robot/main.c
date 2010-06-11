@@ -6,7 +6,7 @@
 #include "base/drivers/sound.h"
 
 S8 main(void) {
-  struct robot_struct robot = {MODE_AUTONOMOUS, 6, 3, BASE_UP};
+  struct robot_struct robot = {MODE_AUTONOMOUS, 12, 8, BASE_UP};
   U8 map[MAP_X_SIZE][MAP_Y_SIZE];
 
   struct_map_init(map);
