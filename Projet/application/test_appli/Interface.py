@@ -132,7 +132,7 @@ class Interface(object):
         self.log = Log.MyLog(self.interface.get_object("log"),self.interface.get_object("scrollLog"))
 
         #Init the game, connection
-        self.game = G.Game(12,6)
+        self.game = G.Game(8,4)
         self.mode = 0
 
         #Dessin
@@ -145,11 +145,11 @@ class Interface(object):
         self.render = ThreadCanvas(self)
         self.bt = ThreadBluetooth(self)
 
-        self.game.f.add_flag(4,2)
-        self.game.f.add_flag(5,5)
+        #self.game.f.add_flag(4,2)
+        #self.game.f.add_flag(2,3)
         self.game.f.init_flag()
-        self.game.m.add_wall(1,1,2)
-        self.game.m.add_wall(1,1,4)
+        #self.game.m.add_wall(1,1,2)
+        #self.game.m.add_wall(1,1,4)
 
         #init combobox
         self.updateCombo()
