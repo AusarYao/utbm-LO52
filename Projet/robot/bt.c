@@ -74,12 +74,12 @@ void bt_check_connect(struct robot_struct *robot, U8 map[MAP_X_SIZE][MAP_Y_SIZE]
       break;
       case BT_MSG_LST_WALL:
         //remove the wall of the map
-        map[data[1]][data[2]] ^⁼ data[3];
+        map[data[1]][data[2]] ^= data[3];
       break;
       case BT_MSG_CPT_FLAG:
         //add flag and set as not took
-        map[data[1]][data[2]] ^⁼ BASE_FLAG_CAPTURED;
-        map[data[1]][data[2]] |⁼ BASE_FLAG;
+        map[data[1]][data[2]] ^= BASE_FLAG_CAPTURED;
+        map[data[1]][data[2]] |= BASE_FLAG;
       break;
       // Position recalibration request.
       case BT_MSG_RECAL_POS:
