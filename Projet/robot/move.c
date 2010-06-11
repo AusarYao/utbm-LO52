@@ -123,13 +123,23 @@ void move_autonomous(struct robot_struct *robot,
     move_rotate_angle(robot, -90);
     move_forward(robot, MAP_SUB_SIZE - 10, TRUE, map);
   }
-  //if there is no walls to go straight on
+  //if we can't go straight on
   else if(move_no_wall_to_go(robot, BASE_UP, map)){
     move_forward(robot, MAP_SUB_SIZE, TRUE, map);
   }
+  //if there is no walls to go on the right
+  else if((move_no_wall_to_go(robot, BASE_RIGHT, map))){
+    move_rotate_angle(robot, 90);
+    move_forward(robot, MAP_SUB_SIZE - 10, TRUE, map);
+  }
+  //if there is no walls on the left
+  else if((move_no_wall_to_go(robot, BASE_LEFT, map))){
+    move_rotate_angle(robot, -90);
+    move_forward(robot, MAP_SUB_SIZE - 10, TRUE, map);
+  }
   else {
     move_rotate_angle(robot, 180);
-    move_forward(robot, MAP_SUB_SIZE, TRUE, map);
+    move_forward(robot, MAP_SUB_SIZE - 5, TRUE, map);
   }
 }
 
