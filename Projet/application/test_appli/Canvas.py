@@ -6,7 +6,7 @@ pygtk.require("2.0")
 import gtk
 import Game as G
 
-SIZE_CASE = 32
+SIZE_CASE = 48
 
 class Coord(object):
     """

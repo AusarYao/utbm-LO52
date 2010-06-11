@@ -284,7 +284,7 @@ class Interface(object):
         if x.isdigit() and y.isdigit():
             if int(x) < self.game.m.mapw and int(x) >= 0 and \
                int(y) < self.game.m.maph and int(y) >= 0:
-                self.game.r.update(int(x), int(y), value_convert)
+                self.game.r.update2(int(x), int(y), value_convert)
                 self.log.add("New position for the robot("+x+","+y+","+value+")")
             else:
                 self.log.add("Error new position robot")

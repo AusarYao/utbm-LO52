@@ -17,11 +17,14 @@ class Game(object):
 
     def update_explore(self, data):
         """update data, robot and flags"""
-        self.r.update2(data[1],data[2],data[3])
+        self.r.update(data[1],data[2])
         if data[0] == 2: #Add Wall
             self.m.add_wall(data[1],data[2],data[3])
         elif data[0] == 3: #Add Flag
             self.f.add_flag(data[1],data[2])
+        else:
+            self.r.dir = data[3]
+
 
     def update_guiding(self, x, y):
         """update robot and if flags are token"""
