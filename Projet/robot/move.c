@@ -115,13 +115,13 @@ void move_autonomous(struct robot_struct *robot,
   else if(move_square_unknown(robot, map, BASE_RIGHT) && \
          (move_no_wall_to_go(robot, BASE_RIGHT, map))){
     move_rotate_angle(robot, 90);
-    move_forward(robot, MAP_SUB_SIZE, TRUE, map);
+    move_forward(robot, MAP_SUB_SIZE - 10, TRUE, map);
   }
   //if the left case has never been visited and there is no walls
   else if(move_square_unknown(robot, map, BASE_LEFT) && \
          (move_no_wall_to_go(robot, BASE_LEFT, map))){
     move_rotate_angle(robot, -90);
-    move_forward(robot, MAP_SUB_SIZE, TRUE, map);
+    move_forward(robot, MAP_SUB_SIZE - 10, TRUE, map);
   }
   //if there is no walls to go straight on
   else if(move_no_wall_to_go(robot, BASE_UP, map)){
@@ -129,7 +129,7 @@ void move_autonomous(struct robot_struct *robot,
   }
   else {
     move_rotate_angle(robot, 180);
-    move_forward(robot, MAP_SUB_SIZE-10, TRUE, map);
+    move_forward(robot, MAP_SUB_SIZE, TRUE, map);
   }
 }
 
@@ -482,8 +482,6 @@ static void move_stop(struct robot_struct *robot) {
   nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
   nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
 
-  // Compute the new position.
-  move_update_position(robot);
 }
 
 static void move_update_position(struct robot_struct *robot) {
