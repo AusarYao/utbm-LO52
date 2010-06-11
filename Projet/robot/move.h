@@ -19,7 +19,7 @@
 #define MOVE_LEFT_MOTOR     2
 #define MOVE_RIGHT_MOTOR    0
 
-#define MOVE_WHEEL_SPACING  96
+#define MOVE_WHEEL_SPACING  92
 #define MOVE_WHEEL_DIAMETER 55
 
 // Freeze time in seconds when on a flag.
