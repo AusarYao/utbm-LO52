@@ -40,7 +40,7 @@
             </child>
             <child>
               <object class="GtkVBox" id="vbox5">
-                <property name="width_request">250</property>
+                <property name="width_request">125</property>
                 <property name="visible">True</property>
                 <child>
                   <object class="GtkVButtonBox" id="vbuttonbox7">
@@ -251,6 +251,33 @@
               </object>
               <packing>
                 <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVSeparator" id="vseparator4">
+                <property name="visible">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVBox" id="vbox6">
+                <property name="width_request">125</property>
+                <property name="visible">True</property>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="position">4</property>
               </packing>
             </child>
           </object>

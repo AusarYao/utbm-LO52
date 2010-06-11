@@ -17,7 +17,7 @@ class Game(object):
 
     def update_explore(self, data):
         """update data, robot and flags"""
-        self.r.update(data[1],data[2])
+        self.r.update2(data[1],data[2],data[3])
         if data[0] == 2: #Add Wall
             self.m.add_wall(data[1],data[2],data[3])
         elif data[0] == 3: #Add Flag
