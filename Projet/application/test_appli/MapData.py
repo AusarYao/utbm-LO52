@@ -39,7 +39,7 @@ class MapData(object):
                     if y!=0:
                         L = T.sum_pow2(self.mapdata[(x,y-1)]['wall'])
                         if not T.search_in_liste(L,4):   
-                            self.mapdata[(x,y-1)]['wall'] += 4
+                            self.mapdata[(x,y+1)]['wall'] += 4
                 if value == 2:
                     if x != self.mapw-1:
                         L = T.sum_pow2(self.mapdata[(x+1,y)]['wall'])
@@ -49,7 +49,7 @@ class MapData(object):
                     if y != self.maph-1:
                         L = T.sum_pow2(self.mapdata[(x,y+1)]['wall'])
                         if not T.search_in_liste(L,1):   
-                            self.mapdata[(x,y+1)]['wall'] += 1
+                            self.mapdata[(x,y-1)]['wall'] += 1
                 if value == 8:
                     if x != 0:
                         L = T.sum_pow2(self.mapdata[(x-1,y)]['wall'])
