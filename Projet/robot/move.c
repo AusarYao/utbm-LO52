@@ -454,7 +454,10 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
   }
 
   // Modify the robot's orientation
+//problem here
   power = (move_log(robot->orientation) + angle / 90) % 4;
+  if(power<0)
+    power+=4;
   robot->orientation = move_pow(2, power);
 
 
