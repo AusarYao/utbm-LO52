@@ -57,14 +57,14 @@ class BT(object):
         print "Ack : ",data
 
     def send_flag(self, x,y):
-        data = "%d%d%d%d" % (3,x,y,1)
-        data = struct.pack('BBB',int(data[0]),int(data[1]),int(data[2]),int(data[3]))
+        data = "%d%d%d%d" % (3,int(x),int(y),1)
+        data = struct.pack('BBBB',int(data[0]),int(data[1]),int(data[2]),int(data[3]))
         print "Sending flag"
         self.sock.send(data)
 
     def send_reposition(self, x, y, dire):
-        data = "%d%d%d%d" % (4,x,y,dire)
-        data = struct.pack('BBB',int(data[0]),int(data[1]),int(data[2]),int(data[3]))
+        data = "%d%d%d%d" % (4,int(x),int(y),int(dire))
+        data = struct.pack('BBBB',int(data[0]),int(data[1]),int(data[2]),int(data[3]))
         print "Sending reposition"
         self.sock.send(data)
 
@@ -78,7 +78,7 @@ class BT(object):
             print "Waiting ACK"
             data=self.sock.recv(4)
             l=struct.unpack('BBBB',data)
-            while l[0] == 7:
+            while l[0] != 7:
                 data=self.sock.recv(4)
             print "ACK Receive"
 #           wait ack format : "7 1 1 1"

@@ -71,6 +71,12 @@ class ThreadBluetooth(T.Thread):
     def isconnect(self):
         return self.bt.isconnect()
 
+    def send_reposition(self,x,y,dire):
+        self.bt.send_reposition(x,y,dire)
+
+    def send_flag(self,x,y):
+        self.bt.send_flag(x,y)
+
 
 class ThreadAlgo(T.Thread):
     """Thread to run the algo"""
@@ -117,13 +123,6 @@ class ThreadAlgo(T.Thread):
     def stop(self):
         self.waiting = True
         self.started.set()
-
-    def send_reposition(self,x,y,dire):
-        self.bt.send_reposition(x,y,dire)
-
-    def send_flag(self,x,y):
-        self.bt.send_flag(x,y)
-
 
 class Interface(object):
     """Interface for the robot"""
