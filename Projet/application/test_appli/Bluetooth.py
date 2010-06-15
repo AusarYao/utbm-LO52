@@ -26,6 +26,7 @@ class BT(object):
             self.isconnected = False
             print "Unable to connect to device"
         else:
+            self.sock.setblocking(0)
             self.isconnected = True
             print "Connected"
 
