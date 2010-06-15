@@ -182,7 +182,7 @@ class Interface(object):
                 self.game.f.mapdata[(int(x),int(y))] = False
                 self.log.add("New flag on the map ("+x+","+y+")")
                 self.updateCombo()
-                #self.bt.send_flag()
+                self.bt.send_flag(x,y)
             else:
                 self.log.add("Error new flag")
         else:
@@ -200,7 +200,7 @@ class Interface(object):
                 self.log.add("New position for the robot("+x+","+y+","+value+")")
                 self.bt.send_reposition(x,y,value_convert)
             else:
-                self.log.add("Error new flag")
+                self.log.add("Error new position")
         else:
             self.log.add("Value are not integer")
 

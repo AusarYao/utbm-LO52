@@ -56,6 +56,12 @@ class BT(object):
         #time.sleep(1)
         print "Ack : ",data
 
+    def send_flag(self, x,y):
+        data = "%d%d%d%d" % (3,x,y,1)
+        data = struct.pack('BBB',int(data[0]),int(data[1]),int(data[2]),int(data[3]))
+        print "Sending flag"
+        self.sock.send(data)
+
     def send_reposition(self, x, y, dire):
         data = "%d%d%d%d" % (4,x,y,dire)
         data = struct.pack('BBB',int(data[0]),int(data[1]),int(data[2]),int(data[3]))
