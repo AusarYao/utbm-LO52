@@ -6,6 +6,7 @@ struct robot_struct {
   U8 mode;
   U8 X, Y;
   U8 orientation;
+  U32 light_threshold;
 };
 
 void struct_map_init(U8[MAP_X_SIZE][MAP_Y_SIZE]);

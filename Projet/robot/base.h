@@ -36,7 +36,7 @@
 
 #include "structures.h"
 
-void base_init(void);
+void base_init(struct robot_struct*);
 
 void base_kill(void);
 
