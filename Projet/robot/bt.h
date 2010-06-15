@@ -8,7 +8,7 @@
 
 // BlueTooth device name
 #define BT_DEVICE_NAME      "NXT-GROUPE-E"
-#define BT_PIN              1234
+#define BT_PIN              "1234"
 // Bluetooth message size, in bytes.
 #define BT_MSG_SIZE         4
 
