@@ -66,13 +66,11 @@ void bt_check_connect(struct robot_struct *robot, U8 map[MAP_X_SIZE][MAP_Y_SIZE]
 
   //if we received data
   if(nx_bt_stream_data_read()>1){
-    struct robot_struct robot_next = {MODE_GUIDED, data[1], data[2], data[3]};
-    nx_sound_freq_async(523,200);
-    nx_sound_freq_async(523,200);
+
     switch(data[0]){
       case BT_MSG_POSITION:
         //move the bot to the new position
-        move_guided(robot, robot_next.X, robot_next.Y, map);
+        move_guided(robot, data[1], data[2], map);
       break;
       case BT_MSG_LST_WALL:
         //remove the wall of the map
@@ -106,6 +104,7 @@ void bt_check_connect(struct robot_struct *robot, U8 map[MAP_X_SIZE][MAP_Y_SIZE]
 
       break;
     }
+
   }
 }
 
