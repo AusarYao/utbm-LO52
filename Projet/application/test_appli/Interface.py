@@ -198,7 +198,7 @@ class Interface(object):
                int(y) < self.game.m.maph and int(y) >= 0:
                 self.game.r.update2(int(x), int(y), value_convert)
                 self.log.add("New position for the robot("+x+","+y+","+value+")")
-                #self.bt.send_reposition()
+                self.bt.send_reposition(x,y,value_convert)
             else:
                 self.log.add("Error new flag")
         else:

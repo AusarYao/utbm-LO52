@@ -43,7 +43,6 @@ class BT(object):
         data = ''
         while data == '':
             data=self.sock.recv(4)
-            #data = '\x02\x01\x01\x02'
         l =struct.unpack('BBBB',data)
         print "Waiting message"        
         print "Recept data, l:",l," ; data:",data
@@ -57,17 +56,25 @@ class BT(object):
         #time.sleep(1)
         print "Ack : ",data
 
+    def send_reposition(self, x, y, dire):
+        data = "%d%d%d%d" % (4,x,y,dire)
+        data = struct.pack('BBB',int(data[0]),int(data[1]),int(data[2]),int(data[3]))
+        print "Sending reposition"
+        self.sock.send(data)
+
     def send_move(self, l):
         if len(l) == 2:
-            data = "%d%d%d" % (l[0],l[1],1)
-            data = struct.pack('BBB',int(data[0]),int(data[1]),int(data[2]))
+            data = "%d%d%d%d" % (1,l[0],l[1],1)
+            data = struct.pack('BBB',int(data[0]),int(data[1]),int(data[2]),int(data[3]))
             print "Sending move"
-            time.sleep(1)
             print "Send move ",data, "(%d,%d,%d)" % (l[0],l[1],1)
-            print "Waiting ACK"
-            time.sleep(2)
-            print "ACK Receive"
             self.sock.send(data)
+            print "Waiting ACK"
+            data=self.sock.recv(4)
+            l=struct.unpack('BBBB',data)
+            while l[0] == 7:
+                data=self.sock.recv(4)
+            print "ACK Receive"
 #           wait ack format : "7 1 1 1"
         else:
             print "Error send message"
