@@ -393,7 +393,7 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
     angle += 360;
 
   // Compute the number of rotations, and its associated angle.
-  distance = move_compute_distance(angle);
+  distance = M_PI * angle * (MOVE_WHEEL_SPACING / 10. )/ 360.;
   angle_rotation = move_compute_angle(distance);
 
   if(angle_rotation > 0) {
