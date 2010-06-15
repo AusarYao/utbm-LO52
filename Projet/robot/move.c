@@ -321,9 +321,6 @@ void move_guided(struct robot_struct *current_robot,\
 // Handle an obstacle by notifying the application and escaping from it.
 static void move_handle_obstacle(struct robot_struct *robot,
     U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
-  struct bt_message msg = {BT_MSG_LST_WALL, robot->X, robot->Y,
-                    robot->orientation};
- // bt_msg_send(&msg);
   map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] |= \
       robot->orientation;
 
@@ -331,9 +328,6 @@ static void move_handle_obstacle(struct robot_struct *robot,
     move_escape_wall(robot);
   }
   else {
-    struct bt_message abort_msg = {BT_MSG_ABORT_LST, robot->X, robot->Y,
-                      robot->orientation};
-  //  bt_msg_send(&abort_msg);
     map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] ^= \
         robot->orientation;
   }
@@ -399,7 +393,7 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
     angle += 360;
 
   // Compute the number of rotations, and its associated angle.
-  distance = M_PI * angle * (MOVE_WHEEL_SPACING / 10. )/ 360.;
+  distance = move_compute_distance(angle);
   angle_rotation = move_compute_angle(distance);
 
   if(angle_rotation > 0) {
@@ -454,7 +448,6 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
   }
 
   // Modify the robot's orientation
-//problem here
   power = (move_log(robot->orientation) + angle / 90) % 4;
   if(power<0)
     power+=4;
@@ -491,10 +484,15 @@ static void move_start(S8 right_speed, S8 left_speed) {
 }
 
 static void move_stop(struct robot_struct *robot) {
-
-  nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
-  nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
-
+  static bool state = FALSE;
+  if(state) {
+    nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
+    nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
+  }
+  else {
+    nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
+    nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
+  }
 }
 
 static void move_update_position(struct robot_struct *robot) {
@@ -522,14 +520,6 @@ static void move_update_position(struct robot_struct *robot) {
 
   bt_msg_send_position((U8)robot->X / MAP_SUB_SIZE,
       (U8) robot->Y / MAP_SUB_SIZE,(U8) robot->orientation);
-/*  U8 data[BT_MSG_SIZE];
-  data[0]=BT_MSG_POSITION;
-  data[1]=robot->X / MAP_SUB_SIZE;
-  data[2]=robot->Y / MAP_SUB_SIZE;
-  data[3]=robot->orientation;
-  nx_bt_stream_write((U8 *)data, BT_MSG_SIZE);
-
-    */
 }
 
 
