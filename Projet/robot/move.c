@@ -493,6 +493,7 @@ static void move_stop(struct robot_struct *robot) {
     nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
     nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
   }
+  move_update_position(robot);
 }
 
 static void move_update_position(struct robot_struct *robot) {
