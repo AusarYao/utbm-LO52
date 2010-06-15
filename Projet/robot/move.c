@@ -490,8 +490,8 @@ static void move_stop(struct robot_struct *robot) {
     nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
   }
   else {
-    nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
     nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
+    nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
   }
 }
 
