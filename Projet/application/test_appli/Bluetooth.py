@@ -57,15 +57,15 @@ class BT(object):
         print "Ack : ",data
 
     def send_flag(self, x,y):
-        data = struct.pack('BBBB', 4,int(x),int(y),int(dire))
+        data = struct.pack('BBBB',3,int(x),int(y),1)
         print "Sending flag"
-        print "Send flag ",data, "(%d,%d,%d,%d)" % (4,int(x),int(y))
+        print "Send flag (%d,%d,%d,%d)" % (3,int(x),int(y),1)
         self.sock.send(data)
 
     def send_reposition(self, x, y, dire):
-        data = struct.pack('BBBB', 4,int(x),int(y),int(dire))
+        data = struct.pack('BBBB',4,int(x),int(y),int(dire))
         print "Sending reposition"
-        print "Send reposition ",data, "(%d,%d,%d,%d)" % (4,int(x),int(y))
+        print "Send reposition (%d,%d,%d,%d)" % (4,int(x),int(y),int(dire))
         self.sock.send(data)
 
     def send_move(self, l):
