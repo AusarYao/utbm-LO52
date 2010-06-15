@@ -10,6 +10,8 @@
 #include "base/display.h"
 #include "base/drivers/systick.h"
 #include "base/drivers/avr.h"
+#include "base/drivers/sound.h"
+#include "base/drivers/_sound.h"
 
 // Definitions of the different modes used by the robot.
 #define MODE_AUTONOMOUS       1
