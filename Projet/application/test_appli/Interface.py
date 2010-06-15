@@ -118,6 +118,12 @@ class ThreadAlgo(T.Thread):
         self.waiting = True
         self.started.set()
 
+    def send_reposition(self,x,y,dire):
+        self.bt.send_reposition(x,y,dire)
+
+    def send_flag(self,x,y):
+        self.bt.send_flag(x,y)
+
 
 class Interface(object):
     """Interface for the robot"""
