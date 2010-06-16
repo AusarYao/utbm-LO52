@@ -316,25 +316,25 @@ void move_guided(struct robot_struct *current_robot,\
   if(current_robot->X / MAP_SUB_SIZE != next_X / MAP_SUB_SIZE) {
     // We have to go on the left
     if(current_robot->X > next_X) {
-      move_rotate_angle(current_robot, -(orientation - 2) * 90);
       dist = current_robot->X - next_X;
+      move_rotate_angle(current_robot, (3 - orientation) * 90);
     }
     //we have to go on the right
     else {
-      move_rotate_angle(current_robot, -(orientation + 1) * 90);
       dist = next_X - current_robot->X;
+      move_rotate_angle(current_robot, (1 - orientation) * 90);
     }
   }
   else {
     //we have to go down
     if(current_robot->Y / MAP_SUB_SIZE > next_Y / MAP_SUB_SIZE) {
       dist = current_robot->Y - next_Y;
-      move_rotate_angle(current_robot, -orientation * 90);
+      move_rotate_angle(current_robot, (2 - orientation) * 90);
     }
     //we have to go up
     else {
       dist = next_Y - current_robot->Y;
-      move_rotate_angle(current_robot, -(orientation - 2) * 90);
+      move_rotate_angle(current_robot, (-orientation) * 90);
     }
   }
   move_forward(current_robot, dist, TRUE, map);
