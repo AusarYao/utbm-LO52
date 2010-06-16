@@ -64,48 +64,57 @@ void bt_check_connect(struct robot_struct *robot, U8 map[MAP_X_SIZE][MAP_Y_SIZE]
   //recept message
   nx_bt_stream_read((U8*)data, BT_MSG_SIZE);
 
-  //if we received data
-  if(nx_bt_stream_data_read()>1){
+	while (nx_bt_stream_data_read() < 1) {
+		nx_systick_wait_ms(10);
+  //	nx_display_cursor_set_pos(0, 5);
+	//  nx_display_string("boucle");
+	}
 
-    switch(data[0]){
-      case BT_MSG_POSITION:
-        //move the bot to the new position
-        move_guided(robot, data[1], data[2], map);
-      break;
-      case BT_MSG_LST_WALL:
-        //remove the wall of the map
-        map[data[1]][data[2]] ^= data[3];
-      break;
-      case BT_MSG_CPT_FLAG:
-        //add flag and set as not took
-        map[data[1]][data[2]] ^= BASE_FLAG_CAPTURED;
-        map[data[1]][data[2]] |= BASE_FLAG;
-      break;
-      // Position recalibration request.
-      case BT_MSG_RECAL_POS:
-        robot->X=data[1];
-        robot->Y=data[2];
-        robot->orientation=data[3];
-        while(nx_avr_get_button() != BUTTON_OK)
-        {
-          nx_systick_wait_ms(10);
-        }
-      break;
-      // Abort last instruction.
-      case BT_MSG_ABORT_LST:
+  switch(data[0]) {
+    case BT_MSG_POSITION:
+      //move the bot to the new position
+      robot->mode=MODE_GUIDED;
+  	nx_display_cursor_set_pos(0, 6);
+	  nx_display_uint(data[1] *  MAP_SUB_SIZE);
+  	nx_display_cursor_set_pos(0, 7);
+	  nx_display_uint(data[2] *  MAP_SUB_SIZE);
+      move_guided(robot, data[1] *  MAP_SUB_SIZE, data[2] *  MAP_SUB_SIZE, map);
+      bt_msg_send_ack();
+    break;
+    case BT_MSG_LST_WALL:
+      //remove the wall of the map
+      map[data[1]][data[2]] ^= data[3];
+    break;
+    case BT_MSG_CPT_FLAG:
+      //add flag and set as not took
+      map[data[1]][data[2]] ^= BASE_FLAG_CAPTURED;
+      map[data[1]][data[2]] |= BASE_FLAG;
+    break;
+    // Position recalibration request.
+    case BT_MSG_RECAL_POS:
+      robot->X=data[1]+12;
+      robot->Y=data[2]+8;
+      robot->orientation=data[3];
+      while(nx_avr_get_button() != BUTTON_OK)
+      {
+        nx_systick_wait_ms(10);
+      }
+    break;
+    // Abort last instruction.
+    case BT_MSG_ABORT_LST:
 
-      break;
-      // Ping the other end.
-      case BT_MSG_PING:
-        bt_msg_send_ack();
-      break;
-      // ACK
-      case BT_MSG_ACK:
+    break;
+    // Ping the other end.
+    case BT_MSG_PING:
+     // bt_msg_send_ack();
+    break;
+    // ACK
+    case BT_MSG_ACK:
 
-      break;
-    }
-
+    break;
   }
+
+  
 }
 
 // Send a bt_message structure

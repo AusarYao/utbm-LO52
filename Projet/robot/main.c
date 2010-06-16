@@ -24,19 +24,20 @@ S8 main(void) {
   }
 
   while(1) {
-    bt_check_connect(&robot, map);
+  //  bt_check_connect(&robot, map);
 
     switch(robot.mode) {
       case MODE_AUTONOMOUS:
         move_autonomous(&robot, map);
         break;
-
+/*
       case MODE_GUIDED:
         if(bt_is_active())
-          move_guided(&robot, robot.X, robot.Y, map);
+        //  move_guided(&robot, robot.X, robot.Y, map);
         else
           move_autonomous(&robot, map);
         break;
+*/
     }
   }
 

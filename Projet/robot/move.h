@@ -8,7 +8,7 @@
 #include "base.h"
 #include "structures.h"
 
-#define MOVE_SPEED          67
+#define MOVE_SPEED          72
 #define MOVE_HIGH_SPEED     (MOVE_SPEED)
 #define MOVE_LOW_SPEED      (MOVE_SPEED - 10)
 #define MOVE_TURN_SPEED     (MOVE_SPEED)
@@ -19,8 +19,8 @@
 #define MOVE_LEFT_MOTOR     2
 #define MOVE_RIGHT_MOTOR    0
 
-#define MOVE_WHEEL_SPACING  89
-#define MOVE_WHEEL_DIAMETER 82
+#define MOVE_WHEEL_SPACING  86
+#define MOVE_WHEEL_DIAMETER 55
 
 // Freeze time in seconds when on a flag.
 #define MOVE_FLAG_FREEZE    3
