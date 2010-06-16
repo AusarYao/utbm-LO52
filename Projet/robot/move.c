@@ -400,84 +400,87 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
   U32 init_tach[2];
   double distance, angle_rotation;
   int power;
+  
+  if(angle != 0) {
 
-  move_update_position(robot);
+    move_update_position(robot);
 
-  nx_systick_wait_ms(100);
+    nx_systick_wait_ms(100);
 
-  // Get the initial state of the motors.
-  init_tach[0] = nx_motors_get_tach_count(MOVE_LEFT_MOTOR);
-  init_tach[1] = nx_motors_get_tach_count(MOVE_RIGHT_MOTOR);
+    // Get the initial state of the motors.
+    init_tach[0] = nx_motors_get_tach_count(MOVE_LEFT_MOTOR);
+    init_tach[1] = nx_motors_get_tach_count(MOVE_RIGHT_MOTOR);
 
-  // Ensure that our angle is in the [-180, 180] range.
-  if(angle > 180)
-    angle -= 360;
-  else if(angle < -180)
-    angle += 360;
+    // Ensure that our angle is in the [-180, 180] range.
+    if(angle > 180)
+      angle -= 360;
+    else if(angle < -180)
+      angle += 360;
 
-  // Compute the number of rotations, and its associated angle.
-  distance = M_PI * angle * (MOVE_WHEEL_SPACING / 10. )/ 360.;
-  angle_rotation = move_compute_angle(distance);
+    // Compute the number of rotations, and its associated angle.
+    distance = M_PI * angle * (MOVE_WHEEL_SPACING / 10. )/ 360.;
+    angle_rotation = move_compute_angle(distance);
 
-  if(angle_rotation > 0) {
-    move_start(-MOVE_TURN_SPEED, MOVE_TURN_SPEED);
+    if(angle_rotation > 0) {
+      move_start(-MOVE_TURN_SPEED, MOVE_TURN_SPEED);
 
-    // We wait for one motor to have reached the target angle.
-    while(((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
-          angle_rotation) && ((init_tach[1] -
-          nx_motors_get_tach_count(MOVE_RIGHT_MOTOR)) > -angle_rotation)){
-      nx_systick_wait_ms(10);
-    }
-    if((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
-        angle_rotation) {
-      nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
-      while((init_tach[1] - nx_motors_get_tach_count(MOVE_RIGHT_MOTOR)) >
-          -angle_rotation){
+      // We wait for one motor to have reached the target angle.
+      while(((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
+            angle_rotation) && ((init_tach[1] -
+            nx_motors_get_tach_count(MOVE_RIGHT_MOTOR)) > -angle_rotation)){
         nx_systick_wait_ms(10);
       }
-      nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
-    }
-    else {
-      nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
-      while((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
-          angle_rotation){
-        nx_systick_wait_ms(10);
+      if((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
+          angle_rotation) {
+        nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
+        while((init_tach[1] - nx_motors_get_tach_count(MOVE_RIGHT_MOTOR)) >
+            -angle_rotation){
+          nx_systick_wait_ms(10);
+        }
+        nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
       }
-      nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
-    }
+      else {
+        nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
+        while((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
+            angle_rotation){
+          nx_systick_wait_ms(10);
+        }
+        nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
+      }
 
-  }
-  else {
-    move_start(MOVE_TURN_SPEED, -MOVE_TURN_SPEED);
-
-    // We wait for one motor to have reached the target angle.
-    while(((nx_motors_get_tach_count(MOVE_RIGHT_MOTOR) - init_tach[1]) >
-          angle_rotation) && ((init_tach[0] -
-          nx_motors_get_tach_count(MOVE_LEFT_MOTOR)) < -angle_rotation));
-
-    if((nx_motors_get_tach_count(MOVE_RIGHT_MOTOR) - init_tach[1]) >
-        angle_rotation) {
-      nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
-      while((init_tach[0] - nx_motors_get_tach_count(MOVE_LEFT_MOTOR)) <
-          -angle_rotation);
-      nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
     }
     else {
-      nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
-      while((nx_motors_get_tach_count(MOVE_RIGHT_MOTOR) - init_tach[1]) >
-          angle_rotation);
-      nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
+      move_start(MOVE_TURN_SPEED, -MOVE_TURN_SPEED);
+
+      // We wait for one motor to have reached the target angle.
+      while(((nx_motors_get_tach_count(MOVE_RIGHT_MOTOR) - init_tach[1]) >
+            angle_rotation) && ((init_tach[0] -
+            nx_motors_get_tach_count(MOVE_LEFT_MOTOR)) < -angle_rotation));
+
+      if((nx_motors_get_tach_count(MOVE_RIGHT_MOTOR) - init_tach[1]) >
+          angle_rotation) {
+        nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
+        while((init_tach[0] - nx_motors_get_tach_count(MOVE_LEFT_MOTOR)) <
+            -angle_rotation);
+        nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
+      }
+      else {
+        nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
+        while((nx_motors_get_tach_count(MOVE_RIGHT_MOTOR) - init_tach[1]) >
+            angle_rotation);
+        nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
+      }
     }
+
+    // Modify the robot's orientation
+    power = (move_log(robot->orientation) + angle / 90) % 4;
+    if(power<0)
+      power+=4;
+    robot->orientation = move_pow(2, power);
+
+
+    move_refresh_tach();
   }
-
-  // Modify the robot's orientation
-  power = (move_log(robot->orientation) + angle / 90) % 4;
-  if(power<0)
-    power+=4;
-  robot->orientation = move_pow(2, power);
-
-
-  move_refresh_tach();
 }
 
 //Return TRUE if the adjacent square has never been visited, FALSE otherwise
