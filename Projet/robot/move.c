@@ -108,32 +108,32 @@ void move_autonomous(struct robot_struct *robot,
   }
   //if the up case has never been visited and there is no walls
   else if(move_square_unknown(robot, map, BASE_UP) && \
-         (move_no_wall_to_go(robot, BASE_UP, map))){
+         (move_no_wall_to_go(robot, BASE_UP, map))) {
     move_forward(robot, MAP_SUB_SIZE, TRUE, map);
   }
   //if the right case has never been visited and there is no walls
   else if(move_square_unknown(robot, map, BASE_RIGHT) && \
-         (move_no_wall_to_go(robot, BASE_RIGHT, map))){
+         (move_no_wall_to_go(robot, BASE_RIGHT, map))) {
     move_rotate_angle(robot, 90);
     move_forward(robot, MAP_SUB_SIZE - 10, TRUE, map);
   }
   //if the left case has never been visited and there is no walls
   else if(move_square_unknown(robot, map, BASE_LEFT) && \
-         (move_no_wall_to_go(robot, BASE_LEFT, map))){
+         (move_no_wall_to_go(robot, BASE_LEFT, map))) {
     move_rotate_angle(robot, -90);
     move_forward(robot, MAP_SUB_SIZE - 10, TRUE, map);
   }
   //if we can't go straight on
-  else if(move_no_wall_to_go(robot, BASE_UP, map)){
+  else if(move_no_wall_to_go(robot, BASE_UP, map)) {
     move_forward(robot, MAP_SUB_SIZE, TRUE, map);
   }
   //if there is no walls to go on the right
-  else if((move_no_wall_to_go(robot, BASE_RIGHT, map))){
+  else if((move_no_wall_to_go(robot, BASE_RIGHT, map))) {
     move_rotate_angle(robot, 90);
     move_forward(robot, MAP_SUB_SIZE - 10, TRUE, map);
   }
   //if there is no walls on the left
-  else if((move_no_wall_to_go(robot, BASE_LEFT, map))){
+  else if((move_no_wall_to_go(robot, BASE_LEFT, map))) {
     move_rotate_angle(robot, -90);
     move_forward(robot, MAP_SUB_SIZE - 10, TRUE, map);
   }
@@ -231,7 +231,7 @@ static void move_forward(struct robot_struct *robot, U32 distance,
           wheel_angle) {
         nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
         while((nx_motors_get_tach_count(MOVE_RIGHT_MOTOR) - init_tach[1]) <
-        wheel_angle){
+        wheel_angle) {
           nx_systick_wait_ms(1);
         }
         nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
@@ -239,7 +239,7 @@ static void move_forward(struct robot_struct *robot, U32 distance,
       else {
         nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
         while((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
-            wheel_angle){
+            wheel_angle) {
           nx_systick_wait_ms(1);
         }
         nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
@@ -427,14 +427,14 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
       // We wait for one motor to have reached the target angle.
       while(((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
             angle_rotation) && ((init_tach[1] -
-            nx_motors_get_tach_count(MOVE_RIGHT_MOTOR)) > -angle_rotation)){
+            nx_motors_get_tach_count(MOVE_RIGHT_MOTOR)) > -angle_rotation)) {
         nx_systick_wait_ms(1);
       }
       if((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
           angle_rotation) {
         nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
         while((init_tach[1] - nx_motors_get_tach_count(MOVE_RIGHT_MOTOR)) >
-            -angle_rotation){
+            -angle_rotation) {
           nx_systick_wait_ms(1);
         }
         nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
@@ -442,7 +442,7 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
       else {
         nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
         while((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
-            angle_rotation){
+            angle_rotation) {
           nx_systick_wait_ms(1);
         }
         nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
@@ -455,7 +455,7 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
       // We wait for one motor to have reached the target angle.
       while(((nx_motors_get_tach_count(MOVE_RIGHT_MOTOR) - init_tach[1]) >
             angle_rotation) && ((init_tach[0] -
-            nx_motors_get_tach_count(MOVE_LEFT_MOTOR)) < -angle_rotation)){ 
+            nx_motors_get_tach_count(MOVE_LEFT_MOTOR)) < -angle_rotation)) { 
         nx_systick_wait_ms(1);
       }
 
