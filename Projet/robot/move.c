@@ -219,13 +219,36 @@ static void move_forward(struct robot_struct *robot, U32 distance,
   move_start(MOVE_HIGH_SPEED, MOVE_HIGH_SPEED);
 
   if(stop) {
-    // Wait until we reach the final distance.
+   // Wait until we reach the final distance.
     while((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
-        wheel_angle && !(sensors_contact())) { // && !(sensors_flag())
-        nx_systick_wait_ms(10);
-  }
+        wheel_angle && (nx_motors_get_tach_count(MOVE_RIGHT_MOTOR)
+        - init_tach[1]) < wheel_angle && !(sensors_contact())) {
+      nx_systick_wait_ms(1);
+    }
 
-    move_stop(robot);
+    if(!(sensors_contact())) {
+      if((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
+          wheel_angle) {
+        nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
+        while((nx_motors_get_tach_count(MOVE_RIGHT_MOTOR) - init_tach[1]) <
+        wheel_angle){
+          nx_systick_wait_ms(1);
+        }
+        nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
+      }
+      else {
+        nx_motors_stop(MOVE_RIGHT_MOTOR, TRUE);
+        while((nx_motors_get_tach_count(MOVE_LEFT_MOTOR) - init_tach[0]) <
+            wheel_angle){
+          nx_systick_wait_ms(1);
+        }
+        nx_motors_stop(MOVE_LEFT_MOTOR, TRUE);
+      }
+    }
+    else {
+      move_stop(robot);
+    }
+
     move_update_position(robot);
 
     if(sensors_contact()) {
