@@ -33,7 +33,7 @@ void base_kill(void) {
   nx_core_halt();
 }
 
-void base_init(struct robot_struct *robot) {
+void base_init(void) {
   // Initialisation de l'ecran
   nx_display_clear();
   nx_display_cursor_set_pos(0, 0);
@@ -55,15 +55,7 @@ void base_init(struct robot_struct *robot) {
   nx__sound_init();
 
   // Initialisation des capteurs
-  nx_radar_init(SENSORS_RADAR);
-  sensors_wall();
-  nx_sensors_analog_enable(SENSORS_TOUCH);
-  nx_sensors_analog_enable(SENSORS_LIGHT);
-  nx_sensors_analog_digi_set(SENSORS_LIGHT, DIGI0);
-
-  // Recuperation de la valeur de luminosite courante : on est sur un
-  // drapeau
-  robot->light_threshold = nx_sensors_analog_get(SENSORS_LIGHT) - 4;
+  sensors_init();
 
   // Initialisation de la partie déplacement.
   move_init();

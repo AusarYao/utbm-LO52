@@ -13,7 +13,6 @@
 
 #define SENSORS_TOUCH_THRESHOLD   500
 #define SENSORS_RADAR_THRESHOLD   20
-#define SENSORS_LIGHT_THRESHOLD   500
 
 // Return TRUE if an obstacle has been encountered, FALSE otherwise.
 bool sensors_contact(void);
@@ -23,5 +22,8 @@ bool sensors_wall(void);
 
 // Return TRUE if we are on a flag.
 bool sensors_flag(void);
+
+// Sensors initialisation function
+void sensors_init(void);
 
 #endif
