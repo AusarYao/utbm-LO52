@@ -25,7 +25,10 @@ S8 main(void) {
   sensors_light_calibrate();
 
   while(1) {
-  //  bt_check_connect(&robot, map);
+    //On a desactivaté la reception de message bletooth car le robot bug
+    //La communication bluetooth ne fonctionne que dans
+    //le sens robot->aplication
+    // bt_check_connect(&robot, map);
 
     switch(robot.mode) {
       case MODE_AUTONOMOUS:
