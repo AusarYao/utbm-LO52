@@ -19,7 +19,7 @@ static double move_compute_angle(double);
 // Compute the distance for the given angle.
 static double move_compute_distance(double);
 //compute the last position from the last Wall
-static void move_compute_position_from_wall(struct robot_struct*);
+//static void move_compute_position_from_wall(struct robot_struct*);
 static void move_escape_wall(struct robot_struct*);
 // Make the robot move forward on the given distance in millimeters.
 // Start gradually and stop gradually if the stop flag is set.
@@ -83,10 +83,6 @@ static U8 move_adjacent_square(struct robot_struct *robot, U8 direction) {
 // Move in autonomous mode, exploring the field.
 void move_autonomous(struct robot_struct *robot,
     U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
-
-  nx_display_clear();
-  nx_display_cursor_set_pos(0, 0);
-  nx_display_uint(robot->X);
 
     map[robot->X / MAP_SUB_SIZE][robot->Y / MAP_SUB_SIZE] |= BASE_VISITED;
   if(sensors_wall()) {
@@ -180,6 +176,7 @@ static double move_compute_distance(double angle) {
 }
 
 //compute the last position from the last Wall
+/*
 static void move_compute_position_from_wall(struct robot_struct *robot) {
   switch(robot->orientation) {
     case BASE_UP:
@@ -196,6 +193,7 @@ static void move_compute_position_from_wall(struct robot_struct *robot) {
     break;
   }
 }
+*/
 
 static void move_escape_wall(struct robot_struct *robot) {
   move_stop(robot);

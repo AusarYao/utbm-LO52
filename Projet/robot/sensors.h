@@ -5,6 +5,7 @@
 // Include the systems' headers
 #include "base/drivers/radar.h"
 #include "base/drivers/sensors.h"
+#include "base/display.h"
 
 // Constants
 #define SENSORS_TOUCH     0
@@ -25,5 +26,8 @@ bool sensors_flag(void);
 
 // Sensors initialisation function
 void sensors_init(void);
+
+// Calibrate our light sensor.
+void sensors_light_calibrate(void);
 
 #endif

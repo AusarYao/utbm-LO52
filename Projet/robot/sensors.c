@@ -29,8 +29,13 @@ void sensors_init(void) {
   nx_sensors_analog_enable(SENSORS_TOUCH);
   nx_sensors_analog_enable(SENSORS_LIGHT);
   nx_sensors_analog_digi_set(SENSORS_LIGHT, DIGI0);
+}
 
+void sensors_light_calibrate(void) {
   // Recuperation de la valeur de luminosite courante : on est sur un
   // drapeau
   light_threshold = nx_sensors_analog_get(SENSORS_LIGHT) - 6;
+  nx_display_string("New light threshold : ");
+  nx_display_uint(light_threshold);
+  nx_display_string("\n");
 }

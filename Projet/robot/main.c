@@ -18,10 +18,11 @@ S8 main(void) {
   if (!nx_bt_stream_opened() || nx_bt_connection_pending())
       bt_wait_connection();
 
-  while(nx_avr_get_button() != BUTTON_OK)
-  {
+  while(nx_avr_get_button() != BUTTON_OK) {
     nx_systick_wait_ms(10);
   }
+
+  sensors_light_calibrate();
 
   while(1) {
   //  bt_check_connect(&robot, map);
