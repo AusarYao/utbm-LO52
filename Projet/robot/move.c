@@ -397,7 +397,7 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
   U32 init_tach[2];
   double distance, angle_rotation;
   int power;
-  
+
   if(angle != 0) {
 
     move_update_position(robot);
@@ -452,7 +452,7 @@ static void move_rotate_angle(struct robot_struct *robot, S32 angle) {
       // We wait for one motor to have reached the target angle.
       while(((nx_motors_get_tach_count(MOVE_RIGHT_MOTOR) - init_tach[1]) >
             angle_rotation) && ((init_tach[0] -
-            nx_motors_get_tach_count(MOVE_LEFT_MOTOR)) < -angle_rotation)) { 
+            nx_motors_get_tach_count(MOVE_LEFT_MOTOR)) < -angle_rotation)) {
         nx_systick_wait_ms(1);
       }
 
