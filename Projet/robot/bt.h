@@ -42,7 +42,7 @@ struct bt_message {
 // Bluetooth initialisation
 int bt_init(void);
 
-//close bluetooth connection 
+//close bluetooth connection
 void bt_die(void);
 
 // Check if the connection is not down.
