@@ -56,28 +56,23 @@ bool bt_is_active(void) {
   return TRUE;
 }
 
-//TODO
 // Process the pending messages on the Bluetooth stack.
-void bt_check_connect(struct robot_struct *robot, U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
+void bt_check_connect(struct robot_struct *robot,
+    U8 map[MAP_X_SIZE][MAP_Y_SIZE]) {
 
   S8 data[BT_MSG_SIZE];
   //recept message
   nx_bt_stream_read((U8*)data, BT_MSG_SIZE);
 
-	while (nx_bt_stream_data_read() < 1) {
-		nx_systick_wait_ms(10);
-  //	nx_display_cursor_set_pos(0, 5);
-	//  nx_display_string("boucle");
-	}
+  while (nx_bt_stream_data_read() < 1) {
+    nx_systick_wait_ms(10);
+    //  nx_display_string("wait message");
+  }
 
   switch(data[0]) {
     case BT_MSG_POSITION:
       //move the bot to the new position
       robot->mode=MODE_GUIDED;
-  	nx_display_cursor_set_pos(0, 6);
-	  nx_display_uint(data[1] *  MAP_SUB_SIZE);
-  	nx_display_cursor_set_pos(0, 7);
-	  nx_display_uint(data[2] *  MAP_SUB_SIZE);
       move_guided(robot, data[1] *  MAP_SUB_SIZE, data[2] *  MAP_SUB_SIZE, map);
       bt_msg_send_ack();
     break;
@@ -113,8 +108,6 @@ void bt_check_connect(struct robot_struct *robot, U8 map[MAP_X_SIZE][MAP_Y_SIZE]
 
     break;
   }
-
-  
 }
 
 // Send a bt_message structure
