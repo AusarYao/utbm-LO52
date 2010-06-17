@@ -1,5 +1,7 @@
 #include "sensors.h"
 
+static U32 light_threshold = 500;
+
 // Return TRUE if an obstacle has been encountered, FALSE otherwise.
 bool sensors_contact(void) {
   if (nx_sensors_analog_get(SENSORS_TOUCH) < SENSORS_TOUCH_THRESHOLD)
