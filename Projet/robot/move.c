@@ -135,7 +135,7 @@ void move_autonomous(struct robot_struct *robot,
   }
   else {
     move_rotate_angle(robot, 180);
-    move_forward(robot, MAP_SUB_SIZE - 5, TRUE, map);
+    move_forward(robot, MAP_SUB_SIZE - 10, TRUE, map);
   }
 }
 
@@ -198,8 +198,7 @@ static void move_compute_position_from_wall(struct robot_struct *robot) {
 static void move_escape_wall(struct robot_struct *robot) {
   move_stop(robot);
   nx_systick_wait_ms(100);
-  move_backward(robot, 5, TRUE);
-//  move_rotate_angle(robot, -90);
+  move_backward(robot, 3, TRUE);
 }
 
 // Make the robot move forward on the given distance in millimeters.
