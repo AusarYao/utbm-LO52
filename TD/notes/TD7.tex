@@ -1,0 +1,84 @@
+\chapter{TD7 : CSMA/CA}
+\section{Cas Downlink}
+\subsubsection{Question 1}
+\begin{align*}
+t_{cycle} &= t_{data} + t_{SIFS} + t_{ACK} + t_{DIFS}\\
+          &= 96 + \frac{30 + 1350 + 4}{\frac{24 \times 1024^2}{8}}
+            + 10 \times 10^{-6} + \frac{14}{\frac{24 \times 1024^2}{8}}
+            + 50 \times 10^{-6}\\
+          &= 96 + 440 + 10 + 4.45 + 50\\
+          &= 600 \mu s
+\end{align*}
+
+\subsubsection{Question 2}
+$t_{backoff} = \frac{31}{2} \times 20 = 310 \mu s$.
+
+\subsubsection{Question 3}
+$t_{cycle} + t_{backoff} = 600 + 310 = 910 \mu s$.
+
+\subsubsection{Question 4}
+$\frac{1350 \times 8}{910} = 11.87 Mbit/s$.
+
+\subsubsection{Question 5}
+\begin{align*}
+t_{cycle} &= t_{data} + t_{SIFS} + t_{ACK} + t_{DIFS}\\
+          &= 96 + \frac{30 + 800 + 4}{\frac{24 \times 1024^2}{8}}
+            + 10 \times 10^{-6} + \frac{14}{\frac{24 \times 1024^2}{8}}
+            + 50 \times 10^{-6}\\
+          &= 96 + 265 + 10 + 4.45 + 50\\
+          &= 425 \mu s\\
+t_{cycle} + t_{backoff} &= 425 + 310 = 735 \mu s\\
+\frac{800 \times 8}{735} &= 8.71 Mbit/s
+\end{align*}
+
+\subsubsection{Question 6}
+\begin{align*}
+t_{cycle} &= t_{data} + t_{SIFS} + t_{ACK} + t_{DIFS}\\
+          &= 96 + \frac{30 + 800 + 4}{\frac{6 \times 1024^2}{8}}
+            + 10 \times 10^{-6} + \frac{14}{\frac{6 \times 1024^2}{8}}
+            + 50 \times 10^{-6}\\
+          &= 96 + 1060 + 10 + 26.7 + 50\\
+          &= 1243 \mu s\\
+t_{cycle} + t_{backoff} &= 1243 + 310 = 1553 \mu s\\
+\frac{800 \times 8}{1553} &= 4.12 Mbit/s
+\end{align*}
+
+\subsubsection{Question 7}
+\begin{align*}
+D &= \frac{8 \times t_s}{\delta_{k,s} \times t_{BO}}
+\end{align*}
+
+\subsubsection{Question 9}
+$\frac{11.87}{3} = 3.96 Mbit/s$.
+
+\subsubsection{Question 11}
+\begin{align*}
+D &= \frac{\displaystyle\sum n_{k,s} \times 8 \times t_s}
+    {\displaystyle\sum (\delta_{k,s} + t_{BO}) \times n_{k,s}}
+\end{align*}
+
+\section{Cas Uplink}
+\subsection{Question 2}
+\begin{align*}
+t_{cycle} &= t_{data} + t_{SIFS} + t_{ACK} + t_{DIFS}\\
+          &= 96 + \frac{30 + 1350 + 4}{\frac{18 \times 1024^2}{8}}
+            + 10 \times 10^{-6} + \frac{14}{\frac{18 \times 1024^2}{8}}
+            + 50 \times 10^{-6}\\
+          &= 96 + 586 + 10 + 5.93 + 50\\
+          &= 747.93 \mu s\\
+t_{backoff} &= \frac{31}{2} \times 20 = 310 \mu s\\
+t_{cycle} + t_{backoff} &= 747.93 + 310 = 1057 \mu s\\
+&\text{Nous devons multiplier par 4, ayant 4 clients sur le lien.}\\
+t_{acces} &= 4 \times (t_{cycle} + t_{backoff}) = 4228 \mu s
+\end{align*}
+
+\subsection{Question 3}
+\begin{align*}
+n\times t_{BO} &+ \displaystyle\sum_{k,s} n_{k,s} \times \delta_{k,s}
+\end{align*}
+
+\subsection{Question 4}
+\begin{align*}
+\frac{\displaystyle\sum_{k,s} n_{k,s} \times 8 \times t_s}{n\times t_{BO} +
+    \displaystyle\sum_{k,s} n_{k,s} \times \delta_{k,s}
+\end{align*}
